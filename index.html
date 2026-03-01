@@ -24,17 +24,10 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--white);
-    color: var(--text);
-    overflow-x: hidden;
-  }
-
-  /* ── NAV ── */
+  /* NAV */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
@@ -43,609 +36,202 @@
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
-
-  .logo {
-    font-family: 'Sora', sans-serif;
-    font-weight: 800; font-size: 22px;
-    color: var(--navy);
-    text-decoration: none;
-  }
+  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 22px; color: var(--navy); text-decoration: none; }
   .logo span { color: var(--orange); }
-
   .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a {
-    font-size: 14px; font-weight: 500; color: var(--gray);
-    text-decoration: none; transition: color .2s;
-  }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray); text-decoration: none; transition: color .2s; }
   .nav-links a:hover { color: var(--navy); }
-
-  .nav-cta {
-    background: var(--navy); color: var(--white) !important;
-    padding: 10px 22px; border-radius: 8px;
-    font-weight: 600 !important; font-size: 14px !important;
-    transition: background .2s !important;
-  }
+  .nav-cta { background: var(--navy); color: var(--white) !important; padding: 10px 22px; border-radius: 8px; font-weight: 600 !important; font-size: 14px !important; transition: background .2s !important; }
   .nav-cta:hover { background: var(--blue) !important; }
 
-  /* ── HERO ── */
+  /* HERO */
   .hero {
-    min-height: 100vh;
-    background: var(--navy);
+    min-height: 100vh; background: var(--navy);
     display: flex; align-items: center;
-    padding: 120px 40px 80px;
-    position: relative;
-    overflow: hidden;
+    padding: 120px 40px 80px; position: relative; overflow: hidden;
   }
-
   .hero-bg {
     position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(21,96,189,0.25) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(247,110,42,0.1) 0%, transparent 60%);
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(21,96,189,0.25) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, rgba(247,110,42,0.1) 0%, transparent 60%);
   }
-
   .hero-grid {
     position: absolute; inset: 0; opacity: 0.04;
-    background-image: linear-gradient(var(--white) 1px, transparent 1px),
-                      linear-gradient(90deg, var(--white) 1px, transparent 1px);
+    background-image: linear-gradient(var(--white) 1px, transparent 1px), linear-gradient(90deg, var(--white) 1px, transparent 1px);
     background-size: 60px 60px;
   }
-
-  .hero-content {
-    position: relative; z-index: 2;
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-  }
-
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 100px; padding: 6px 16px;
-    font-size: 13px; color: rgba(255,255,255,0.7);
-    margin-bottom: 24px;
-  }
-
-  .hero-badge span {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green); display: inline-block;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  .hero h1 {
-    font-family: 'Sora', sans-serif;
-    font-size: clamp(36px, 4vw, 58px);
-    font-weight: 800; line-height: 1.1;
-    color: var(--white); margin-bottom: 20px;
-  }
-
-  .hero h1 em {
-    font-style: normal; color: var(--orange);
-  }
-
-  .hero p {
-    font-size: 18px; line-height: 1.7;
-    color: rgba(255,255,255,0.65);
-    margin-bottom: 40px;
-  }
-
+  .hero-content { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 16px; font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 24px; }
+  .hero-badge span { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  .hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(36px, 4vw, 58px); font-weight: 800; line-height: 1.1; color: var(--white); margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero p { font-size: 18px; line-height: 1.7; color: rgba(255,255,255,0.65); margin-bottom: 40px; }
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
-
-  .btn-primary {
-    background: var(--orange); color: var(--white);
-    padding: 16px 32px; border-radius: 10px;
-    font-family: 'Sora', sans-serif;
-    font-weight: 700; font-size: 15px;
-    text-decoration: none; border: none; cursor: pointer;
-    transition: all .25s; display: inline-flex; align-items: center; gap: 8px;
-  }
+  .btn-primary { background: var(--orange); color: var(--white); padding: 16px 32px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; text-decoration: none; border: none; cursor: pointer; transition: all .25s; display: inline-flex; align-items: center; gap: 8px; }
   .btn-primary:hover { background: #E55A1A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(247,110,42,0.4); }
-
-  .btn-secondary {
-    background: transparent; color: var(--white);
-    padding: 16px 32px; border-radius: 10px;
-    font-family: 'Sora', sans-serif;
-    font-weight: 600; font-size: 15px;
-    text-decoration: none; border: 1px solid rgba(255,255,255,0.2);
-    cursor: pointer; transition: all .25s;
-  }
+  .btn-secondary { background: transparent; color: var(--white); padding: 16px 32px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: all .25s; }
   .btn-secondary:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
-
-  .hero-stats {
-    display: flex; gap: 40px; margin-top: 48px;
-    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .stat-item { text-align: left; }
-  .stat-number {
-    font-family: 'Sora', sans-serif;
-    font-size: 28px; font-weight: 800; color: var(--white);
-    display: block;
-  }
+  .hero-stats { display: flex; gap: 40px; margin-top: 48px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .stat-number { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--white); display: block; }
   .stat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
 
-  /* Hero Card */
-  .hero-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 32px;
-    backdrop-filter: blur(10px);
-    animation: floatUp 0.8s ease-out;
-  }
-
-  @keyframes floatUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .card-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: var(--orange); display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-
-  .card-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 16px; font-weight: 600; color: var(--white);
-  }
+  /* HERO CARD */
+  .hero-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; backdrop-filter: blur(10px); animation: floatUp 0.8s ease-out; }
+  @keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .card-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .card-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600; color: var(--white); }
   .card-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-
   .card-docs { display: flex; flex-direction: column; gap: 10px; }
-
-  .doc-item {
-    display: flex; align-items: center; gap: 12px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 12px 16px;
-    transition: all .2s;
-  }
-  .doc-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-
+  .doc-item { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 16px; transition: all .2s; }
+  .doc-item:hover { background: rgba(255,255,255,0.1); }
   .doc-emoji { font-size: 20px; }
   .doc-name { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); flex: 1; }
-
-  .doc-status {
-    font-size: 11px; font-weight: 600; padding: 3px 10px;
-    border-radius: 100px;
-  }
+  .doc-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
   .status-ok { background: var(--green-light); color: var(--green); }
   .status-alert { background: var(--orange-light); color: var(--orange); }
   .status-new { background: var(--sky); color: var(--blue); }
 
-  /* ── PROBLEM ── */
-  .section {
-    padding: 100px 40px;
-    max-width: 1200px; margin: 0 auto;
-  }
+  /* SECTIONS */
+  .section-tag { display: inline-block; background: var(--sky); color: var(--blue); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border-radius: 6px; margin-bottom: 20px; }
+  .section-title { font-family: 'Sora', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; line-height: 1.15; color: var(--navy); margin-bottom: 16px; }
+  .section-sub { font-size: 18px; color: var(--gray); line-height: 1.7; max-width: 600px; }
 
-  .section-tag {
-    display: inline-block;
-    background: var(--sky); color: var(--blue);
-    font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
-    text-transform: uppercase; padding: 6px 14px; border-radius: 6px;
-    margin-bottom: 20px;
-  }
-
-  .section-title {
-    font-family: 'Sora', sans-serif;
-    font-size: clamp(28px, 3vw, 44px);
-    font-weight: 800; line-height: 1.15;
-    color: var(--navy); margin-bottom: 16px;
-  }
-
-  .section-sub {
-    font-size: 18px; color: var(--gray); line-height: 1.7;
-    max-width: 600px;
-  }
-
-  /* Pain cards */
-  .pains-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    margin-top: 60px;
-  }
-
-  .pain-card {
-    background: var(--off-white);
-    border: 1px solid var(--border);
-    border-radius: 16px; padding: 28px;
-    transition: all .25s;
-  }
+  /* PAINS */
+  .pains-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+  .pain-card { background: var(--off-white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all .25s; }
   .pain-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(11,31,58,0.08); border-color: var(--blue); }
-
   .pain-icon { font-size: 32px; margin-bottom: 16px; }
-  .pain-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
-  }
+  .pain-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
   .pain-text { font-size: 14px; color: var(--gray); line-height: 1.6; }
 
-  /* ── HOW IT WORKS ── */
-  .how-section {
-    background: var(--navy);
-    padding: 100px 40px;
-  }
-
+  /* HOW */
+  .how-section { background: var(--navy); padding: 100px 40px; }
   .how-inner { max-width: 1200px; margin: 0 auto; }
-
   .how-section .section-tag { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
   .how-section .section-title { color: var(--white); }
   .how-section .section-sub { color: rgba(255,255,255,0.5); }
-
-  .steps-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
-    margin-top: 60px; position: relative;
-  }
-
-  .steps-grid::before {
-    content: '';
-    position: absolute; top: 32px; left: 10%; right: 10%;
-    height: 1px; background: rgba(255,255,255,0.1);
-    z-index: 0;
-  }
-
-  .step {
-    text-align: center; position: relative; z-index: 1;
-  }
-
-  .step-num {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: var(--blue); color: var(--white);
-    font-family: 'Sora', sans-serif;
-    font-size: 22px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    border: 3px solid var(--navy);
-    box-shadow: 0 0 0 4px rgba(21,96,189,0.3);
-  }
-
+  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 60px; position: relative; }
+  .steps-grid::before { content: ''; position: absolute; top: 32px; left: 10%; right: 10%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
+  .step { text-align: center; position: relative; z-index: 1; }
+  .step-num { width: 64px; height: 64px; border-radius: 50%; background: var(--blue); color: var(--white); font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 3px solid var(--navy); box-shadow: 0 0 0 4px rgba(21,96,189,0.3); }
   .step:nth-child(4) .step-num { background: var(--orange); box-shadow: 0 0 0 4px rgba(247,110,42,0.3); }
-
-  .step-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 10px;
-  }
+  .step-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
   .step-text { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
 
-  /* ── AI ASSISTANT ── */
-  .assistant-section {
-    padding: 100px 40px;
-    background: var(--off-white);
-  }
-
-  .assistant-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-  }
-
-  .chat-window {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(11,31,58,0.1);
-  }
-
-  .chat-header {
-    background: var(--navy); padding: 16px 20px;
-    display: flex; align-items: center; gap: 12px;
-  }
-
-  .chat-avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--orange);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-  }
-
-  .chat-info { flex: 1; }
+  /* ASSISTANT */
+  .assistant-section { padding: 100px 40px; background: var(--off-white); }
+  .assistant-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .chat-window { background: var(--white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(11,31,58,0.1); }
+  .chat-header { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  .chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .chat-name { font-size: 14px; font-weight: 600; color: var(--white); }
   .chat-online { font-size: 12px; color: var(--green); }
-
-  .chat-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; min-height: 320px; }
-
-  .msg {
-    max-width: 85%;
-    padding: 12px 16px; border-radius: 12px;
-    font-size: 14px; line-height: 1.6;
-    animation: msgIn 0.4s ease-out;
-  }
-
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .msg-user {
-    background: var(--navy); color: var(--white);
-    align-self: flex-end; border-bottom-right-radius: 4px;
-  }
-
-  .msg-bot {
-    background: var(--sky); color: var(--text);
-    align-self: flex-start; border-bottom-left-radius: 4px;
-    border: 1px solid var(--border);
-  }
-
+  .chat-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; min-height: 320px; max-height: 400px; overflow-y: auto; }
+  .msg { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; animation: msgIn 0.4s ease-out; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-user { background: var(--navy); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg-bot { background: var(--sky); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
   .msg-bot strong { color: var(--navy); }
-
-  .chat-input {
-    border-top: 1px solid var(--border);
-    padding: 16px 20px;
-    display: flex; gap: 12px; align-items: center;
-  }
-
-  .chat-input input {
-    flex: 1; border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif; font-size: 14px;
-    outline: none; color: var(--text);
-    transition: border-color .2s;
-  }
+  .chat-input { border-top: 1px solid var(--border); padding: 16px 20px; display: flex; gap: 12px; align-items: center; }
+  .chat-input input { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; color: var(--text); transition: border-color .2s; }
   .chat-input input:focus { border-color: var(--blue); }
-
-  .chat-send {
-    background: var(--orange); color: var(--white);
-    border: none; border-radius: 8px;
-    padding: 10px 16px; cursor: pointer;
-    font-size: 16px; transition: background .2s;
-  }
+  .chat-send { background: var(--orange); color: var(--white); border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; font-size: 16px; transition: background .2s; }
   .chat-send:hover { background: #E55A1A; }
-
-  .typing {
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 16px;
-    background: var(--sky); border: 1px solid var(--border);
-    border-radius: 12px; border-bottom-left-radius: 4px;
-    align-self: flex-start; max-width: 85%;
-  }
-
-  .typing span {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--blue); display: inline-block;
-    animation: bounce 1.2s infinite;
-  }
+  .typing { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--sky); border: 1px solid var(--border); border-radius: 12px; border-bottom-left-radius: 4px; align-self: flex-start; }
+  .typing span { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); display: inline-block; animation: bounce 1.2s infinite; }
   .typing span:nth-child(2) { animation-delay: 0.2s; }
   .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-6px); opacity: 1; } }
 
-  @keyframes bounce {
-    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-    40% { transform: translateY(-6px); opacity: 1; }
-  }
-
-  /* ── FEATURES ── */
-  .features-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    margin-top: 60px;
-  }
-
-  .feature-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px; padding: 32px;
-    transition: all .25s;
-    position: relative; overflow: hidden;
-  }
-
-  .feature-card::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--blue), var(--orange));
-    transform: scaleX(0); transform-origin: left;
-    transition: transform .3s;
-  }
+  /* FEATURES */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+  .feature-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 32px; transition: all .25s; position: relative; overflow: hidden; }
+  .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--blue), var(--orange)); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
   .feature-card:hover::before { transform: scaleX(1); }
   .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(11,31,58,0.1); }
-
-  .feature-icon {
-    width: 52px; height: 52px; border-radius: 14px;
-    background: var(--sky); display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 20px;
-  }
-
-  .feature-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
-  }
+  .feature-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+  .feature-title { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
   .feature-text { font-size: 14px; color: var(--gray); line-height: 1.7; }
 
-  /* ── PRICING ── */
-  .pricing-section { padding: 100px 40px; background: var(--white); }
-  .pricing-inner { max-width: 1200px; margin: 0 auto; }
-
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    margin-top: 60px; align-items: start;
-  }
-
-  .price-card {
-    border: 2px solid var(--border);
-    border-radius: 20px; padding: 36px;
-    transition: all .25s; position: relative;
-  }
-
-  .price-card.featured {
-    border-color: var(--navy);
-    background: var(--navy);
-    transform: scale(1.04);
-    box-shadow: 0 24px 60px rgba(11,31,58,0.25);
-  }
-
-  .price-badge {
-    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-    background: var(--orange); color: var(--white);
-    font-family: 'Sora', sans-serif;
-    font-size: 12px; font-weight: 700;
-    padding: 4px 16px; border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  .price-plan {
-    font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 600;
-    color: var(--gray); text-transform: uppercase;
-    letter-spacing: 1px; margin-bottom: 12px;
-  }
-
+  /* PRICING */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; align-items: start; }
+  .price-card { border: 2px solid var(--border); border-radius: 20px; padding: 36px; transition: all .25s; position: relative; }
+  .price-card.featured { border-color: var(--navy); background: var(--navy); transform: scale(1.04); box-shadow: 0 24px 60px rgba(11,31,58,0.25); }
+  .price-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--orange); color: var(--white); font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; padding: 4px 16px; border-radius: 100px; white-space: nowrap; }
+  .price-plan { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
   .price-card.featured .price-plan { color: rgba(255,255,255,0.5); }
-
-  .price-amount {
-    display: flex; align-items: baseline; gap: 4px;
-    margin-bottom: 8px;
-  }
-
+  .price-amount { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
   .price-currency { font-size: 20px; font-weight: 600; color: var(--navy); }
-  .price-number {
-    font-family: 'Sora', sans-serif;
-    font-size: 52px; font-weight: 800; color: var(--navy); line-height: 1;
-  }
+  .price-number { font-family: 'Sora', sans-serif; font-size: 52px; font-weight: 800; color: var(--navy); line-height: 1; }
   .price-period { font-size: 14px; color: var(--gray); }
-
-  .price-card.featured .price-currency,
-  .price-card.featured .price-number { color: var(--white); }
+  .price-card.featured .price-currency, .price-card.featured .price-number { color: var(--white); }
   .price-card.featured .price-period { color: rgba(255,255,255,0.5); }
-
   .price-desc { font-size: 14px; color: var(--gray); margin-bottom: 28px; line-height: 1.5; }
   .price-card.featured .price-desc { color: rgba(255,255,255,0.6); }
-
   .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
-
-  .price-features li {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 14px; color: var(--text);
-  }
+  .price-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); }
   .price-card.featured .price-features li { color: rgba(255,255,255,0.85); }
-
-  .check {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--green-light); color: var(--green);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; flex-shrink: 0; font-weight: 700;
-  }
+  .check { width: 20px; height: 20px; border-radius: 50%; background: var(--green-light); color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; font-weight: 700; }
   .price-card.featured .check { background: rgba(0,179,126,0.2); }
-
-  .price-btn {
-    width: 100%; padding: 14px; border-radius: 10px;
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700;
-    cursor: pointer; border: none; transition: all .25s;
-    text-align: center;
-  }
-
-  .price-btn-outline {
-    background: transparent; color: var(--navy);
-    border: 2px solid var(--border);
-  }
+  .price-btn { width: 100%; padding: 14px; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; border: none; transition: all .25s; text-align: center; }
+  .price-btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--border); }
   .price-btn-outline:hover { border-color: var(--navy); background: var(--sky); }
-
-  .price-btn-primary {
-    background: var(--orange); color: var(--white);
-  }
+  .price-btn-primary { background: var(--orange); color: var(--white); }
   .price-btn-primary:hover { background: #E55A1A; transform: translateY(-2px); }
 
-  /* ── TESTIMONIALS ── */
-  .testimonials-section {
-    padding: 100px 40px;
-    background: var(--off-white);
-  }
-
-  .testimonials-inner { max-width: 1200px; margin: 0 auto; }
-
-  .reviews-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    margin-top: 60px;
-  }
-
-  .review-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px; padding: 28px;
-  }
-
+  /* REVIEWS */
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+  .review-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
   .stars { color: #F5A623; font-size: 16px; margin-bottom: 16px; letter-spacing: 2px; }
-
-  .review-text {
-    font-size: 15px; color: var(--text); line-height: 1.7;
-    margin-bottom: 20px; font-style: italic;
-  }
-
+  .review-text { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
   .reviewer { display: flex; align-items: center; gap: 12px; }
-
-  .reviewer-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--navy); color: var(--white);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px;
-  }
-
-  .reviewer-name {
-    font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 700; color: var(--navy);
-  }
+  .reviewer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; }
+  .reviewer-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); }
   .reviewer-role { font-size: 12px; color: var(--gray); }
 
-  /* ── CTA ── */
-  .cta-section {
-    background: var(--navy);
-    padding: 100px 40px; text-align: center;
-    position: relative; overflow: hidden;
-  }
-
-  .cta-section::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(21,96,189,0.3) 0%, transparent 70%);
-  }
-
+  /* CTA */
+  .cta-section { background: var(--navy); padding: 100px 40px; text-align: center; position: relative; overflow: hidden; }
+  .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(21,96,189,0.3) 0%, transparent 70%); }
   .cta-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-
   .cta-section .section-title { color: var(--white); margin-bottom: 16px; }
   .cta-section .section-sub { color: rgba(255,255,255,0.6); margin: 0 auto 40px; }
 
-  /* ── FOOTER ── */
-  footer {
-    background: #060F1C;
-    padding: 60px 40px 32px;
-  }
+  /* MODAL CADASTRO */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 24px; padding: 48px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn 0.3s ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .modal-close { position: absolute; top: 20px; right: 24px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray); transition: color .2s; }
+  .modal-close:hover { color: var(--navy); }
+  .modal-title { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .modal-sub { font-size: 15px; color: var(--gray); margin-bottom: 32px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .form-group input, .form-group select { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: border-color .2s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.1); }
+  .form-group input::placeholder { color: var(--gray); }
+  .form-divider { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin: 8px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .form-submit { width: 100%; padding: 16px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all .25s; margin-top: 8px; }
+  .form-submit:hover { background: #E55A1A; transform: translateY(-2px); }
+  .form-terms { font-size: 12px; color: var(--gray); text-align: center; margin-top: 12px; }
 
+  /* FOOTER */
+  footer { background: #060F1C; padding: 60px 40px 32px; }
   .footer-inner { max-width: 1200px; margin: 0 auto; }
-
-  .footer-top {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding-bottom: 40px; margin-bottom: 32px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .footer-brand .logo { font-size: 20px; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 40px; margin-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 8px; }
-
   .footer-links { display: flex; gap: 60px; }
-  .footer-col h4 {
-    font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
-  }
+  .footer-col h4 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
   .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .footer-col a { font-size: 14px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color .2s; }
   .footer-col a:hover { color: var(--white); }
-
-  .footer-bottom {
-    display: flex; justify-content: space-between; align-items: center;
-  }
-
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; }
   .footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); }
   .footer-lgpd { font-size: 12px; color: rgba(255,255,255,0.2); }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .hero-content { grid-template-columns: 1fr; }
     .hero-card { display: none; }
@@ -657,7 +243,7 @@
     nav { padding: 16px 20px; }
     .nav-links { display: none; }
     .hero { padding: 100px 20px 60px; }
-    .section { padding: 60px 20px; }
+    .form-row { grid-template-columns: 1fr; }
     .footer-top { flex-direction: column; gap: 40px; }
     .footer-links { flex-wrap: wrap; gap: 40px; }
   }
@@ -672,9 +258,68 @@
     <li><a href="#como-funciona">Como funciona</a></li>
     <li><a href="#funcionalidades">Funcionalidades</a></li>
     <li><a href="#precos">Preços</a></li>
-    <li><a href="#assistente" class="nav-cta">Testar grátis</a></li>
+    <li><a href="#" onclick="abrirCadastro()" class="nav-cta">Criar conta grátis</a></li>
   </ul>
 </nav>
+
+<!-- MODAL CADASTRO -->
+<div class="modal-overlay" id="modalCadastro">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharCadastro()">×</button>
+    <div class="modal-title">Crie sua conta grátis</div>
+    <p class="modal-sub">Seus documentos organizados em minutos. Sem cartão de crédito.</p>
+    <form onsubmit="submeterCadastro(event)">
+      <div class="form-divider">Dados Pessoais</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome completo</label>
+          <input type="text" id="nome" placeholder="João Silva" required>
+        </div>
+        <div class="form-group">
+          <label>Data de nascimento</label>
+          <input type="date" id="dataNascimento" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="email" placeholder="joao@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Telefone / WhatsApp</label>
+          <input type="tel" id="telefone" placeholder="(71) 99999-9999" required>
+        </div>
+      </div>
+      <div class="form-divider">Endereço</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>CEP</label>
+          <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="buscarCep(this.value)">
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <input type="text" id="estado" placeholder="BA">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cidade</label>
+          <input type="text" id="cidade" placeholder="Salvador">
+        </div>
+        <div class="form-group">
+          <label>Bairro</label>
+          <input type="text" id="bairro" placeholder="Pituba">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Rua / Logradouro</label>
+        <input type="text" id="rua" placeholder="Rua das Flores, 123">
+      </div>
+      <button type="submit" class="form-submit">Criar minha conta grátis</button>
+      <p class="form-terms">Ao criar sua conta você concorda com nossos Termos de Uso e Política de Privacidade. Seus dados são protegidos pela LGPD.</p>
+    </form>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -682,29 +327,17 @@
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div>
-      <div class="hero-badge">
-        <span></span>
-        Novo — Assistente com IA disponível
-      </div>
+      <div class="hero-badge"><span></span>Novo: Assistente com IA disponível</div>
       <h1>Todos os seus documentos em <em>um só lugar</em></h1>
       <p>Chega de perder documento, chegar no cartório sem o papel certo ou renovar a CNH atrasado. O MeuDoc.app organiza, alerta e resolve toda sua burocracia.</p>
       <div class="hero-actions">
-        <a href="#assistente" class="btn-primary">🚀 Começar grátis</a>
+        <button onclick="abrirCadastro()" class="btn-primary">🚀 Começar grátis</button>
         <a href="#como-funciona" class="btn-secondary">Como funciona →</a>
       </div>
       <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-number">100%</span>
-          <div class="stat-label">Gratuito pra começar</div>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">200+</span>
-          <div class="stat-label">Tipos de documento</div>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">IA</span>
-          <div class="stat-label">Assistente 24h</div>
-        </div>
+        <div class="stat-item"><span class="stat-number">100%</span><div class="stat-label">Gratuito pra começar</div></div>
+        <div class="stat-item"><span class="stat-number">200+</span><div class="stat-label">Tipos de documento</div></div>
+        <div class="stat-item"><span class="stat-number">IA</span><div class="stat-label">Assistente 24h</div></div>
       </div>
     </div>
     <div class="hero-card">
@@ -716,31 +349,11 @@
         </div>
       </div>
       <div class="card-docs">
-        <div class="doc-item">
-          <span class="doc-emoji">🪪</span>
-          <span class="doc-name">Carteira de Identidade (CIN)</span>
-          <span class="doc-status status-new">Novo</span>
-        </div>
-        <div class="doc-item">
-          <span class="doc-emoji">🚗</span>
-          <span class="doc-name">CNH — Categoria B</span>
-          <span class="doc-status status-alert">Vence em 45d</span>
-        </div>
-        <div class="doc-item">
-          <span class="doc-emoji">💉</span>
-          <span class="doc-name">Carteira de Vacinação</span>
-          <span class="doc-status status-ok">Em dia</span>
-        </div>
-        <div class="doc-item">
-          <span class="doc-emoji">📋</span>
-          <span class="doc-name">CPF — Situação Regular</span>
-          <span class="doc-status status-ok">Regular</span>
-        </div>
-        <div class="doc-item">
-          <span class="doc-emoji">🏢</span>
-          <span class="doc-name">INSS — Contribuições</span>
-          <span class="doc-status status-ok">Em dia</span>
-        </div>
+        <div class="doc-item"><span class="doc-emoji">🪪</span><span class="doc-name">Carteira de Identidade (CIN)</span><span class="doc-status status-new">Novo</span></div>
+        <div class="doc-item"><span class="doc-emoji">🚗</span><span class="doc-name">CNH — Categoria B</span><span class="doc-status status-alert">Vence em 45d</span></div>
+        <div class="doc-item"><span class="doc-emoji">✈️</span><span class="doc-name">Passaporte</span><span class="doc-status status-ok">Válido</span></div>
+        <div class="doc-item"><span class="doc-emoji">💉</span><span class="doc-name">Carteira de Vacinação</span><span class="doc-status status-ok">Em dia</span></div>
+        <div class="doc-item"><span class="doc-emoji">🏢</span><span class="doc-name">INSS — Contribuições</span><span class="doc-status status-ok">Em dia</span></div>
       </div>
     </div>
   </div>
@@ -755,36 +368,12 @@
       <p class="section-sub" style="margin: 0 auto;">Burocracia não precisava ser tão difícil. Mas hoje é assim para a maioria dos brasileiros.</p>
     </div>
     <div class="pains-grid">
-      <div class="pain-card">
-        <div class="pain-icon">😤</div>
-        <div class="pain-title">Informação espalhada por mil sites</div>
-        <p class="pain-text">Gov.br, site do Detran, INSS, cartório, Receita Federal... cada documento em um lugar diferente, com informação contradizendo a outra.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">📦</div>
-        <div class="pain-title">Documentos perdidos ou desatualizados</div>
-        <p class="pain-text">Gaveta, foto no celular, e-mail de 2018... quando precisa, não sabe onde está. Quando perde, não sabe como recuperar.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">⏰</div>
-        <div class="pain-title">Vencimento que pega de surpresa</div>
-        <p class="pain-text">A CNH vence e você descobre na blitz. O passaporte expira na véspera da viagem. Ninguém avisa — e renovar emergencial custa mais.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">🏃</div>
-        <div class="pain-title">Fila no cartório sem o papel certo</div>
-        <p class="pain-text">Duas horas de fila para ouvir "falta um documento". Volta outro dia. Mais tempo perdido, mais dinheiro com transporte.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">🪪</div>
-        <div class="pain-title">Confusão com a nova CIN</div>
-        <p class="pain-text">O governo trocou o RG pela nova Carteira de Identidade Nacional. 130 milhões de brasileiros não sabem o que fazer, onde ir, ou se o antigo ainda vale.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">👨‍👩‍👧</div>
-        <div class="pain-title">Família sem controle documental</div>
-        <p class="pain-text">Vacina dos filhos? Documentos dos pais idosos? Cada um em um lugar diferente, na memória de quem cuida — sem backup, sem organização.</p>
-      </div>
+      <div class="pain-card"><div class="pain-icon">😤</div><div class="pain-title">Informação espalhada por mil sites</div><p class="pain-text">Gov.br, site do Detran, INSS, cartório, Receita Federal... cada documento em um lugar diferente, com informações que se contradizem.</p></div>
+      <div class="pain-card"><div class="pain-icon">📦</div><div class="pain-title">Documentos perdidos ou desatualizados</div><p class="pain-text">Gaveta, foto no celular, e-mail de 2018... quando precisa não sabe onde está. Quando perde, não sabe como recuperar.</p></div>
+      <div class="pain-card"><div class="pain-icon">⏰</div><div class="pain-title">Vencimento que pega de surpresa</div><p class="pain-text">A CNH vence e você descobre na blitz. O passaporte expira na véspera da viagem. Ninguém avisa e renovar emergencial custa mais.</p></div>
+      <div class="pain-card"><div class="pain-icon">🏃</div><div class="pain-title">Fila no cartório sem o papel certo</div><p class="pain-text">Duas horas de fila para ouvir "falta um documento". Volta outro dia. Mais tempo perdido, mais dinheiro com transporte.</p></div>
+      <div class="pain-card"><div class="pain-icon">🪪</div><div class="pain-title">Confusão com a nova CIN</div><p class="pain-text">O governo trocou o RG pela nova Carteira de Identidade Nacional. 130 milhões de brasileiros não sabem o que fazer, onde ir ou se o antigo ainda vale.</p></div>
+      <div class="pain-card"><div class="pain-icon">👨‍👩‍👧</div><div class="pain-title">Família sem controle documental</div><p class="pain-text">Vacina dos filhos? Documentos dos pais idosos? Cada um em um lugar diferente, na memória de quem cuida e sem backup.</p></div>
     </div>
   </div>
 </section>
@@ -798,69 +387,41 @@
       <p class="section-sub" style="margin: 0 auto;">Em menos de 5 minutos você já tem seus documentos organizados e sua primeira dúvida resolvida.</p>
     </div>
     <div class="steps-grid">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-title">Crie sua conta grátis</div>
-        <p class="step-text">Cadastro em 2 minutos, sem burocracia. Só e-mail e senha.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-title">Adicione seus documentos</div>
-        <p class="step-text">Fotografe ou faça upload. RG, CNH, vacinas, certidões — tudo em um cofre seguro.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-title">Tire suas dúvidas com IA</div>
-        <p class="step-text">Digite qualquer pergunta sobre documentos. O assistente responde em segundos com o passo a passo completo.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-title">Receba alertas e resolva</div>
-        <p class="step-text">Avisamos antes do vencimento e ajudamos a agendar no órgão certo da sua cidade.</p>
-      </div>
+      <div class="step"><div class="step-num">1</div><div class="step-title">Crie sua conta grátis</div><p class="step-text">Cadastro em 2 minutos, sem burocracia. Nome, e-mail e pronto.</p></div>
+      <div class="step"><div class="step-num">2</div><div class="step-title">Adicione seus documentos</div><p class="step-text">Fotografe ou faça upload. RG, CNH, passaporte, vacinas, certidões — tudo em um cofre seguro.</p></div>
+      <div class="step"><div class="step-num">3</div><div class="step-title">Tire suas dúvidas com IA</div><p class="step-text">Digite qualquer pergunta sobre documentos. O assistente responde em segundos com o passo a passo completo.</p></div>
+      <div class="step"><div class="step-num">4</div><div class="step-title">Receba alertas e resolva</div><p class="step-text">Avisamos antes do vencimento e ajudamos a agendar no órgão certo da sua cidade.</p></div>
     </div>
   </div>
 </section>
 
-<!-- AI ASSISTANT DEMO -->
+<!-- AI ASSISTANT -->
 <section class="assistant-section" id="assistente">
   <div class="assistant-inner">
     <div>
       <div class="section-tag">Assistente IA</div>
       <h2 class="section-title">Pergunte qualquer coisa sobre documentos</h2>
-      <p class="section-sub">Nossa IA foi treinada para responder qualquer dúvida documental do cidadão brasileiro — com linguagem simples, passo a passo e informação da sua cidade.</p>
+      <p class="section-sub">Nossa IA foi treinada para responder qualquer dúvida documental do cidadão brasileiro com linguagem simples, passo a passo e informação da sua cidade.</p>
       <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 40px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div>
-          <p style="font-size: 15px; color: var(--text);">Responde em linguagem simples, sem juridiquês</p>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div>
-          <p style="font-size: 15px; color: var(--text);">Personalizado pela sua cidade e estado</p>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div>
-          <p style="font-size: 15px; color: var(--text);">Cobre mais de 200 tipos de documentos</p>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div>
-          <p style="font-size: 15px; color: var(--text);">Disponível 24 horas, 7 dias por semana</p>
-        </div>
+        <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div><p style="font-size: 15px; color: var(--text);">Responde em linguagem simples, sem juridiquês</p></div>
+        <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div><p style="font-size: 15px; color: var(--text);">Personalizado pela sua cidade e estado</p></div>
+        <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div><p style="font-size: 15px; color: var(--text);">Cobre mais de 200 tipos de documentos incluindo passaporte</p></div>
+        <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">✅</div><p style="font-size: 15px; color: var(--text);">Disponível 24 horas, 7 dias por semana</p></div>
       </div>
     </div>
     <div class="chat-window">
       <div class="chat-header">
         <div class="chat-avatar">🤖</div>
-        <div class="chat-info">
+        <div>
           <div class="chat-name">Assistente MeuDoc</div>
           <div class="chat-online">● Online agora</div>
         </div>
       </div>
       <div class="chat-body" id="chatBody">
-        <div class="msg msg-bot">Olá! Sou o assistente do <strong>MeuDoc.app</strong>. Pode me perguntar qualquer coisa sobre documentos — como tirar, renovar, o que precisa levar, quanto custa. Estou aqui pra ajudar! 😊</div>
+        <div class="msg msg-bot">Olá! Sou o assistente do <strong>MeuDoc.app</strong>. Antes de começar, qual é o seu nome?</div>
       </div>
       <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Ex: Como tiro minha nova CIN em Salvador?" />
+        <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
         <button class="chat-send" onclick="sendMessage()">➤</button>
       </div>
     </div>
@@ -873,46 +434,22 @@
     <div style="text-align: center; margin-bottom: 60px;">
       <div class="section-tag">Funcionalidades</div>
       <h2 class="section-title">Tudo que você precisa em um lugar</h2>
-      <p class="section-sub" style="margin: 0 auto;">Do cofre digital ao agendamento — o MeuDoc.app resolve do começo ao fim.</p>
+      <p class="section-sub" style="margin: 0 auto;">Do cofre digital ao agendamento, o MeuDoc.app resolve do começo ao fim.</p>
     </div>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🔐</div>
-        <div class="feature-title">Cofre Digital Seguro</div>
-        <p class="feature-text">Guarde todos os seus documentos digitalizados com criptografia de ponta. Acesse de qualquer dispositivo, a qualquer hora.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🤖</div>
-        <div class="feature-title">Assistente com IA</div>
-        <p class="feature-text">Digite sua dúvida e receba em segundos o passo a passo completo — documentos necessários, onde ir, quanto custa e prazo estimado.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📅</div>
-        <div class="feature-title">Agendamento Integrado</div>
-        <p class="feature-text">Agende diretamente nos postos e cartórios da sua cidade sem sair do MeuDoc.app. Lembretes automáticos por WhatsApp.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔔</div>
-        <div class="feature-title">Alertas Inteligentes</div>
-        <p class="feature-text">Receba notificações com 90, 30 e 7 dias antes de qualquer vencimento. Nunca mais seja pego de surpresa.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">👨‍👩‍👧</div>
-        <div class="feature-title">Módulo Família</div>
-        <p class="feature-text">Gerencie os documentos de toda a família em uma só conta. Ideal para mães, cuidadores e filhos que ajudam os pais.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📜</div>
-        <div class="feature-title">Histórico Documental</div>
-        <p class="feature-text">Registro permanente de toda a sua jornada — quando emitiu, renovou, atualizou. Uma memória que dura para sempre.</p>
-      </div>
+      <div class="feature-card"><div class="feature-icon">🔐</div><div class="feature-title">Cofre Digital Seguro</div><p class="feature-text">Guarde todos os seus documentos digitalizados com criptografia de ponta. Acesse de qualquer dispositivo, a qualquer hora.</p></div>
+      <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Assistente com IA</div><p class="feature-text">Digite sua dúvida e receba em segundos o passo a passo completo com documentos necessários, onde ir, quanto custa e prazo estimado.</p></div>
+      <div class="feature-card"><div class="feature-icon">📅</div><div class="feature-title">Agendamento Integrado</div><p class="feature-text">Agende diretamente nos postos e cartórios da sua cidade sem sair do MeuDoc.app. Lembretes automáticos por WhatsApp.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔔</div><div class="feature-title">Alertas Inteligentes</div><p class="feature-text">Receba notificações com 90, 30 e 7 dias antes de qualquer vencimento. Nunca mais seja pego de surpresa.</p></div>
+      <div class="feature-card"><div class="feature-icon">👨‍👩‍👧</div><div class="feature-title">Módulo Família</div><p class="feature-text">Gerencie os documentos de toda a família em uma só conta. Ideal para mães, cuidadores e filhos que ajudam os pais.</p></div>
+      <div class="feature-card"><div class="feature-icon">✈️</div><div class="feature-title">Passaporte Simplificado</div><p class="feature-text">Primeira emissão, renovação ou urgência. O assistente te guia por cada etapa do processo de passaporte na Polícia Federal.</p></div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section class="pricing-section" id="precos">
-  <div class="pricing-inner">
+<section style="padding: 100px 40px; background: var(--off-white);" id="precos">
+  <div style="max-width: 1200px; margin: 0 auto;">
     <div style="text-align: center; margin-bottom: 60px;">
       <div class="section-tag">Preços</div>
       <h2 class="section-title">Simples e transparente</h2>
@@ -921,101 +458,59 @@
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-plan">Gratuito</div>
-        <div class="price-amount">
-          <span class="price-currency">R$</span>
-          <span class="price-number">0</span>
-          <span class="price-period">/mês</span>
-        </div>
+        <div class="price-amount"><span class="price-currency">R$</span><span class="price-number">0</span><span class="price-period">/mês</span></div>
         <p class="price-desc">Para começar a organizar sua vida documental sem gastar nada.</p>
         <ul class="price-features">
-          <li><div class="check">✓</div> Até 5 documentos no cofre</li>
-          <li><div class="check">✓</div> Assistente IA (5 perguntas/dia)</li>
-          <li><div class="check">✓</div> Alertas de vencimento</li>
-          <li><div class="check">✓</div> Acesso pelo navegador</li>
+          <li><div class="check">✓</div>Até 5 documentos no cofre</li>
+          <li><div class="check">✓</div>Assistente IA (5 perguntas por dia)</li>
+          <li><div class="check">✓</div>Alertas de vencimento</li>
+          <li><div class="check">✓</div>Acesso pelo navegador</li>
         </ul>
-        <button class="price-btn price-btn-outline">Começar grátis</button>
+        <button onclick="abrirCadastro()" class="price-btn price-btn-outline">Começar grátis</button>
       </div>
       <div class="price-card featured">
         <div class="price-badge">Mais Popular</div>
         <div class="price-plan">Premium</div>
-        <div class="price-amount">
-          <span class="price-currency">R$</span>
-          <span class="price-number">9</span>
-          <span class="price-period">,90/mês</span>
-        </div>
+        <div class="price-amount"><span class="price-currency">R$</span><span class="price-number">10</span><span class="price-period">,90/mês</span></div>
         <p class="price-desc">Para quem quer resolver tudo de uma vez, sem limite.</p>
         <ul class="price-features">
-          <li><div class="check">✓</div> Documentos ilimitados</li>
-          <li><div class="check">✓</div> Assistente IA ilimitado</li>
-          <li><div class="check">✓</div> Agendamento integrado</li>
-          <li><div class="check">✓</div> Módulo família (até 5 pessoas)</li>
-          <li><div class="check">✓</div> Histórico completo</li>
-          <li><div class="check">✓</div> Suporte prioritário</li>
+          <li><div class="check">✓</div>Documentos ilimitados</li>
+          <li><div class="check">✓</div>Assistente IA ilimitado</li>
+          <li><div class="check">✓</div>Agendamento integrado</li>
+          <li><div class="check">✓</div>Módulo família (até 5 pessoas)</li>
+          <li><div class="check">✓</div>Histórico completo</li>
+          <li><div class="check">✓</div>Suporte prioritário</li>
         </ul>
-        <button class="price-btn price-btn-primary">Assinar agora</button>
+        <button onclick="abrirCadastro()" class="price-btn price-btn-primary">Assinar agora</button>
       </div>
       <div class="price-card">
-        <div class="price-plan">MEI & Empresas</div>
-        <div class="price-amount">
-          <span class="price-currency">R$</span>
-          <span class="price-number">29</span>
-          <span class="price-period">,90/mês</span>
-        </div>
+        <div class="price-plan">MEI e Empresas</div>
+        <div class="price-amount"><span class="price-currency">R$</span><span class="price-number">29</span><span class="price-period">,90/mês</span></div>
         <p class="price-desc">Para MEIs, autônomos e pequenas empresas que precisam controlar mais.</p>
         <ul class="price-features">
-          <li><div class="check">✓</div> Tudo do Premium</li>
-          <li><div class="check">✓</div> Módulo CNPJ e alvará</li>
-          <li><div class="check">✓</div> Certidões negativas</li>
-          <li><div class="check">✓</div> Obrigações mensais</li>
-          <li><div class="check">✓</div> Gestão de equipe (até 10)</li>
+          <li><div class="check">✓</div>Tudo do Premium</li>
+          <li><div class="check">✓</div>Módulo CNPJ e alvará</li>
+          <li><div class="check">✓</div>Certidões negativas</li>
+          <li><div class="check">✓</div>Obrigações mensais</li>
+          <li><div class="check">✓</div>Gestão de equipe (até 10)</li>
         </ul>
-        <button class="price-btn price-btn-outline">Começar grátis</button>
+        <button onclick="abrirCadastro()" class="price-btn price-btn-outline">Começar grátis</button>
       </div>
     </div>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials-section">
-  <div class="testimonials-inner">
+<section style="padding: 100px 40px; background: white;">
+  <div style="max-width: 1200px; margin: 0 auto;">
     <div style="text-align: center; margin-bottom: 60px;">
       <div class="section-tag">Avaliações</div>
       <h2 class="section-title">O que os usuários dizem</h2>
     </div>
     <div class="reviews-grid">
-      <div class="review-card">
-        <div class="stars">★★★★★</div>
-        <p class="review-text">"Fui tirar minha nova CIN sem saber nada. Perguntei pro assistente e em 2 minutos sabia tudo: documentos, posto mais próximo e horário. Que app incrível!"</p>
-        <div class="reviewer">
-          <div class="reviewer-avatar">M</div>
-          <div>
-            <div class="reviewer-name">Maria S.</div>
-            <div class="reviewer-role">Professora — Salvador, BA</div>
-          </div>
-        </div>
-      </div>
-      <div class="review-card">
-        <div class="stars">★★★★★</div>
-        <p class="review-text">"Recebi o alerta que minha CNH ia vencer. Abri o app, vi o passo a passo, agendei tudo em 5 minutos. Antes eu ficava procrastinando e sempre atrasava."</p>
-        <div class="reviewer">
-          <div class="reviewer-avatar">R</div>
-          <div>
-            <div class="reviewer-name">Roberto L.</div>
-            <div class="reviewer-role">Motorista — Feira de Santana, BA</div>
-          </div>
-        </div>
-      </div>
-      <div class="review-card">
-        <div class="stars">★★★★★</div>
-        <p class="review-text">"Uso pra controlar os documentos de toda a família. Vacinas dos meus filhos, documentos dos meus pais... tudo num lugar só. Não tem preço essa tranquilidade."</p>
-        <div class="reviewer">
-          <div class="reviewer-avatar">A</div>
-          <div>
-            <div class="reviewer-name">Ana C.</div>
-            <div class="reviewer-role">Advogada — São Paulo, SP</div>
-          </div>
-        </div>
-      </div>
+      <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"Fui tirar minha nova CIN sem saber nada. Perguntei pro assistente e em 2 minutos sabia tudo: documentos, posto mais próximo e horário. Que app incrível!"</p><div class="reviewer"><div class="reviewer-avatar">M</div><div><div class="reviewer-name">Maria S.</div><div class="reviewer-role">Professora • Salvador, BA</div></div></div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"Recebi o alerta que minha CNH ia vencer. Abri o app, vi o passo a passo, agendei tudo em 5 minutos. Antes eu ficava procrastinando e sempre atrasava."</p><div class="reviewer"><div class="reviewer-avatar">R</div><div><div class="reviewer-name">Roberto L.</div><div class="reviewer-role">Motorista • Feira de Santana, BA</div></div></div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"Uso pra controlar os documentos de toda a família. Vacinas dos meus filhos, documentos dos meus pais... tudo num lugar só. Não tem preço essa tranquilidade."</p><div class="reviewer"><div class="reviewer-avatar">A</div><div><div class="reviewer-name">Ana C.</div><div class="reviewer-role">Advogada • São Paulo, SP</div></div></div></div>
     </div>
   </div>
 </section>
@@ -1026,7 +521,7 @@
     <div class="section-tag" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);">Comece agora</div>
     <h2 class="section-title">Chega de burocracia te travando</h2>
     <p class="section-sub">Junte-se a milhares de brasileiros que já organizaram sua vida documental. Grátis pra começar, sem cartão de crédito.</p>
-    <a href="#assistente" class="btn-primary" style="font-size: 17px; padding: 18px 40px;">🚀 Criar minha conta grátis</a>
+    <button onclick="abrirCadastro()" class="btn-primary" style="font-size: 17px; padding: 18px 40px;">🚀 Criar minha conta grátis</button>
   </div>
 </section>
 
@@ -1034,38 +529,14 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div class="footer-brand">
+      <div>
         <a href="#" class="logo" style="color: white;">MeuDoc<span>.app</span></a>
         <p class="footer-tagline">A carteira digital do cidadão brasileiro.</p>
       </div>
       <div class="footer-links">
-        <div class="footer-col">
-          <h4>Produto</h4>
-          <ul>
-            <li><a href="#">Como funciona</a></li>
-            <li><a href="#">Funcionalidades</a></li>
-            <li><a href="#">Preços</a></li>
-            <li><a href="#">Segurança</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Empresa</h4>
-          <ul>
-            <li><a href="#">Sobre nós</a></li>
-            <li><a href="#">Parceiros</a></li>
-            <li><a href="#">Imprensa</a></li>
-            <li><a href="#">Contato</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="#">Termos de Uso</a></li>
-            <li><a href="#">Privacidade</a></li>
-            <li><a href="#">LGPD</a></li>
-            <li><a href="#">Cookies</a></li>
-          </ul>
-        </div>
+        <div class="footer-col"><h4>Produto</h4><ul><li><a href="#">Como funciona</a></li><li><a href="#">Funcionalidades</a></li><li><a href="#">Preços</a></li><li><a href="#">Segurança</a></li></ul></div>
+        <div class="footer-col"><h4>Empresa</h4><ul><li><a href="#">Sobre nós</a></li><li><a href="#">Parceiros</a></li><li><a href="#">Imprensa</a></li><li><a href="#">Contato</a></li></ul></div>
+        <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Termos de Uso</a></li><li><a href="#">Privacidade</a></li><li><a href="#">LGPD</a></li><li><a href="#">Cookies</a></li></ul></div>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1076,95 +547,134 @@
 </footer>
 
 <script>
-const SYSTEM_PROMPT = `Você é o assistente de documentos do MeuDoc.app, uma plataforma brasileira que ajuda cidadãos a resolverem qualquer questão documental.
+  // Conversation history
+  let conversationHistory = [];
+  let userName = '';
 
-Seu papel é responder perguntas sobre documentos brasileiros de forma clara, simples e direta — como um amigo que entende bem de burocracia.
+  // Modal
+  function abrirCadastro() {
+    document.getElementById('modalCadastro').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharCadastro() {
+    document.getElementById('modalCadastro').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalCadastro').addEventListener('click', function(e) {
+    if (e.target === this) fecharCadastro();
+  });
 
-Para cada dúvida, responda com:
-1. O que é necessário (documentos, requisitos)
-2. Onde fazer (órgão responsável)
-3. Como fazer (passo a passo simples)
-4. Quanto custa (valores aproximados)
-5. Quanto tempo leva
+  // CEP auto-fill
+  async function buscarCep(cep) {
+    cep = cep.replace(/\D/g, '');
+    if (cep.length === 8) {
+      try {
+        const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const d = await r.json();
+        if (!d.erro) {
+          document.getElementById('rua').value = d.logradouro || '';
+          document.getElementById('bairro').value = d.bairro || '';
+          document.getElementById('cidade').value = d.localidade || '';
+          document.getElementById('estado').value = d.uf || '';
+        }
+      } catch(e) {}
+    }
+  }
 
-Use linguagem simples, sem juridiquês. Use emojis com moderação para facilitar a leitura. Seja conciso mas completo.
+  // Form submit
+  function submeterCadastro(e) {
+    e.preventDefault();
+    const dados = {
+      nome: document.getElementById('nome').value,
+      dataNascimento: document.getElementById('dataNascimento').value,
+      email: document.getElementById('email').value,
+      telefone: document.getElementById('telefone').value,
+      cep: document.getElementById('cep').value,
+      estado: document.getElementById('estado').value,
+      cidade: document.getElementById('cidade').value,
+      bairro: document.getElementById('bairro').value,
+      rua: document.getElementById('rua').value,
+    };
+    console.log('Cadastro:', dados);
+    fecharCadastro();
+    alert(`Bem-vindo, ${dados.nome.split(' ')[0]}! Sua conta foi criada com sucesso.`);
+  }
 
-Se o usuário mencionar uma cidade específica, personalize a resposta para aquela localidade.
+  // Chat
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const chatBody = document.getElementById('chatBody');
+    const msg = input.value.trim();
+    if (!msg) return;
 
-Documentos que você conhece muito bem: CIN/RG, CPF, CNH, Passaporte, Certidão de Nascimento, Certidão de Casamento, INSS, MEI, CNPJ, Carteira de Trabalho, Título de Eleitor, Certidão de Óbito, Carteira de Vacinação, entre outros documentos brasileiros.`;
+    // Capture user name from first response
+    if (!userName && conversationHistory.length === 0) {
+      userName = msg.split(' ')[0];
+    }
 
-async function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const chatBody = document.getElementById('chatBody');
-  const msg = input.value.trim();
-  if (!msg) return;
-
-  // User message
-  const userDiv = document.createElement('div');
-  userDiv.className = 'msg msg-user';
-  userDiv.textContent = msg;
-  chatBody.appendChild(userDiv);
-  input.value = '';
-  chatBody.scrollTop = chatBody.scrollHeight;
-
-  // Typing indicator
-  const typing = document.createElement('div');
-  typing.className = 'typing';
-  typing.innerHTML = '<span></span><span></span><span></span>';
-  chatBody.appendChild(typing);
-  chatBody.scrollTop = chatBody.scrollHeight;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: msg }]
-      })
-    });
-
-    const data = await response.json();
-    typing.remove();
-
-    const botDiv = document.createElement('div');
-    botDiv.className = 'msg msg-bot';
-    const text = data.content?.[0]?.text || 'Desculpe, não consegui processar sua pergunta. Tente novamente!';
-    botDiv.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    chatBody.appendChild(botDiv);
+    const userDiv = document.createElement('div');
+    userDiv.className = 'msg msg-user';
+    userDiv.textContent = msg;
+    chatBody.appendChild(userDiv);
+    input.value = '';
     chatBody.scrollTop = chatBody.scrollHeight;
 
-  } catch (e) {
-    typing.remove();
-    const errDiv = document.createElement('div');
-    errDiv.className = 'msg msg-bot';
-    errDiv.textContent = 'Ops! Algo deu errado. Tente novamente em instantes.';
-    chatBody.appendChild(errDiv);
-  }
-}
+    conversationHistory.push({ role: 'user', content: msg });
 
-document.getElementById('chatInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendMessage();
-});
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    chatBody.appendChild(typing);
+    chatBody.scrollTop = chatBody.scrollHeight;
 
-// Animate elements on scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: conversationHistory })
+      });
+
+      const data = await response.json();
+      typing.remove();
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'msg msg-bot';
+      const text = data.content || 'Desculpe, não consegui processar sua pergunta. Tente novamente!';
+      botDiv.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      chatBody.appendChild(botDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      conversationHistory.push({ role: 'assistant', content: text });
+
+    } catch (e) {
+      typing.remove();
+      const errDiv = document.createElement('div');
+      errDiv.className = 'msg msg-bot';
+      errDiv.textContent = 'Ops! Algo deu errado. Tente novamente em instantes.';
+      chatBody.appendChild(errDiv);
     }
-  });
-}, { threshold: 0.1 });
+  }
 
-document.querySelectorAll('.pain-card, .feature-card, .price-card, .review-card, .step').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(20px)';
-  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  observer.observe(el);
-});
+  document.getElementById('chatInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.pain-card, .feature-card, .price-card, .review-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
 </script>
 </body>
 </html>
