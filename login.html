@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeuDoc.app — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --blue: #1560BD;
+    --sky: #E8F2FF;
+    --green: #00B37E;
+    --green-light: #E6FAF4;
+    --orange: #F76E2A;
+    --orange-light: #FEF0E7;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray: #8A99B0;
+    --border: #DCE4F0;
+    --text: #1A2B40;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; display: flex; }
+
+  /* LEFT PANEL */
+  .left-panel {
+    width: 55%; background: var(--navy);
+    display: flex; flex-direction: column;
+    padding: 48px; position: relative; overflow: hidden;
+  }
+
+  .left-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 80% 30%, rgba(21,96,189,0.3) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 20% 80%, rgba(247,110,42,0.12) 0%, transparent 60%);
+  }
+
+  .left-grid {
+    position: absolute; inset: 0; opacity: 0.03;
+    background-image: linear-gradient(var(--white) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--white) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .left-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
+
+  .left-logo { margin-bottom: auto; }
+  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 24px; color: var(--white); text-decoration: none; }
+  .logo span { color: var(--orange); }
+
+  .left-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 0; }
+
+  .left-hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(32px, 3vw, 48px);
+    font-weight: 800; line-height: 1.15;
+    color: var(--white); margin-bottom: 20px;
+  }
+
+  .left-hero h1 em { font-style: normal; color: var(--orange); }
+
+  .left-hero p { font-size: 17px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 48px; max-width: 420px; }
+
+  .features-list { display: flex; flex-direction: column; gap: 16px; }
+
+  .feature-item { display: flex; align-items: center; gap: 14px; }
+
+  .feature-check {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(0,179,126,0.15);
+    border: 1px solid rgba(0,179,126,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; color: var(--green);
+    font-weight: 700;
+  }
+
+  .feature-text { font-size: 15px; color: rgba(255,255,255,0.75); }
+
+  .left-footer {
+    display: flex; align-items: center; gap: 20px;
+    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 48px 40px;
+  }
+
+  .form-container { width: 100%; max-width: 420px; }
+
+  .form-header { margin-bottom: 36px; }
+  .form-title { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .form-sub { font-size: 15px; color: var(--gray); }
+
+  /* TABS */
+  .auth-tabs {
+    display: flex; background: var(--off-white);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 4px; margin-bottom: 32px;
+  }
+
+  .auth-tab {
+    flex: 1; padding: 10px; border-radius: 8px;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none; background: none;
+    color: var(--gray); transition: all .2s;
+  }
+
+  .auth-tab.active { background: var(--white); color: var(--navy); box-shadow: 0 2px 8px rgba(11,31,58,0.08); }
+
+  /* FORM */
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
+
+  .input-wrap { position: relative; }
+  .input-wrap input {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--text); outline: none;
+    transition: all .2s; background: var(--white);
+  }
+  .input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(21,96,189,0.08); }
+  .input-wrap input::placeholder { color: var(--gray); }
+
+  .input-icon {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 18px; cursor: pointer; color: var(--gray);
+    transition: color .2s;
+  }
+  .input-icon:hover { color: var(--navy); }
+
+  .form-options { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .checkbox-wrap input { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
+  .checkbox-wrap span { font-size: 14px; color: var(--gray); }
+  .forgot-link { font-size: 14px; color: var(--blue); font-weight: 600; text-decoration: none; transition: color .2s; }
+  .forgot-link:hover { color: var(--navy); }
+
+  .btn-submit {
+    width: 100%; padding: 16px; background: var(--orange); color: var(--white);
+    border: none; border-radius: 12px; font-family: 'Sora', sans-serif;
+    font-size: 16px; font-weight: 700; cursor: pointer; transition: all .25s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .btn-submit:hover { background: #E55A1A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(247,110,42,0.35); }
+
+  .divider { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 13px; color: var(--gray); white-space: nowrap; }
+
+  .btn-social {
+    width: 100%; padding: 14px; background: var(--white);
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    color: var(--text); cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .btn-social:hover { border-color: var(--blue); background: var(--sky); }
+
+  .form-footer { text-align: center; font-size: 14px; color: var(--gray); margin-top: 24px; }
+  .form-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  .form-footer a:hover { color: var(--navy); }
+
+  /* CADASTRO FIELDS */
+  .cadastro-fields { display: none; }
+  .cadastro-fields.active { display: block; }
+  .login-fields { display: block; }
+  .login-fields.hidden { display: none; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* SUCCESS */
+  .success-state { display: none; text-align: center; padding: 20px 0; }
+  .success-state.active { display: block; }
+  .success-icon { font-size: 64px; margin-bottom: 20px; animation: bounceIn .5s ease; }
+  @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .success-title { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+  .success-sub { font-size: 15px; color: var(--gray); margin-bottom: 28px; line-height: 1.6; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-bg"></div>
+  <div class="left-grid"></div>
+  <div class="left-content">
+    <div class="left-logo">
+      <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
+    </div>
+    <div class="left-hero">
+      <h1>Seus documentos,<br><em>sempre seguros</em><br>e organizados.</h1>
+      <p>Chega de perder documento ou ser pego de surpresa com vencimento. O MeuDoc.app cuida de tudo por você.</p>
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Cofre digital com criptografia de ponta</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Alertas automáticos de vencimento</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Assistente IA para tirar dúvidas 24h</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <div class="feature-text">Agendamento integrado nos órgãos públicos</div>
+        </div>
+      </div>
+    </div>
+    <div class="left-footer">
+      <div class="trust-item">🔒 LGPD</div>
+      <div class="trust-item">🛡️ Criptografia</div>
+      <div class="trust-item">🇧🇷 Feito no Brasil</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="form-container">
+
+    <div class="form-header">
+      <div class="form-title" id="formTitle">Bem-vindo de volta!</div>
+      <div class="form-sub" id="formSub">Entre na sua conta para acessar seus documentos.</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="mudarTab('login')">Entrar</button>
+      <button class="auth-tab" id="tabCadastro" onclick="mudarTab('cadastro')">Criar conta</button>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">🎉</div>
+      <div class="success-title" id="successTitle">Conta criada!</div>
+      <div class="success-sub" id="successSub">Bem-vindo ao MeuDoc.app. Seus documentos estão seguros com a gente.</div>
+      <button class="btn-submit" onclick="window.location.href='dashboard.html'" style="margin-bottom:0">
+        Acessar meu painel →
+      </button>
+    </div>
+
+    <!-- FORM -->
+    <form id="authForm" onsubmit="submeter(event)" style="display:block">
+
+      <!-- LOGIN FIELDS -->
+      <div class="login-fields" id="loginFields">
+        <div class="form-group">
+          <label>E-mail</label>
+          <div class="input-wrap">
+            <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+            <span class="input-icon">✉️</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-wrap">
+            <input type="password" id="loginSenha" placeholder="Sua senha" required style="padding-right: 48px;">
+            <span class="input-icon" onclick="toggleSenha('loginSenha', this)">👁️</span>
+          </div>
+        </div>
+        <div class="form-options">
+          <label class="checkbox-wrap">
+            <input type="checkbox">
+            <span>Lembrar de mim</span>
+          </label>
+          <a href="#" class="forgot-link">Esqueceu a senha?</a>
+        </div>
+      </div>
+
+      <!-- CADASTRO FIELDS -->
+      <div class="cadastro-fields" id="cadastroFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome</label>
+            <div class="input-wrap">
+              <input type="text" placeholder="João">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Sobrenome</label>
+            <div class="input-wrap">
+              <input type="text" placeholder="Silva">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <div class="input-wrap">
+            <input type="email" placeholder="seu@email.com">
+            <span class="input-icon">✉️</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Telefone / WhatsApp</label>
+          <div class="input-wrap">
+            <input type="tel" placeholder="(71) 99999-9999">
+            <span class="input-icon">📱</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-wrap">
+            <input type="password" id="cadastroSenha" placeholder="Crie uma senha forte" style="padding-right: 48px;">
+            <span class="input-icon" onclick="toggleSenha('cadastroSenha', this)">👁️</span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="checkbox-wrap" style="align-items: flex-start; gap: 10px;">
+            <input type="checkbox" style="margin-top: 3px; flex-shrink: 0;" required>
+            <span style="font-size: 13px; line-height: 1.5;">Concordo com os <a href="#" style="color: var(--blue); font-weight: 600;">Termos de Uso</a> e a <a href="#" style="color: var(--blue); font-weight: 600;">Política de Privacidade</a>. Meus dados são protegidos pela LGPD.</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <span id="btnText">Entrar na minha conta</span>
+        <span id="btnArrow">→</span>
+      </button>
+
+    </form>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">ou continue com</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="btn-social">
+      <span>🌐</span> Entrar com Google
+    </button>
+    <button class="btn-social">
+      <span>🏛️</span> Entrar com Gov.br
+    </button>
+
+    <div class="form-footer" id="formFooter">
+      Não tem conta? <a href="#" onclick="mudarTab('cadastro')">Criar grátis</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let modoAtual = 'login';
+
+  function mudarTab(modo) {
+    modoAtual = modo;
+    const isLogin = modo === 'login';
+
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabCadastro').classList.toggle('active', !isLogin);
+
+    document.getElementById('loginFields').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('cadastroFields').style.display = isLogin ? 'none' : 'block';
+
+    document.getElementById('formTitle').textContent = isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta grátis';
+    document.getElementById('formSub').textContent = isLogin
+      ? 'Entre na sua conta para acessar seus documentos.'
+      : 'Junte-se a milhares de brasileiros organizados.';
+
+    document.getElementById('btnText').textContent = isLogin ? 'Entrar na minha conta' : 'Criar minha conta grátis';
+
+    document.getElementById('formFooter').innerHTML = isLogin
+      ? 'Não tem conta? <a href="#" onclick="mudarTab(\'cadastro\')">Criar grátis</a>'
+      : 'Já tem conta? <a href="#" onclick="mudarTab(\'login\')">Entrar</a>';
+  }
+
+  function toggleSenha(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      icon.textContent = '👁️';
+    }
+  }
+
+  function submeter(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmit');
+    btn.textContent = 'Carregando...';
+    btn.style.opacity = '0.8';
+
+    setTimeout(() => {
+      if (modoAtual === 'login') {
+        window.location.href = 'dashboard.html';
+      } else {
+        document.getElementById('authForm').style.display = 'none';
+        document.querySelector('.auth-tabs').style.display = 'none';
+        document.querySelector('.divider').style.display = 'none';
+        document.querySelectorAll('.btn-social').forEach(b => b.style.display = 'none');
+        document.getElementById('formFooter').style.display = 'none';
+        document.getElementById('successState').classList.add('active');
+        document.getElementById('formTitle').textContent = 'Tudo certo!';
+        document.getElementById('formSub').textContent = '';
+      }
+    }, 1200);
+  }
+</script>
+</body>
+</html>
