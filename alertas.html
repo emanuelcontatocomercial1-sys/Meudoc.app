@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeuDoc.app — Alertas</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --blue: #1560BD;
+    --sky: #E8F2FF;
+    --green: #00B37E;
+    --green-light: #E6FAF4;
+    --orange: #F76E2A;
+    --orange-light: #FEF0E7;
+    --red: #E53935;
+    --red-light: #FEECEC;
+    --yellow: #F59E0B;
+    --yellow-light: #FFFBEB;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray: #8A99B0;
+    --border: #DCE4F0;
+    --text: #1A2B40;
+    --sidebar-width: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: var(--sidebar-width); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 50; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); text-decoration: none; }
+  .logo span { color: var(--orange); }
+  .sidebar-user { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); flex-shrink: 0; }
+  .user-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .user-plan { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; cursor: pointer; transition: all .2s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+  .nav-item.active { background: rgba(247,110,42,0.15); color: var(--white); }
+  .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+  .nav-section-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 14px 6px; }
+  .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); }
+  .topbar-sub { font-size: 13px; color: var(--gray); margin-top: 2px; }
+  .topbar-actions { display: flex; gap: 12px; }
+  .btn-outline { padding: 10px 18px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all .2s; }
+  .btn-outline:hover { border-color: var(--navy); background: var(--sky); }
+  .btn-primary { background: var(--orange); color: var(--white); padding: 10px 20px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .25s; }
+  .btn-primary:hover { background: #E55A1A; }
+
+  /* CONTENT */
+  .content { padding: 32px; flex: 1; }
+
+  /* SUMMARY CARDS */
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+
+  .summary-card {
+    background: var(--white); border-radius: 16px; padding: 22px;
+    display: flex; align-items: center; gap: 14px;
+    border: 1px solid var(--border); transition: all .25s;
+  }
+  .summary-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,31,58,0.08); }
+
+  .summary-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .icon-red { background: var(--red-light); }
+  .icon-orange { background: var(--orange-light); }
+  .icon-yellow { background: var(--yellow-light); }
+  .icon-green { background: var(--green-light); }
+
+  .summary-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .summary-label { font-size: 13px; color: var(--gray); margin-top: 4px; }
+
+  /* FILTERS */
+  .filters-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .filter-tabs { display: flex; gap: 8px; }
+  .filter-tab { padding: 7px 16px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--gray); transition: all .2s; }
+  .filter-tab:hover { border-color: var(--blue); color: var(--blue); }
+  .filter-tab.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .filter-tab .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-red { background: var(--red); }
+  .dot-orange { background: var(--orange); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-green { background: var(--green); }
+  .dot-blue { background: var(--blue); }
+
+  /* ALERTS LIST */
+  .alerts-container { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+
+  .alerts-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .alerts-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
+  .mark-all { font-size: 13px; color: var(--blue); font-weight: 600; cursor: pointer; border: none; background: none; transition: color .2s; }
+  .mark-all:hover { color: var(--navy); }
+
+  .alert-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    transition: background .2s; cursor: pointer; position: relative;
+  }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-item:hover { background: var(--off-white); }
+  .alert-item.lida { opacity: 0.6; }
+  .alert-item.lida .alert-unread { display: none; }
+
+  .alert-unread {
+    position: absolute; top: 22px; right: 24px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--orange);
+  }
+
+  .alert-icon-wrap {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .alert-body { flex: 1; padding-right: 20px; }
+  .alert-title-text { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+  .alert-desc-text { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 10px; }
+
+  .alert-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .alert-btn {
+    padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; transition: all .2s;
+  }
+  .alert-btn-primary { background: var(--orange); color: var(--white); }
+  .alert-btn-primary:hover { background: #E55A1A; }
+  .alert-btn-secondary { background: var(--off-white); color: var(--navy); border: 1px solid var(--border); }
+  .alert-btn-secondary:hover { background: var(--sky); border-color: var(--blue); }
+
+  .alert-meta { display: flex; align-items: center; gap: 6px; }
+  .alert-time-text { font-size: 12px; color: var(--gray); }
+  .alert-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
+  .tag-urgente { background: var(--red-light); color: var(--red); }
+  .tag-atencao { background: var(--orange-light); color: var(--orange); }
+  .tag-info { background: var(--sky); color: var(--blue); }
+  .tag-ok { background: var(--green-light); color: var(--green); }
+
+  /* EMPTY */
+  .empty-alerts { text-align: center; padding: 80px 40px; }
+  .empty-icon { font-size: 56px; margin-bottom: 16px; }
+  .empty-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .empty-sub { font-size: 15px; color: var(--gray); }
+
+  /* SETTINGS PANEL */
+  .settings-panel { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px; }
+  .settings-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 20px; }
+  .setting-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .setting-item:last-child { border-bottom: none; }
+  .setting-info { flex: 1; }
+  .setting-name { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+  .setting-desc { font-size: 13px; color: var(--gray); }
+
+  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: .3s; }
+  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: .3s; }
+  .toggle input:checked + .toggle-slider { background: var(--green); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+  @media (max-width: 900px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 20px; }
+    .topbar { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar">E</div>
+    <div>
+      <div class="user-name">Emanuel Silva</div>
+      <div class="user-plan">Plano Gratuito</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span>Painel</span></a>
+    <a class="nav-item" href="documentos.html"><span class="nav-icon">📁</span><span style="flex:1">Meus Documentos</span><span class="nav-badge">5</span></a>
+    <a class="nav-item active" href="alertas.html"><span class="nav-icon">🔔</span><span style="flex:1">Alertas</span><span class="nav-badge">3</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📅</span><span>Agendamentos</span></a>
+    <div class="nav-section-title">Ferramentas</div>
+    <a class="nav-item" href="#"><span class="nav-icon">🤖</span><span>Assistente IA</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👨‍👩‍👧</span><span>Família</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📜</span><span>Histórico</span></a>
+    <div class="nav-section-title">Conta</div>
+    <a class="nav-item" href="#"><span class="nav-icon">👤</span><span>Perfil</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Configurações</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="nav-item" href="index.html" style="color: rgba(255,255,255,0.4);"><span class="nav-icon">🚪</span><span>Sair</span></a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title">Central de Alertas</div>
+      <div class="topbar-sub">3 alertas não lidos</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-outline" onclick="marcarTodos()">Marcar todos como lidos</button>
+      <button class="btn-primary">⚙️ Configurar alertas</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- SUMMARY -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon icon-red">🚨</div>
+        <div>
+          <div class="summary-num" style="color: var(--red);">1</div>
+          <div class="summary-label">Urgente</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon icon-orange">⚠️</div>
+        <div>
+          <div class="summary-num" style="color: var(--orange);">1</div>
+          <div class="summary-label">Atenção</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon icon-yellow">💡</div>
+        <div>
+          <div class="summary-num" style="color: var(--yellow);">1</div>
+          <div class="summary-label">Informativos</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon icon-green">✅</div>
+        <div>
+          <div class="summary-num" style="color: var(--green);">2</div>
+          <div class="summary-label">Resolvidos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-row">
+      <div class="filter-tabs">
+        <div class="filter-tab active" onclick="filtrar('todos', this)">Todos</div>
+        <div class="filter-tab" onclick="filtrar('urgente', this)"><span class="dot dot-red"></span>Urgente</div>
+        <div class="filter-tab" onclick="filtrar('atencao', this)"><span class="dot dot-orange"></span>Atenção</div>
+        <div class="filter-tab" onclick="filtrar('info', this)"><span class="dot dot-blue"></span>Informativo</div>
+        <div class="filter-tab" onclick="filtrar('ok', this)"><span class="dot dot-green"></span>Resolvido</div>
+      </div>
+    </div>
+
+    <!-- ALERTS LIST -->
+    <div class="alerts-container">
+      <div class="alerts-header">
+        <div class="alerts-title">Seus alertas</div>
+        <button class="mark-all" onclick="marcarTodos()">Marcar todos como lidos</button>
+      </div>
+
+      <div id="alertsList">
+
+        <div class="alert-item" data-tipo="urgente" onclick="marcarLido(this)">
+          <div class="alert-unread"></div>
+          <div class="alert-icon-wrap" style="background: var(--red-light);">✈️</div>
+          <div class="alert-body">
+            <div class="alert-meta" style="margin-bottom: 6px;">
+              <span class="alert-tag tag-urgente">Urgente</span>
+              <span class="alert-time-text">Hoje, 08:00</span>
+            </div>
+            <div class="alert-title-text">Passaporte vence em 2 dias!</div>
+            <div class="alert-desc-text">Seu passaporte vence no dia 03/03/2026. Para renovar com urgência, agende na Polícia Federal e pague a taxa de serviço urgente. Leve RG, CPF, foto 3x4 recente e comprovante de residência.</div>
+            <div class="alert-actions">
+              <button class="alert-btn alert-btn-primary">Renovar agora</button>
+              <button class="alert-btn alert-btn-secondary">Ver documento</button>
+              <button class="alert-btn alert-btn-secondary">Perguntar à IA</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-item" data-tipo="atencao" onclick="marcarLido(this)">
+          <div class="alert-unread"></div>
+          <div class="alert-icon-wrap" style="background: var(--orange-light);">🚗</div>
+          <div class="alert-body">
+            <div class="alert-meta" style="margin-bottom: 6px;">
+              <span class="alert-tag tag-atencao">Atenção</span>
+              <span class="alert-time-text">Ontem, 09:00</span>
+            </div>
+            <div class="alert-title-text">CNH vence em 45 dias</div>
+            <div class="alert-desc-text">Sua CNH vence em 15/04/2026. Agende sua renovação no Detran com antecedência para evitar filas e multas. O processo leva em média 15 dias após o agendamento.</div>
+            <div class="alert-actions">
+              <button class="alert-btn alert-btn-primary">Agendar renovação</button>
+              <button class="alert-btn alert-btn-secondary">Ver documento</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-item" data-tipo="info" onclick="marcarLido(this)">
+          <div class="alert-unread"></div>
+          <div class="alert-icon-wrap" style="background: var(--sky);">🪪</div>
+          <div class="alert-body">
+            <div class="alert-meta" style="margin-bottom: 6px;">
+              <span class="alert-tag tag-info">Informativo</span>
+              <span class="alert-time-text">3 dias atrás</span>
+            </div>
+            <div class="alert-title-text">Nova Carteira de Identidade Nacional disponível</div>
+            <div class="alert-desc-text">O governo federal liberou a emissão da nova CIN para todos os estados. O documento é gratuito na primeira via e pode ser emitido em qualquer posto de identificação do seu estado.</div>
+            <div class="alert-actions">
+              <button class="alert-btn alert-btn-primary">Saiba mais</button>
+              <button class="alert-btn alert-btn-secondary">Já tenho a CIN</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-item lida" data-tipo="ok" onclick="marcarLido(this)">
+          <div class="alert-unread"></div>
+          <div class="alert-icon-wrap" style="background: var(--green-light);">💉</div>
+          <div class="alert-body">
+            <div class="alert-meta" style="margin-bottom: 6px;">
+              <span class="alert-tag tag-ok">Resolvido</span>
+              <span class="alert-time-text">1 semana atrás</span>
+            </div>
+            <div class="alert-title-text">Carteira de vacinação atualizada</div>
+            <div class="alert-desc-text">Sua carteira de vacinação foi atualizada com sucesso. Próxima dose programada para Junho de 2026.</div>
+            <div class="alert-actions">
+              <button class="alert-btn alert-btn-secondary">Ver vacinação</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-item lida" data-tipo="ok" onclick="marcarLido(this)">
+          <div class="alert-unread"></div>
+          <div class="alert-icon-wrap" style="background: var(--green-light);">📋</div>
+          <div class="alert-body">
+            <div class="alert-meta" style="margin-bottom: 6px;">
+              <span class="alert-tag tag-ok">Resolvido</span>
+              <span class="alert-time-text">2 semanas atrás</span>
+            </div>
+            <div class="alert-title-text">CPF regularizado com sucesso</div>
+            <div class="alert-desc-text">Seu CPF está regular junto à Receita Federal. Nenhuma pendência encontrada.</div>
+            <div class="alert-actions">
+              <button class="alert-btn alert-btn-secondary">Ver CPF</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="settings-panel">
+      <div class="settings-title">⚙️ Configurações de alertas</div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Alertas por e-mail</div>
+          <div class="setting-desc">Receba alertas de vencimento no seu e-mail</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Alertas por WhatsApp</div>
+          <div class="setting-desc">Receba lembretes direto no seu WhatsApp</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Alertas com 90 dias de antecedência</div>
+          <div class="setting-desc">Aviso inicial muito antes do vencimento</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Alertas com 30 dias de antecedência</div>
+          <div class="setting-desc">Lembrete intermediário de renovação</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Alertas com 7 dias de antecedência</div>
+          <div class="setting-desc">Aviso urgente de vencimento iminente</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-name">Novidades e informativos</div>
+          <div class="setting-desc">Fique por dentro de mudanças em documentos brasileiros</div>
+        </div>
+        <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function marcarLido(item) {
+    item.classList.add('lida');
+    const unread = item.querySelector('.alert-unread');
+    if (unread) unread.style.display = 'none';
+  }
+
+  function marcarTodos() {
+    document.querySelectorAll('.alert-item').forEach(item => {
+      item.classList.add('lida');
+      const unread = item.querySelector('.alert-unread');
+      if (unread) unread.style.display = 'none';
+    });
+    document.querySelector('.topbar-sub').textContent = '0 alertas não lidos';
+  }
+
+  function filtrar(tipo, el) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.alert-item').forEach(item => {
+      item.style.display = (tipo === 'todos' || item.dataset.tipo === tipo) ? 'flex' : 'none';
+    });
+  }
+
+  // Animate on load
+  document.querySelectorAll('.summary-card, .alert-item, .settings-panel').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s`;
+    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 80);
+  });
+</script>
+</body>
+</html>
