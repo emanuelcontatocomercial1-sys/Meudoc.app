@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeuDoc.app — Agendamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --blue: #1560BD;
+    --sky: #E8F2FF;
+    --green: #00B37E;
+    --green-light: #E6FAF4;
+    --orange: #F76E2A;
+    --orange-light: #FEF0E7;
+    --red: #E53935;
+    --red-light: #FEECEC;
+    --purple: #7C3AED;
+    --purple-light: #EDE9FE;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray: #8A99B0;
+    --border: #DCE4F0;
+    --text: #1A2B40;
+    --sidebar-width: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: var(--sidebar-width); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 50; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); text-decoration: none; }
+  .logo span { color: var(--orange); }
+  .sidebar-user { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); flex-shrink: 0; }
+  .user-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .user-plan { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; cursor: pointer; transition: all .2s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+  .nav-item.active { background: rgba(247,110,42,0.15); color: var(--white); }
+  .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+  .nav-section-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 14px 6px; }
+  .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); }
+  .topbar-sub { font-size: 13px; color: var(--gray); margin-top: 2px; }
+  .btn-primary { background: var(--orange); color: var(--white); padding: 10px 20px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .25s; display: flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { background: #E55A1A; }
+
+  /* CONTENT */
+  .content { padding: 32px; flex: 1; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; align-items: center; gap: 14px; transition: all .25s; }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,31,58,0.08); }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--gray); margin-top: 4px; }
+
+  /* MAIN GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+
+  /* CARD */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
+
+  /* APPOINTMENTS */
+  .appt-item { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--border); transition: background .2s; cursor: pointer; }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-item:hover { background: var(--off-white); }
+
+  .appt-date-box { background: var(--navy); border-radius: 12px; padding: 10px 14px; text-align: center; flex-shrink: 0; min-width: 56px; }
+  .appt-day { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--white); line-height: 1; }
+  .appt-month { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 3px; }
+
+  .appt-date-box.orange { background: var(--orange); }
+  .appt-date-box.red { background: var(--red); }
+  .appt-date-box.green { background: var(--green); }
+
+  .appt-body { flex: 1; }
+  .appt-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .appt-meta { font-size: 13px; color: var(--gray); margin-bottom: 10px; line-height: 1.5; }
+  .appt-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .appt-tag { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+  .tag-confirmed { background: var(--green-light); color: var(--green); }
+  .tag-pending { background: var(--orange-light); color: var(--orange); }
+  .tag-urgent { background: var(--red-light); color: var(--red); }
+  .tag-done { background: var(--border); color: var(--gray); }
+
+  .appt-action { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .appt-time { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .btn-small { padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); font-size: 12px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .btn-small:hover { border-color: var(--blue); background: var(--sky); color: var(--blue); }
+
+  /* CALENDAR */
+  .calendar { padding: 20px 24px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-month { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
+  .cal-nav { background: none; border: 1px solid var(--border); border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+  .cal-nav:hover { background: var(--sky); border-color: var(--blue); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-weekday { text-align: center; font-size: 11px; font-weight: 700; color: var(--gray); padding: 6px 0; text-transform: uppercase; }
+  .cal-day { text-align: center; font-size: 13px; padding: 8px 4px; border-radius: 8px; cursor: pointer; transition: all .2s; position: relative; }
+  .cal-day:hover { background: var(--sky); color: var(--blue); }
+  .cal-day.today { background: var(--navy); color: var(--white); font-weight: 700; }
+  .cal-day.has-event::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+  .cal-day.today.has-event::after { background: var(--orange); }
+  .cal-day.other-month { color: var(--border); }
+
+  /* QUICK SCHEDULE */
+  .quick-schedule { padding: 20px 24px; }
+  .orgaos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .orgao-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: all .2s; text-align: center; }
+  .orgao-item:hover { border-color: var(--blue); background: var(--sky); transform: translateY(-2px); }
+  .orgao-emoji { font-size: 26px; }
+  .orgao-name { font-size: 12px; font-weight: 600; color: var(--navy); }
+  .orgao-desc { font-size: 11px; color: var(--gray); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 20px; padding: 40px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn 0.3s ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--gray); }
+  .modal-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .modal-sub { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .form-group input, .form-group select { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: all .2s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.08); }
+  .btn-full { width: 100%; padding: 14px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .25s; margin-top: 8px; }
+  .btn-full:hover { background: #E55A1A; }
+
+  @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .content { padding: 20px; } .topbar { padding: 16px 20px; } }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar">E</div>
+    <div>
+      <div class="user-name">Emanuel Silva</div>
+      <div class="user-plan">Plano Gratuito</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span>Painel</span></a>
+    <a class="nav-item" href="documentos.html"><span class="nav-icon">📁</span><span style="flex:1">Meus Documentos</span><span class="nav-badge">5</span></a>
+    <a class="nav-item" href="alertas.html"><span class="nav-icon">🔔</span><span style="flex:1">Alertas</span><span class="nav-badge">3</span></a>
+    <a class="nav-item active" href="agendamentos.html"><span class="nav-icon">📅</span><span>Agendamentos</span></a>
+    <div class="nav-section-title">Ferramentas</div>
+    <a class="nav-item" href="#"><span class="nav-icon">🤖</span><span>Assistente IA</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👨‍👩‍👧</span><span>Família</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📜</span><span>Histórico</span></a>
+    <div class="nav-section-title">Conta</div>
+    <a class="nav-item" href="perfil.html"><span class="nav-icon">👤</span><span>Perfil</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Configurações</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="nav-item" href="index.html" style="color: rgba(255,255,255,0.4);"><span class="nav-icon">🚪</span><span>Sair</span></a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title">Agendamentos</div>
+      <div class="topbar-sub">Gerencie seus compromissos em órgãos públicos</div>
+    </div>
+    <button class="btn-primary" onclick="abrirModal()">+ Novo agendamento</button>
+  </header>
+
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--sky);">📅</div>
+        <div><div class="stat-num">3</div><div class="stat-label">Agendamentos</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--orange-light);">⏳</div>
+        <div><div class="stat-num">1</div><div class="stat-label">Próximo em 2 dias</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--green-light);">✅</div>
+        <div><div class="stat-num">2</div><div class="stat-label">Confirmados</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--purple-light);">🏛️</div>
+        <div><div class="stat-num">4</div><div class="stat-label">Órgãos disponíveis</div></div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- LEFT -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Próximos agendamentos</div>
+            <span style="font-size: 13px; color: var(--gray);">Março 2026</span>
+          </div>
+
+          <div class="appt-item">
+            <div class="appt-date-box red">
+              <div class="appt-day">03</div>
+              <div class="appt-month">Mar</div>
+            </div>
+            <div class="appt-body">
+              <div class="appt-title">Renovação de Passaporte — Urgente</div>
+              <div class="appt-meta">Polícia Federal • Av. Tancredo Neves, 274 — Salvador, BA<br>Protocolo: PF-2026-00123</div>
+              <div class="appt-tags">
+                <span class="appt-tag tag-confirmed">Confirmado</span>
+                <span class="appt-tag tag-urgent">Urgente</span>
+              </div>
+            </div>
+            <div class="appt-action">
+              <div class="appt-time">09:30</div>
+              <button class="btn-small">Ver detalhes</button>
+            </div>
+          </div>
+
+          <div class="appt-item">
+            <div class="appt-date-box orange">
+              <div class="appt-day">15</div>
+              <div class="appt-month">Mar</div>
+            </div>
+            <div class="appt-body">
+              <div class="appt-title">Renovação de CNH — Categoria B</div>
+              <div class="appt-meta">Detran Bahia • Av. ACM, 2340 — Salvador, BA<br>Protocolo: DT-2026-00456</div>
+              <div class="appt-tags">
+                <span class="appt-tag tag-confirmed">Confirmado</span>
+              </div>
+            </div>
+            <div class="appt-action">
+              <div class="appt-time">14:00</div>
+              <button class="btn-small">Ver detalhes</button>
+            </div>
+          </div>
+
+          <div class="appt-item">
+            <div class="appt-date-box" style="background: var(--blue);">
+              <div class="appt-day">22</div>
+              <div class="appt-month">Mar</div>
+            </div>
+            <div class="appt-body">
+              <div class="appt-title">Emissão da nova CIN</div>
+              <div class="appt-meta">Instituto de Identificação da Bahia • Rua Chile, 10 — Salvador, BA<br>Protocolo: IIN-2026-00789</div>
+              <div class="appt-tags">
+                <span class="appt-tag tag-pending">Pendente confirmação</span>
+              </div>
+            </div>
+            <div class="appt-action">
+              <div class="appt-time">10:00</div>
+              <button class="btn-small">Ver detalhes</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAST -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Histórico</div>
+            <span style="font-size: 13px; color: var(--blue); cursor: pointer; font-weight: 600;">Ver todos</span>
+          </div>
+          <div class="appt-item">
+            <div class="appt-date-box" style="background: var(--gray);">
+              <div class="appt-day">10</div>
+              <div class="appt-month">Fev</div>
+            </div>
+            <div class="appt-body">
+              <div class="appt-title">Atualização Carteira de Vacinação</div>
+              <div class="appt-meta">UBS Centro de Saúde • Salvador, BA</div>
+              <div class="appt-tags">
+                <span class="appt-tag tag-done">Concluído</span>
+              </div>
+            </div>
+            <div class="appt-action">
+              <div class="appt-time">08:00</div>
+            </div>
+          </div>
+          <div class="appt-item">
+            <div class="appt-date-box" style="background: var(--gray);">
+              <div class="appt-day">28</div>
+              <div class="appt-month">Jan</div>
+            </div>
+            <div class="appt-body">
+              <div class="appt-title">Regularização CPF</div>
+              <div class="appt-meta">Receita Federal • Salvador, BA</div>
+              <div class="appt-tags">
+                <span class="appt-tag tag-done">Concluído</span>
+              </div>
+            </div>
+            <div class="appt-action">
+              <div class="appt-time">11:00</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- CALENDAR -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Calendário</div>
+          </div>
+          <div class="calendar">
+            <div class="cal-header">
+              <button class="cal-nav">‹</button>
+              <div class="cal-month">Março 2026</div>
+              <button class="cal-nav">›</button>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-weekday">Dom</div>
+              <div class="cal-weekday">Seg</div>
+              <div class="cal-weekday">Ter</div>
+              <div class="cal-weekday">Qua</div>
+              <div class="cal-weekday">Qui</div>
+              <div class="cal-weekday">Sex</div>
+              <div class="cal-weekday">Sáb</div>
+              <div class="cal-day other-month">22</div>
+              <div class="cal-day other-month">23</div>
+              <div class="cal-day other-month">24</div>
+              <div class="cal-day other-month">25</div>
+              <div class="cal-day other-month">26</div>
+              <div class="cal-day other-month">27</div>
+              <div class="cal-day other-month">28</div>
+              <div class="cal-day today has-event">1</div>
+              <div class="cal-day">2</div>
+              <div class="cal-day has-event">3</div>
+              <div class="cal-day">4</div>
+              <div class="cal-day">5</div>
+              <div class="cal-day">6</div>
+              <div class="cal-day">7</div>
+              <div class="cal-day">8</div>
+              <div class="cal-day">9</div>
+              <div class="cal-day">10</div>
+              <div class="cal-day">11</div>
+              <div class="cal-day">12</div>
+              <div class="cal-day">13</div>
+              <div class="cal-day">14</div>
+              <div class="cal-day has-event">15</div>
+              <div class="cal-day">16</div>
+              <div class="cal-day">17</div>
+              <div class="cal-day">18</div>
+              <div class="cal-day">19</div>
+              <div class="cal-day">20</div>
+              <div class="cal-day">21</div>
+              <div class="cal-day has-event">22</div>
+              <div class="cal-day">23</div>
+              <div class="cal-day">24</div>
+              <div class="cal-day">25</div>
+              <div class="cal-day">26</div>
+              <div class="cal-day">27</div>
+              <div class="cal-day">28</div>
+              <div class="cal-day">29</div>
+              <div class="cal-day">30</div>
+              <div class="cal-day">31</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK SCHEDULE -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Agendar em</div>
+          </div>
+          <div class="quick-schedule">
+            <div class="orgaos-grid">
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">🚗</div>
+                <div class="orgao-name">Detran</div>
+                <div class="orgao-desc">CNH e veículos</div>
+              </div>
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">✈️</div>
+                <div class="orgao-name">Polícia Federal</div>
+                <div class="orgao-desc">Passaporte</div>
+              </div>
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">🪪</div>
+                <div class="orgao-name">Instituto de ID</div>
+                <div class="orgao-desc">RG e CIN</div>
+              </div>
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">🏢</div>
+                <div class="orgao-name">INSS</div>
+                <div class="orgao-desc">Previdência</div>
+              </div>
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">📋</div>
+                <div class="orgao-name">Receita Federal</div>
+                <div class="orgao-desc">CPF e impostos</div>
+              </div>
+              <div class="orgao-item" onclick="abrirModal()">
+                <div class="orgao-emoji">🗳️</div>
+                <div class="orgao-name">TRE</div>
+                <div class="orgao-desc">Título eleitor</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVO AGENDAMENTO -->
+<div class="modal-overlay" id="modalAgendamento">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal()">×</button>
+    <div class="modal-title">Novo Agendamento</div>
+    <p class="modal-sub">Preencha os dados para registrar seu agendamento.</p>
+    <div class="form-group">
+      <label>Órgão</label>
+      <select>
+        <option>Selecione o órgão</option>
+        <option>Detran Bahia</option>
+        <option>Polícia Federal</option>
+        <option>Instituto de Identificação</option>
+        <option>INSS</option>
+        <option>Receita Federal</option>
+        <option>TRE Bahia</option>
+        <option>Cartório</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Serviço</label>
+      <select>
+        <option>Selecione o serviço</option>
+        <option>Renovação de CNH</option>
+        <option>Renovação de Passaporte</option>
+        <option>Emissão de CIN</option>
+        <option>Regularização de CPF</option>
+        <option>Solicitação INSS</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Data</label>
+      <input type="date">
+    </div>
+    <div class="form-group">
+      <label>Horário</label>
+      <input type="time">
+    </div>
+    <div class="form-group">
+      <label>Local / Endereço</label>
+      <input type="text" placeholder="Ex: Av. Tancredo Neves, 274 — Salvador, BA">
+    </div>
+    <div class="form-group">
+      <label>Número do protocolo (opcional)</label>
+      <input type="text" placeholder="Ex: PF-2026-00123">
+    </div>
+    <button class="btn-full" onclick="salvarAgendamento()">Salvar agendamento</button>
+  </div>
+</div>
+
+<script>
+  function abrirModal() {
+    document.getElementById('modalAgendamento').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharModal() {
+    document.getElementById('modalAgendamento').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalAgendamento').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+  function salvarAgendamento() {
+    fecharModal();
+    alert('Agendamento salvo com sucesso!');
+  }
+
+  document.querySelectorAll('.stat-card, .card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
+    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 80);
+  });
+</script>
+</body>
+</html>
