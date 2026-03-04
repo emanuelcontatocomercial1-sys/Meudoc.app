@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeuDoc.app — Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --blue: #1560BD;
+    --sky: #E8F2FF;
+    --green: #00B37E;
+    --green-light: #E6FAF4;
+    --orange: #F76E2A;
+    --orange-light: #FEF0E7;
+    --red: #E53935;
+    --red-light: #FEECEC;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --gray: #8A99B0;
+    --border: #DCE4F0;
+    --text: #1A2B40;
+    --sidebar-width: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: var(--sidebar-width); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 50; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); text-decoration: none; }
+  .logo span { color: var(--orange); }
+  .sidebar-user { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); flex-shrink: 0; }
+  .user-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .user-plan { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; cursor: pointer; transition: all .2s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+  .nav-item.active { background: rgba(247,110,42,0.15); color: var(--white); }
+  .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+  .nav-section-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 14px 6px; }
+  .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); }
+  .topbar-sub { font-size: 13px; color: var(--gray); margin-top: 2px; }
+  .btn-primary { background: var(--orange); color: var(--white); padding: 10px 20px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .25s; display: flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { background: #E55A1A; }
+
+  /* CONTENT */
+  .content { padding: 32px; flex: 1; }
+  .content-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+
+  /* PROFILE CARD */
+  .profile-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+
+  .profile-cover {
+    height: 100px;
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%);
+    position: relative;
+  }
+
+  .profile-cover::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(247,110,42,0.2) 0%, transparent 60%);
+  }
+
+  .profile-avatar-wrap {
+    padding: 0 24px;
+    margin-top: -40px;
+    position: relative; z-index: 1;
+  }
+
+  .profile-avatar-big {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--orange); border: 4px solid var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora', sans-serif; font-weight: 800; font-size: 28px; color: var(--white);
+    cursor: pointer; position: relative; transition: all .2s;
+  }
+
+  .profile-avatar-big:hover .avatar-overlay { opacity: 1; }
+
+  .avatar-overlay {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; opacity: 0; transition: opacity .2s;
+  }
+
+  .profile-info { padding: 16px 24px 24px; }
+  .profile-name { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .profile-email { font-size: 14px; color: var(--gray); margin-bottom: 16px; }
+
+  .profile-plan {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange-light); border: 1px solid var(--orange);
+    border-radius: 10px; padding: 8px 14px; margin-bottom: 20px;
+  }
+  .plan-icon { font-size: 16px; }
+  .plan-name { font-size: 13px; font-weight: 700; color: var(--orange); }
+  .plan-desc { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+  .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .pstat { text-align: center; padding: 12px; background: var(--off-white); border-radius: 12px; }
+  .pstat-num { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); }
+  .pstat-label { font-size: 11px; color: var(--gray); margin-top: 3px; }
+
+  .upgrade-btn {
+    width: 100%; padding: 12px; background: var(--navy); color: var(--white);
+    border: none; border-radius: 12px; font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all .25s;
+  }
+  .upgrade-btn:hover { background: var(--blue); }
+
+  /* RIGHT PANEL */
+  .right-panel { display: flex; flex-direction: column; gap: 24px; }
+
+  /* CARD */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
+  .card-body { padding: 24px; }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .form-group input, .form-group select { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: all .2s; background: var(--white); }
+  .form-group input:focus, .form-group select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.08); }
+  .form-group input:disabled { background: var(--off-white); color: var(--gray); cursor: not-allowed; }
+
+  .save-btn { margin-top: 20px; padding: 13px 28px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .25s; }
+  .save-btn:hover { background: #E55A1A; transform: translateY(-1px); }
+
+  /* SECURITY */
+  .security-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .security-item:last-child { border-bottom: none; }
+  .security-info { flex: 1; }
+  .security-name { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+  .security-desc { font-size: 13px; color: var(--gray); }
+  .security-status { display: flex; align-items: center; gap: 8px; }
+  .status-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+  .status-ok { background: var(--green-light); color: var(--green); }
+  .status-pending { background: var(--orange-light); color: var(--orange); }
+
+  .btn-small { padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all .2s; }
+  .btn-small:hover { border-color: var(--blue); background: var(--sky); }
+  .btn-small-danger { border-color: var(--red-light); color: var(--red); }
+  .btn-small-danger:hover { border-color: var(--red); background: var(--red-light); }
+
+  /* TOGGLE */
+  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: .3s; }
+  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: .3s; }
+  .toggle input:checked + .toggle-slider { background: var(--green); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+  /* DANGER ZONE */
+  .danger-zone { background: var(--red-light); border: 1px solid rgba(229,57,53,0.2); border-radius: 16px; padding: 24px; }
+  .danger-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--red); margin-bottom: 6px; }
+  .danger-desc { font-size: 13px; color: var(--gray); margin-bottom: 16px; line-height: 1.6; }
+  .btn-danger { padding: 10px 20px; background: var(--red); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; }
+  .btn-danger:hover { background: #C62828; }
+
+  @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 20px; }
+    .topbar { padding: 16px 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar">E</div>
+    <div>
+      <div class="user-name">Emanuel Silva</div>
+      <div class="user-plan">Plano Gratuito</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span>Painel</span></a>
+    <a class="nav-item" href="documentos.html"><span class="nav-icon">📁</span><span style="flex:1">Meus Documentos</span><span class="nav-badge">5</span></a>
+    <a class="nav-item" href="alertas.html"><span class="nav-icon">🔔</span><span style="flex:1">Alertas</span><span class="nav-badge">3</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📅</span><span>Agendamentos</span></a>
+    <div class="nav-section-title">Ferramentas</div>
+    <a class="nav-item" href="#"><span class="nav-icon">🤖</span><span>Assistente IA</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👨‍👩‍👧</span><span>Família</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📜</span><span>Histórico</span></a>
+    <div class="nav-section-title">Conta</div>
+    <a class="nav-item active" href="perfil.html"><span class="nav-icon">👤</span><span>Perfil</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Configurações</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="nav-item" href="index.html" style="color: rgba(255,255,255,0.4);"><span class="nav-icon">🚪</span><span>Sair</span></a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title">Meu Perfil</div>
+      <div class="topbar-sub">Gerencie suas informações pessoais e preferências</div>
+    </div>
+    <button class="btn-primary" onclick="salvarPerfil()">💾 Salvar alterações</button>
+  </header>
+
+  <div class="content">
+    <div class="content-grid">
+
+      <!-- LEFT — PROFILE CARD -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+
+        <div class="profile-card">
+          <div class="profile-cover"></div>
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar-big" onclick="trocarFoto()" title="Trocar foto">
+              E
+              <div class="avatar-overlay">📷</div>
+            </div>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name">Emanuel Silva</div>
+            <div class="profile-email">emanuel@email.com</div>
+            <div class="profile-plan">
+              <span class="plan-icon">⚡</span>
+              <div>
+                <div class="plan-name">Plano Gratuito</div>
+                <div class="plan-desc">5 documentos • 5 perguntas/dia</div>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="pstat"><div class="pstat-num">5</div><div class="pstat-label">Documentos</div></div>
+              <div class="pstat"><div class="pstat-num">12</div><div class="pstat-label">Perguntas</div></div>
+              <div class="pstat"><div class="pstat-num">2</div><div class="pstat-label">Alertas</div></div>
+            </div>
+            <button class="upgrade-btn">⚡ Fazer upgrade para Premium</button>
+          </div>
+        </div>
+
+        <!-- PLAN DETAILS -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Seu plano</div>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <span style="color: var(--gray);">Documentos</span>
+                <span style="font-weight: 600;">2 / 5 usados</span>
+              </div>
+              <div style="height: 8px; background: var(--border); border-radius: 100px; overflow: hidden;">
+                <div style="width: 40%; height: 100%; background: var(--blue); border-radius: 100px;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+                <span style="color: var(--gray);">Perguntas hoje</span>
+                <span style="font-weight: 600;">3 / 5 usadas</span>
+              </div>
+              <div style="height: 8px; background: var(--border); border-radius: 100px; overflow: hidden;">
+                <div style="width: 60%; height: 100%; background: var(--orange); border-radius: 100px;"></div>
+              </div>
+              <div style="margin-top: 8px; padding: 14px; background: var(--sky); border-radius: 12px; text-align: center;">
+                <div style="font-size: 13px; color: var(--blue); font-weight: 600;">Premium por R$10,90/mês</div>
+                <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Documentos ilimitados + IA sem limite</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+
+        <!-- PERSONAL DATA -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Dados pessoais</div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nome</label>
+                <input type="text" value="Emanuel">
+              </div>
+              <div class="form-group">
+                <label>Sobrenome</label>
+                <input type="text" value="Silva">
+              </div>
+              <div class="form-group">
+                <label>Data de nascimento</label>
+                <input type="date" value="2005-03-15">
+              </div>
+              <div class="form-group">
+                <label>CPF</label>
+                <input type="text" value="000.000.000-00" disabled>
+              </div>
+              <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" value="emanuel@email.com">
+              </div>
+              <div class="form-group">
+                <label>Telefone / WhatsApp</label>
+                <input type="tel" value="(71) 99999-9999">
+              </div>
+              <div class="form-group full">
+                <label>CEP</label>
+                <input type="text" value="40000-000" style="max-width: 160px;" oninput="buscarCep(this.value)">
+              </div>
+              <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" value="Salvador" id="cidade">
+              </div>
+              <div class="form-group">
+                <label>Estado</label>
+                <input type="text" value="BA" id="estado">
+              </div>
+              <div class="form-group full">
+                <label>Endereço</label>
+                <input type="text" value="Rua das Flores, 123 — Pituba" id="rua">
+              </div>
+            </div>
+            <button class="save-btn" onclick="salvarPerfil()">Salvar dados pessoais</button>
+          </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Segurança</div>
+          </div>
+          <div class="card-body" style="padding: 0 24px;">
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Senha</div>
+                <div class="security-desc">Última alteração há 30 dias</div>
+              </div>
+              <div class="security-status">
+                <span class="status-badge status-ok">Segura</span>
+                <button class="btn-small">Alterar</button>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">E-mail verificado</div>
+                <div class="security-desc">emanuel@email.com</div>
+              </div>
+              <div class="security-status">
+                <span class="status-badge status-pending">Pendente</span>
+                <button class="btn-small">Verificar</button>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Autenticação em dois fatores</div>
+                <div class="security-desc">Proteja sua conta com 2FA</div>
+              </div>
+              <div class="security-status">
+                <span class="status-badge status-pending">Desativado</span>
+                <button class="btn-small">Ativar</button>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Sessões ativas</div>
+                <div class="security-desc">1 dispositivo conectado</div>
+              </div>
+              <div class="security-status">
+                <button class="btn-small btn-small-danger">Encerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Notificações</div>
+          </div>
+          <div class="card-body" style="padding: 0 24px;">
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Alertas por e-mail</div>
+                <div class="security-desc">Vencimentos e novidades</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Alertas por WhatsApp</div>
+                <div class="security-desc">Lembretes direto no seu WhatsApp</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Novidades do produto</div>
+                <div class="security-desc">Novas funcionalidades e melhorias</div>
+              </div>
+              <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="security-item">
+              <div class="security-info">
+                <div class="security-name">Dicas e tutoriais</div>
+                <div class="security-desc">Aprenda a usar melhor o MeuDoc.app</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="danger-zone">
+          <div class="danger-title">⚠️ Zona de perigo</div>
+          <div class="danger-desc">Essas ações são irreversíveis. Ao excluir sua conta, todos os seus documentos e dados serão permanentemente apagados dos nossos servidores.</div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn-small btn-small-danger">Exportar meus dados</button>
+            <button class="btn-danger" onclick="confirmarExclusao()">Excluir minha conta</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function salvarPerfil() {
+    const btn = document.querySelector('.btn-primary');
+    btn.textContent = '✅ Salvo!';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = '💾 Salvar alterações';
+      btn.style.background = 'var(--orange)';
+    }, 2000);
+  }
+
+  function trocarFoto() {
+    alert('Funcionalidade de foto em breve!');
+  }
+
+  function confirmarExclusao() {
+    if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+      alert('Conta excluída. Você será redirecionado.');
+      window.location.href = 'index.html';
+    }
+  }
+
+  async function buscarCep(cep) {
+    cep = cep.replace(/\D/g, '');
+    if (cep.length === 8) {
+      try {
+        const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const d = await r.json();
+        if (!d.erro) {
+          document.getElementById('rua').value = d.logradouro || '';
+          document.getElementById('cidade').value = d.localidade || '';
+          document.getElementById('estado').value = d.uf || '';
+        }
+      } catch(e) {}
+    }
+  }
+
+  // Animate on load
+  document.querySelectorAll('.profile-card, .card, .danger-zone').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
+    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 80);
+  });
+</script>
+</body>
+</html>
