@@ -5,416 +5,239 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MeuDoc.app — Entrar</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --navy: #0B1F3A;
-    --blue: #1560BD;
-    --sky: #E8F2FF;
-    --green: #00B37E;
-    --green-light: #E6FAF4;
-    --orange: #F76E2A;
-    --orange-light: #FEF0E7;
-    --white: #FFFFFF;
-    --off-white: #F7F9FC;
-    --gray: #8A99B0;
-    --border: #DCE4F0;
-    --text: #1A2B40;
+    --navy: #0B1F3A; --blue: #1560BD; --sky: #E8F2FF;
+    --green: #00B37E; --green-light: #E6FAF4;
+    --orange: #F76E2A; --orange-light: #FEF0E7;
+    --red: #E53935; --red-light: #FEECEC;
+    --white: #FFFFFF; --off-white: #F7F9FC;
+    --gray: #8A99B0; --border: #DCE4F0; --text: #1A2B40;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; display: flex; }
 
-  /* LEFT PANEL */
-  .left-panel {
-    width: 55%; background: var(--navy);
-    display: flex; flex-direction: column;
-    padding: 48px; position: relative; overflow: hidden;
-  }
-
-  .left-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 50% at 80% 30%, rgba(21,96,189,0.3) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 20% 80%, rgba(247,110,42,0.12) 0%, transparent 60%);
-  }
-
-  .left-grid {
-    position: absolute; inset: 0; opacity: 0.03;
-    background-image: linear-gradient(var(--white) 1px, transparent 1px),
-                      linear-gradient(90deg, var(--white) 1px, transparent 1px);
-    background-size: 50px 50px;
-  }
-
-  .left-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
-
-  .left-logo { margin-bottom: auto; }
-  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 24px; color: var(--white); text-decoration: none; }
-  .logo span { color: var(--orange); }
-
-  .left-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 0; }
-
-  .left-hero h1 {
-    font-family: 'Sora', sans-serif;
-    font-size: clamp(32px, 3vw, 48px);
-    font-weight: 800; line-height: 1.15;
-    color: var(--white); margin-bottom: 20px;
-  }
-
-  .left-hero h1 em { font-style: normal; color: var(--orange); }
-
-  .left-hero p { font-size: 17px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 48px; max-width: 420px; }
-
-  .features-list { display: flex; flex-direction: column; gap: 16px; }
-
+  .left-panel { width: 55%; background: var(--navy); display: flex; flex-direction: column; padding: 48px; position: relative; overflow: hidden; }
+  .left-panel::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(247,110,42,0.12) 0%, transparent 70%); }
+  .left-panel::after { content: ''; position: absolute; bottom: -80px; left: -80px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(21,96,189,0.2) 0%, transparent 70%); }
+  .left-logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 24px; color: var(--white); text-decoration: none; }
+  .left-logo span { color: var(--orange); }
+  .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
+  .left-title { font-family: 'Sora', sans-serif; font-size: 42px; font-weight: 800; color: var(--white); line-height: 1.15; margin-bottom: 20px; }
+  .left-title span { color: var(--orange); }
+  .left-sub { font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.7; max-width: 380px; margin-bottom: 40px; }
+  .feature-list { display: flex; flex-direction: column; gap: 16px; }
   .feature-item { display: flex; align-items: center; gap: 14px; }
+  .feature-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .feature-text { font-size: 14px; color: rgba(255,255,255,0.6); }
 
-  .feature-check {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: rgba(0,179,126,0.15);
-    border: 1px solid rgba(0,179,126,0.3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0; color: var(--green);
-    font-weight: 700;
-  }
-
-  .feature-text { font-size: 15px; color: rgba(255,255,255,0.75); }
-
-  .left-footer {
-    display: flex; align-items: center; gap: 20px;
-    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.4); }
-
-  /* RIGHT PANEL */
-  .right-panel {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    padding: 48px 40px;
-  }
-
-  .form-container { width: 100%; max-width: 420px; }
-
-  .form-header { margin-bottom: 36px; }
-  .form-title { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
-  .form-sub { font-size: 15px; color: var(--gray); }
-
-  /* TABS */
-  .auth-tabs {
-    display: flex; background: var(--off-white);
-    border: 1px solid var(--border); border-radius: 12px;
-    padding: 4px; margin-bottom: 32px;
-  }
-
-  .auth-tab {
-    flex: 1; padding: 10px; border-radius: 8px;
-    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer; border: none; background: none;
-    color: var(--gray); transition: all .2s;
-  }
-
-  .auth-tab.active { background: var(--white); color: var(--navy); box-shadow: 0 2px 8px rgba(11,31,58,0.08); }
-
-  /* FORM */
-  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px 40px; }
+  .auth-box { width: 100%; max-width: 420px; }
+  .auth-tabs { display: flex; background: var(--border); border-radius: 12px; padding: 4px; margin-bottom: 32px; }
+  .auth-tab { flex: 1; padding: 10px; text-align: center; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; color: var(--gray); border: none; background: none; }
+  .auth-tab.active { background: var(--white); color: var(--navy); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .auth-title { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .auth-sub { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
   .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
-
-  .input-wrap { position: relative; }
-  .input-wrap input {
-    width: 100%; border: 1.5px solid var(--border); border-radius: 12px;
-    padding: 14px 16px; font-family: 'DM Sans', sans-serif;
-    font-size: 15px; color: var(--text); outline: none;
-    transition: all .2s; background: var(--white);
-  }
-  .input-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(21,96,189,0.08); }
-  .input-wrap input::placeholder { color: var(--gray); }
-
-  .input-icon {
-    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-    font-size: 18px; cursor: pointer; color: var(--gray);
-    transition: color .2s;
-  }
-  .input-icon:hover { color: var(--navy); }
-
-  .form-options { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-  .checkbox-wrap input { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
-  .checkbox-wrap span { font-size: 14px; color: var(--gray); }
-  .forgot-link { font-size: 14px; color: var(--blue); font-weight: 600; text-decoration: none; transition: color .2s; }
-  .forgot-link:hover { color: var(--navy); }
-
-  .btn-submit {
-    width: 100%; padding: 16px; background: var(--orange); color: var(--white);
-    border: none; border-radius: 12px; font-family: 'Sora', sans-serif;
-    font-size: 16px; font-weight: 700; cursor: pointer; transition: all .25s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    margin-bottom: 20px;
-  }
-  .btn-submit:hover { background: #E55A1A; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(247,110,42,0.35); }
-
-  .divider { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .form-group input { border: 1.5px solid var(--border); border-radius: 10px; padding: 13px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: all .2s; background: var(--white); }
+  .form-group input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.08); }
+  .password-wrap { position: relative; }
+  .password-wrap input { width: 100%; padding-right: 48px; }
+  .password-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--gray); }
+  .forgot { text-align: right; margin-top: -8px; margin-bottom: 16px; }
+  .forgot a { font-size: 13px; color: var(--blue); text-decoration: none; font-weight: 600; }
+  .btn-auth { width: 100%; padding: 14px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .25s; margin-top: 8px; }
+  .btn-auth:hover { background: #E55A1A; transform: translateY(-1px); }
+  .btn-auth:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
   .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-text { font-size: 13px; color: var(--gray); white-space: nowrap; }
-
-  .btn-social {
-    width: 100%; padding: 14px; background: var(--white);
-    border: 1.5px solid var(--border); border-radius: 12px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-    color: var(--text); cursor: pointer; transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-bottom: 12px;
-  }
-  .btn-social:hover { border-color: var(--blue); background: var(--sky); }
-
-  .form-footer { text-align: center; font-size: 14px; color: var(--gray); margin-top: 24px; }
-  .form-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
-  .form-footer a:hover { color: var(--navy); }
-
-  /* CADASTRO FIELDS */
-  .cadastro-fields { display: none; }
-  .cadastro-fields.active { display: block; }
-  .login-fields { display: block; }
-  .login-fields.hidden { display: none; }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  /* SUCCESS */
-  .success-state { display: none; text-align: center; padding: 20px 0; }
-  .success-state.active { display: block; }
-  .success-icon { font-size: 64px; margin-bottom: 20px; animation: bounceIn .5s ease; }
-  @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
-  .success-title { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
-  .success-sub { font-size: 15px; color: var(--gray); margin-bottom: 28px; line-height: 1.6; }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .left-panel { display: none; }
-    .right-panel { padding: 40px 24px; }
-  }
+  .divider-text { font-size: 12px; color: var(--gray); font-weight: 500; }
+  .btn-social { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+  .btn-social:hover { border-color: var(--navy); background: var(--sky); }
+  .terms { font-size: 12px; color: var(--gray); text-align: center; margin-top: 20px; line-height: 1.6; }
+  .terms a { color: var(--blue); text-decoration: none; }
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; margin-bottom: 16px; display: none; align-items: center; gap: 8px; }
+  .alert.error { background: var(--red-light); color: var(--red); border: 1px solid rgba(229,57,53,0.2); }
+  .alert.success { background: var(--green-light); color: var(--green); border: 1px solid rgba(0,179,126,0.2); }
+  .success-screen { display: none; text-align: center; padding: 40px 20px; }
+  .success-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 24px; animation: bounceIn 0.5s ease; }
+  @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+  .success-title { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .success-sub { font-size: 15px; color: var(--gray); margin-bottom: 28px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 768px) { .left-panel { display: none; } .right-panel { padding: 32px 24px; } }
 </style>
 </head>
 <body>
 
-<!-- LEFT PANEL -->
 <div class="left-panel">
-  <div class="left-bg"></div>
-  <div class="left-grid"></div>
+  <a href="index.html" class="left-logo">MeuDoc<span>.app</span></a>
   <div class="left-content">
-    <div class="left-logo">
-      <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
-    </div>
-    <div class="left-hero">
-      <h1>Seus documentos,<br><em>sempre seguros</em><br>e organizados.</h1>
-      <p>Chega de perder documento ou ser pego de surpresa com vencimento. O MeuDoc.app cuida de tudo por você.</p>
-      <div class="features-list">
-        <div class="feature-item">
-          <div class="feature-check">✓</div>
-          <div class="feature-text">Cofre digital com criptografia de ponta</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-check">✓</div>
-          <div class="feature-text">Alertas automáticos de vencimento</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-check">✓</div>
-          <div class="feature-text">Assistente IA para tirar dúvidas 24h</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-check">✓</div>
-          <div class="feature-text">Agendamento integrado nos órgãos públicos</div>
-        </div>
-      </div>
-    </div>
-    <div class="left-footer">
-      <div class="trust-item">🔒 LGPD</div>
-      <div class="trust-item">🛡️ Criptografia</div>
-      <div class="trust-item">🇧🇷 Feito no Brasil</div>
+    <div class="left-title">Seus documentos.<br><span>Sempre em dia.</span></div>
+    <div class="left-sub">Centralize todos os seus documentos, receba alertas de vencimento e tire dúvidas com nossa IA em segundos.</div>
+    <div class="feature-list">
+      <div class="feature-item"><div class="feature-icon">📁</div><div class="feature-text">Todos os seus documentos em um só lugar</div></div>
+      <div class="feature-item"><div class="feature-icon">🔔</div><div class="feature-text">Alertas automáticos antes de vencer</div></div>
+      <div class="feature-item"><div class="feature-icon">🤖</div><div class="feature-text">Assistente IA para tirar dúvidas burocráticas</div></div>
+      <div class="feature-item"><div class="feature-icon">🔒</div><div class="feature-text">Seus dados seguros e criptografados</div></div>
     </div>
   </div>
 </div>
 
-<!-- RIGHT PANEL -->
 <div class="right-panel">
-  <div class="form-container">
-
-    <div class="form-header">
-      <div class="form-title" id="formTitle">Bem-vindo de volta!</div>
-      <div class="form-sub" id="formSub">Entre na sua conta para acessar seus documentos.</div>
-    </div>
-
-    <!-- TABS -->
+  <div class="auth-box">
     <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="mudarTab('login')">Entrar</button>
-      <button class="auth-tab" id="tabCadastro" onclick="mudarTab('cadastro')">Criar conta</button>
+      <button class="auth-tab active" id="tabEntrar" onclick="trocarTab('entrar')">Entrar</button>
+      <button class="auth-tab" id="tabCadastro" onclick="trocarTab('cadastro')">Criar conta</button>
     </div>
 
-    <!-- SUCCESS STATE -->
-    <div class="success-state" id="successState">
-      <div class="success-icon">🎉</div>
-      <div class="success-title" id="successTitle">Conta criada!</div>
-      <div class="success-sub" id="successSub">Bem-vindo ao MeuDoc.app. Seus documentos estão seguros com a gente.</div>
-      <button class="btn-submit" onclick="window.location.href='dashboard.html'" style="margin-bottom:0">
-        Acessar meu painel →
-      </button>
-    </div>
+    <div class="alert" id="alertMsg"></div>
 
-    <!-- FORM -->
-    <form id="authForm" onsubmit="submeter(event)" style="display:block">
-
-      <!-- LOGIN FIELDS -->
-      <div class="login-fields" id="loginFields">
-        <div class="form-group">
-          <label>E-mail</label>
-          <div class="input-wrap">
-            <input type="email" id="loginEmail" placeholder="seu@email.com" required>
-            <span class="input-icon">✉️</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Senha</label>
-          <div class="input-wrap">
-            <input type="password" id="loginSenha" placeholder="Sua senha" required style="padding-right: 48px;">
-            <span class="input-icon" onclick="toggleSenha('loginSenha', this)">👁️</span>
-          </div>
-        </div>
-        <div class="form-options">
-          <label class="checkbox-wrap">
-            <input type="checkbox">
-            <span>Lembrar de mim</span>
-          </label>
-          <a href="#" class="forgot-link">Esqueceu a senha?</a>
+    <div id="formEntrar">
+      <div class="auth-title">Bem-vindo de volta</div>
+      <div class="auth-sub">Entre na sua conta para continuar</div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="loginEmail" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <div class="password-wrap">
+          <input type="password" id="loginSenha" placeholder="Sua senha">
+          <button class="password-toggle" onclick="toggleSenha('loginSenha', this)">👁️</button>
         </div>
       </div>
-
-      <!-- CADASTRO FIELDS -->
-      <div class="cadastro-fields" id="cadastroFields">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nome</label>
-            <div class="input-wrap">
-              <input type="text" placeholder="João">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Sobrenome</label>
-            <div class="input-wrap">
-              <input type="text" placeholder="Silva">
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>E-mail</label>
-          <div class="input-wrap">
-            <input type="email" placeholder="seu@email.com">
-            <span class="input-icon">✉️</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Telefone / WhatsApp</label>
-          <div class="input-wrap">
-            <input type="tel" placeholder="(71) 99999-9999">
-            <span class="input-icon">📱</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Senha</label>
-          <div class="input-wrap">
-            <input type="password" id="cadastroSenha" placeholder="Crie uma senha forte" style="padding-right: 48px;">
-            <span class="input-icon" onclick="toggleSenha('cadastroSenha', this)">👁️</span>
-          </div>
-        </div>
-        <div class="form-group" style="margin-bottom: 24px;">
-          <label class="checkbox-wrap" style="align-items: flex-start; gap: 10px;">
-            <input type="checkbox" style="margin-top: 3px; flex-shrink: 0;" required>
-            <span style="font-size: 13px; line-height: 1.5;">Concordo com os <a href="#" style="color: var(--blue); font-weight: 600;">Termos de Uso</a> e a <a href="#" style="color: var(--blue); font-weight: 600;">Política de Privacidade</a>. Meus dados são protegidos pela LGPD.</span>
-          </label>
-        </div>
-      </div>
-
-      <button type="submit" class="btn-submit" id="btnSubmit">
-        <span id="btnText">Entrar na minha conta</span>
-        <span id="btnArrow">→</span>
-      </button>
-
-    </form>
-
-    <div class="divider">
-      <div class="divider-line"></div>
-      <div class="divider-text">ou continue com</div>
-      <div class="divider-line"></div>
+      <div class="forgot"><a href="#">Esqueci minha senha</a></div>
+      <button class="btn-auth" id="btnEntrar" onclick="fazerLogin()">Entrar</button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">ou continue com</div><div class="divider-line"></div></div>
+      <button class="btn-social" onclick="loginGovBr()">🏛️ Entrar com Gov.br</button>
     </div>
 
-    <button class="btn-social">
-      <span>🌐</span> Entrar com Google
-    </button>
-    <button class="btn-social">
-      <span>🏛️</span> Entrar com Gov.br
-    </button>
+    <div id="formCadastro" style="display:none;">
+      <div class="auth-title">Criar conta gratuita</div>
+      <div class="auth-sub">Comece a organizar seus documentos agora</div>
+      <div class="form-group"><label>Nome completo</label><input type="text" id="cadNome" placeholder="Seu nome completo"></div>
+      <div class="form-group"><label>E-mail</label><input type="email" id="cadEmail" placeholder="seu@email.com"></div>
+      <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cadTelefone" placeholder="(71) 99999-9999"></div>
+      <div class="form-group">
+        <label>Senha</label>
+        <div class="password-wrap">
+          <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres">
+          <button class="password-toggle" onclick="toggleSenha('cadSenha', this)">👁️</button>
+        </div>
+      </div>
+      <button class="btn-auth" id="btnCadastro" onclick="fazerCadastro()">Criar minha conta</button>
+      <div class="terms">Ao criar sua conta você concorda com nossos<br><a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a></div>
+    </div>
 
-    <div class="form-footer" id="formFooter">
-      Não tem conta? <a href="#" onclick="mudarTab('cadastro')">Criar grátis</a>
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Conta criada!</div>
+      <div class="success-sub">Verifique seu e-mail para confirmar o cadastro e acessar o MeuDoc.app.</div>
+      <button class="btn-auth" onclick="trocarTab('entrar')">Fazer login agora</button>
     </div>
 
   </div>
 </div>
 
 <script>
-  let modoAtual = 'login';
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
 
-  function mudarTab(modo) {
-    modoAtual = modo;
-    const isLogin = modo === 'login';
+  window.addEventListener('load', async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) window.location.href = 'dashboard.html';
+  });
 
-    document.getElementById('tabLogin').classList.toggle('active', isLogin);
-    document.getElementById('tabCadastro').classList.toggle('active', !isLogin);
-
-    document.getElementById('loginFields').style.display = isLogin ? 'block' : 'none';
-    document.getElementById('cadastroFields').style.display = isLogin ? 'none' : 'block';
-
-    document.getElementById('formTitle').textContent = isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta grátis';
-    document.getElementById('formSub').textContent = isLogin
-      ? 'Entre na sua conta para acessar seus documentos.'
-      : 'Junte-se a milhares de brasileiros organizados.';
-
-    document.getElementById('btnText').textContent = isLogin ? 'Entrar na minha conta' : 'Criar minha conta grátis';
-
-    document.getElementById('formFooter').innerHTML = isLogin
-      ? 'Não tem conta? <a href="#" onclick="mudarTab(\'cadastro\')">Criar grátis</a>'
-      : 'Já tem conta? <a href="#" onclick="mudarTab(\'login\')">Entrar</a>';
+  function trocarTab(tab) {
+    const isEntrar = tab === 'entrar';
+    document.getElementById('tabEntrar').classList.toggle('active', isEntrar);
+    document.getElementById('tabCadastro').classList.toggle('active', !isEntrar);
+    document.getElementById('formEntrar').style.display = isEntrar ? 'block' : 'none';
+    document.getElementById('formCadastro').style.display = !isEntrar ? 'block' : 'none';
+    document.getElementById('successScreen').style.display = 'none';
+    esconderAlerta();
   }
 
-  function toggleSenha(inputId, icon) {
-    const input = document.getElementById(inputId);
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.textContent = '🙈';
-    } else {
-      input.type = 'password';
-      icon.textContent = '👁️';
+  function toggleSenha(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁️' : '🙈';
+  }
+
+  function mostrarAlerta(msg, tipo) {
+    const el = document.getElementById('alertMsg');
+    el.textContent = (tipo === 'error' ? '⚠️ ' : '✅ ') + msg;
+    el.className = `alert ${tipo}`;
+    el.style.display = 'flex';
+  }
+
+  function esconderAlerta() { document.getElementById('alertMsg').style.display = 'none'; }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading ? '<span class="spinner"></span> Aguarde...' : (btnId === 'btnEntrar' ? 'Entrar' : 'Criar minha conta');
+  }
+
+  async function fazerLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const senha = document.getElementById('loginSenha').value;
+    if (!email || !senha) return mostrarAlerta('Preencha e-mail e senha.', 'error');
+    setLoading('btnEntrar', true);
+    esconderAlerta();
+    const { error } = await sb.auth.signInWithPassword({ email, password: senha });
+    if (error) {
+      setLoading('btnEntrar', false);
+      if (error.message.includes('Invalid login')) return mostrarAlerta('E-mail ou senha incorretos.', 'error');
+      if (error.message.includes('Email not confirmed')) return mostrarAlerta('Confirme seu e-mail antes de entrar.', 'error');
+      return mostrarAlerta(error.message, 'error');
     }
+    window.location.href = 'dashboard.html';
   }
 
-  function submeter(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnSubmit');
-    btn.textContent = 'Carregando...';
-    btn.style.opacity = '0.8';
-
-    setTimeout(() => {
-      if (modoAtual === 'login') {
-        window.location.href = 'dashboard.html';
-      } else {
-        document.getElementById('authForm').style.display = 'none';
-        document.querySelector('.auth-tabs').style.display = 'none';
-        document.querySelector('.divider').style.display = 'none';
-        document.querySelectorAll('.btn-social').forEach(b => b.style.display = 'none');
-        document.getElementById('formFooter').style.display = 'none';
-        document.getElementById('successState').classList.add('active');
-        document.getElementById('formTitle').textContent = 'Tudo certo!';
-        document.getElementById('formSub').textContent = '';
-      }
-    }, 1200);
+  async function fazerCadastro() {
+    const nome = document.getElementById('cadNome').value.trim();
+    const email = document.getElementById('cadEmail').value.trim();
+    const telefone = document.getElementById('cadTelefone').value.trim();
+    const senha = document.getElementById('cadSenha').value;
+    if (!nome || !email || !senha) return mostrarAlerta('Preencha todos os campos obrigatórios.', 'error');
+    if (senha.length < 6) return mostrarAlerta('A senha deve ter pelo menos 6 caracteres.', 'error');
+    setLoading('btnCadastro', true);
+    esconderAlerta();
+    const { data, error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, telefone } } });
+    if (error) {
+      setLoading('btnCadastro', false);
+      if (error.message.includes('already registered')) return mostrarAlerta('Este e-mail já está cadastrado.', 'error');
+      return mostrarAlerta(error.message, 'error');
+    }
+    if (data.user) {
+      const nomes = nome.split(' ');
+      await sb.from('profiles').upsert({ id: data.user.id, nome: nomes[0], sobrenome: nomes.slice(1).join(' '), email, telefone });
+    }
+    setLoading('btnCadastro', false);
+    document.getElementById('formCadastro').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
   }
+
+  function loginGovBr() { mostrarAlerta('Integração com Gov.br em breve!', 'error'); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const entrar = document.getElementById('formEntrar');
+    const cadastro = document.getElementById('formCadastro');
+    if (entrar.style.display !== 'none') fazerLogin();
+    else if (cadastro.style.display !== 'none') fazerCadastro();
+  });
 </script>
+</body>
+</html>
+
 </body>
 </html>
