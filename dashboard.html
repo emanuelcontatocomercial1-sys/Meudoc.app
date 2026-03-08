@@ -5,719 +5,260 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MeuDoc.app — Painel</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --navy: #0B1F3A;
-    --blue: #1560BD;
-    --sky: #E8F2FF;
-    --green: #00B37E;
-    --green-light: #E6FAF4;
-    --orange: #F76E2A;
-    --orange-light: #FEF0E7;
-    --red: #E53935;
-    --red-light: #FEECEC;
-    --white: #FFFFFF;
-    --off-white: #F7F9FC;
-    --gray: #8A99B0;
-    --border: #DCE4F0;
-    --text: #1A2B40;
+    --navy: #0B1F3A; --blue: #1560BD; --sky: #E8F2FF;
+    --green: #00B37E; --green-light: #E6FAF4;
+    --orange: #F76E2A; --orange-light: #FEF0E7;
+    --red: #E53935; --red-light: #FEECEC;
+    --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --white: #FFFFFF; --off-white: #F7F9FC;
+    --gray: #8A99B0; --border: #DCE4F0; --text: #1A2B40;
     --sidebar-width: 260px;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); display: flex; min-height: 100vh; }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-width);
-    background: var(--navy);
-    min-height: 100vh;
-    position: fixed; top: 0; left: 0;
-    display: flex; flex-direction: column;
-    padding: 0; z-index: 50;
-    transition: transform .3s;
-  }
-
-  .sidebar-logo {
-    padding: 28px 24px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
+  .sidebar { width: var(--sidebar-width); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 50; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); text-decoration: none; }
   .logo span { color: var(--orange); }
-
-  .sidebar-user {
-    padding: 20px 24px;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .user-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--orange);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white);
-    flex-shrink: 0;
-  }
-
+  .sidebar-user { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); flex-shrink: 0; }
   .user-name { font-size: 14px; font-weight: 600; color: var(--white); }
   .user-plan { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-
   .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 11px 14px; border-radius: 10px;
-    font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55);
-    text-decoration: none; cursor: pointer; transition: all .2s;
-    border: none; background: none; width: 100%; text-align: left;
-  }
-
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; cursor: pointer; transition: all .2s; border: none; background: none; width: 100%; text-align: left; }
   .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
   .nav-item.active { background: rgba(247,110,42,0.15); color: var(--white); }
-  .nav-item.active .nav-icon { color: var(--orange); }
-
   .nav-icon { font-size: 18px; width: 22px; text-align: center; }
-  .nav-label { flex: 1; }
   .nav-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
-
-  .nav-section-title {
-    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25);
-    text-transform: uppercase; letter-spacing: 1.5px;
-    padding: 12px 14px 6px;
-  }
-
-  .sidebar-footer {
-    padding: 16px 12px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  /* MAIN */
-  .main {
-    margin-left: var(--sidebar-width);
-    flex: 1; min-height: 100vh;
-    display: flex; flex-direction: column;
-  }
-
-  /* TOPBAR */
-  .topbar {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 40;
-  }
-
+  .nav-section-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 14px 6px; }
+  .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .topbar-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); }
   .topbar-sub { font-size: 13px; color: var(--gray); margin-top: 2px; }
-
-  .topbar-actions { display: flex; align-items: center; gap: 12px; }
-
-  .btn-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--off-white); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; cursor: pointer; transition: all .2s; position: relative;
-  }
-  .btn-icon:hover { background: var(--sky); border-color: var(--blue); }
-
-  .notif-dot {
-    position: absolute; top: 6px; right: 6px;
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--orange); border: 2px solid var(--white);
-  }
-
-  .btn-primary {
-    background: var(--orange); color: var(--white);
-    padding: 10px 20px; border-radius: 10px;
-    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px;
-    border: none; cursor: pointer; transition: all .25s;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .btn-primary:hover { background: #E55A1A; transform: translateY(-1px); }
-
-  /* CONTENT */
   .content { padding: 32px; flex: 1; }
-
-  /* WELCOME BANNER */
-  .welcome-banner {
-    background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%);
-    border-radius: 20px; padding: 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 32px; position: relative; overflow: hidden;
-  }
-
-  .welcome-banner::before {
-    content: '';
-    position: absolute; right: -40px; top: -40px;
-    width: 200px; height: 200px; border-radius: 50%;
-    background: rgba(247,110,42,0.1);
-  }
-
-  .welcome-banner::after {
-    content: '';
-    position: absolute; right: 80px; bottom: -60px;
-    width: 150px; height: 150px; border-radius: 50%;
-    background: rgba(21,96,189,0.2);
-  }
-
-  .welcome-text { position: relative; z-index: 1; }
-  .welcome-greeting { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
-  .welcome-name { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
-  .welcome-sub { font-size: 15px; color: rgba(255,255,255,0.6); }
-
-  .welcome-emoji { font-size: 64px; position: relative; z-index: 1; }
-
-  /* STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
-
-  .stat-card {
-    background: var(--white); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px;
-    display: flex; align-items: center; gap: 16px;
-    transition: all .25s;
-  }
+  .welcome-banner { background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%); border-radius: 20px; padding: 32px; margin-bottom: 28px; position: relative; overflow: hidden; }
+  .welcome-banner::after { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(247,110,42,0.15) 0%, transparent 70%); }
+  .welcome-name { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+  .welcome-sub { font-size: 15px; color: rgba(255,255,255,0.5); }
+  .welcome-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(247,110,42,0.15); border: 1px solid rgba(247,110,42,0.3); border-radius: 100px; padding: 6px 14px; margin-top: 16px; }
+  .welcome-badge-text { font-size: 13px; color: var(--orange); font-weight: 600; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; align-items: center; gap: 14px; transition: all .25s; }
   .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,31,58,0.08); }
-
-  .stat-icon {
-    width: 52px; height: 52px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
-  }
-
-  .stat-icon.blue { background: var(--sky); }
-  .stat-icon.green { background: var(--green-light); }
-  .stat-icon.orange { background: var(--orange-light); }
-  .stat-icon.red { background: var(--red-light); }
-
-  .stat-number { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1; }
   .stat-label { font-size: 13px; color: var(--gray); margin-top: 4px; }
-
-  /* MAIN GRID */
   .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
-
-  /* DOCUMENTS */
-  .card {
-    background: var(--white); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-  }
-
-  .card-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .card-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
-  .card-action { font-size: 13px; color: var(--blue); font-weight: 600; cursor: pointer; text-decoration: none; transition: color .2s; }
-  .card-action:hover { color: var(--navy); }
-
-  .doc-list { padding: 8px 0; }
-
-  .doc-row {
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 24px; transition: background .2s; cursor: pointer;
-  }
-  .doc-row:hover { background: var(--off-white); }
-
-  .doc-emoji-wrap {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: var(--sky); display: flex; align-items: center;
-    justify-content: center; font-size: 20px; flex-shrink: 0;
-  }
-
+  .card-link { font-size: 13px; color: var(--blue); font-weight: 600; text-decoration: none; }
+  .doc-item { display: flex; align-items: center; gap: 14px; padding: 16px 24px; border-bottom: 1px solid var(--border); transition: background .2s; cursor: pointer; }
+  .doc-item:last-child { border-bottom: none; }
+  .doc-item:hover { background: var(--off-white); }
+  .doc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
   .doc-info { flex: 1; }
-  .doc-name { font-size: 15px; font-weight: 600; color: var(--navy); }
+  .doc-name { font-size: 14px; font-weight: 600; color: var(--navy); }
   .doc-meta { font-size: 12px; color: var(--gray); margin-top: 3px; }
-
-  .doc-badge {
-    font-size: 11px; font-weight: 700; padding: 4px 10px;
-    border-radius: 100px; white-space: nowrap;
-  }
-  .badge-ok { background: var(--green-light); color: var(--green); }
-  .badge-alert { background: var(--orange-light); color: var(--orange); }
-  .badge-danger { background: var(--red-light); color: var(--red); }
-  .badge-new { background: var(--sky); color: var(--blue); }
-
-  .doc-arrow { color: var(--gray); font-size: 16px; }
-
-  /* ALERTS */
-  .alert-list { padding: 8px 0; }
-
-  .alert-item {
-    display: flex; align-items: flex-start; gap: 14px;
-    padding: 14px 24px; border-bottom: 1px solid var(--border);
-  }
+  .doc-status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; }
+  .status-ok { background: var(--green-light); color: var(--green); }
+  .status-warn { background: var(--yellow-light); color: var(--yellow); }
+  .status-danger { background: var(--red-light); color: var(--red); }
+  .alert-item { display: flex; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--border); }
   .alert-item:last-child { border-bottom: none; }
-
-  .alert-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    margin-top: 5px; flex-shrink: 0;
-  }
-  .dot-orange { background: var(--orange); }
-  .dot-red { background: var(--red); }
-  .dot-blue { background: var(--blue); }
-  .dot-green { background: var(--green); }
-
-  .alert-title { font-size: 14px; font-weight: 600; color: var(--navy); }
-  .alert-desc { font-size: 12px; color: var(--gray); margin-top: 3px; line-height: 1.5; }
-  .alert-time { font-size: 11px; color: var(--gray); margin-top: 6px; }
-
-  /* QUICK ACTIONS */
-  .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px 24px; }
-
-  .quick-item {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 10px; padding: 20px 12px; border-radius: 14px;
-    background: var(--off-white); border: 1px solid var(--border);
-    cursor: pointer; transition: all .2s; text-align: center;
-  }
-  .quick-item:hover { background: var(--sky); border-color: var(--blue); transform: translateY(-2px); }
-
-  .quick-icon { font-size: 28px; }
-  .quick-label { font-size: 13px; font-weight: 600; color: var(--navy); line-height: 1.3; }
-
-  /* PROGRESS */
-  .progress-section { padding: 20px 24px; }
-  .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .progress-title { font-size: 13px; font-weight: 600; color: var(--navy); }
-  .progress-pct { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .alert-body-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+  .alert-body-desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+  .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px 24px; }
+  .action-btn { display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--white); cursor: pointer; transition: all .2s; text-decoration: none; }
+  .action-btn:hover { border-color: var(--orange); background: var(--orange-light); }
+  .action-icon { font-size: 20px; }
+  .action-text { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .progress-wrap { padding: 20px 24px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+  .progress-label span:first-child { font-weight: 600; color: var(--navy); }
+  .progress-label span:last-child { color: var(--gray); }
   .progress-bar { height: 8px; background: var(--border); border-radius: 100px; overflow: hidden; margin-bottom: 16px; }
-  .progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--blue), var(--orange)); transition: width .5s ease; }
-  .progress-hint { font-size: 12px; color: var(--gray); }
-
-  /* ADD DOC MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-  .modal-overlay.active { display: flex; }
-  .modal { background: var(--white); border-radius: 20px; padding: 40px; width: 100%; max-width: 520px; position: relative; animation: modalIn 0.3s ease-out; }
-  @keyframes modalIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--gray); }
-  .modal-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
-  .modal-sub { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
-
-  .doc-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-  .doc-type-item {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 16px 8px; border-radius: 12px; border: 2px solid var(--border);
-    cursor: pointer; transition: all .2s; text-align: center;
-  }
-  .doc-type-item:hover { border-color: var(--blue); background: var(--sky); }
-  .doc-type-item.selected { border-color: var(--orange); background: var(--orange-light); }
-  .doc-type-emoji { font-size: 24px; }
-  .doc-type-label { font-size: 12px; font-weight: 600; color: var(--navy); }
-
-  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
-  .form-group input { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: border-color .2s; }
-  .form-group input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.1); }
-
-  .upload-area {
-    border: 2px dashed var(--border); border-radius: 12px; padding: 28px;
-    text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 20px;
-  }
-  .upload-area:hover { border-color: var(--blue); background: var(--sky); }
-  .upload-icon { font-size: 32px; margin-bottom: 8px; }
-  .upload-text { font-size: 14px; color: var(--gray); }
-  .upload-text strong { color: var(--blue); }
-
-  .btn-full { width: 100%; padding: 14px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .25s; }
-  .btn-full:hover { background: #E55A1A; }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); }
-    .sidebar.open { transform: translateX(0); }
-    .main { margin-left: 0; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .content { padding: 20px; }
-    .topbar { padding: 16px 20px; }
-    .welcome-emoji { display: none; }
-  }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width .5s ease; }
+  .upgrade-card { margin: 0 24px 24px; background: linear-gradient(135deg, var(--orange) 0%, #E55A1A 100%); border-radius: 14px; padding: 20px; color: white; }
+  .upgrade-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .upgrade-desc { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
+  .upgrade-btn { background: white; color: var(--orange); padding: 8px 18px; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; border: none; cursor: pointer; }
+  .empty-state { text-align: center; padding: 48px 24px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; color: var(--gray); }
+  @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } .content { padding: 20px; } .topbar { padding: 16px 20px; } }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
-  </div>
+<aside class="sidebar">
+  <div class="sidebar-logo"><a href="index.html" class="logo">MeuDoc<span>.app</span></a></div>
   <div class="sidebar-user">
-    <div class="user-avatar" id="userAvatarSidebar">E</div>
+    <div class="user-avatar" id="sidebarAvatar">?</div>
     <div>
-      <div class="user-name" id="userNameSidebar">Emanuel Silva</div>
+      <div class="user-name" id="sidebarNome">Carregando...</div>
       <div class="user-plan">Plano Gratuito</div>
     </div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section-title">Principal</div>
-    <a class="nav-item active" href="dashboard.html">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Painel</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">📁</span>
-      <span class="nav-label">Meus Documentos</span>
-      <span class="nav-badge">5</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">🔔</span>
-      <span class="nav-label">Alertas</span>
-      <span class="nav-badge">2</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">📅</span>
-      <span class="nav-label">Agendamentos</span>
-    </a>
+    <a class="nav-item active" href="dashboard.html"><span class="nav-icon">🏠</span><span>Painel</span></a>
+    <a class="nav-item" href="documentos.html"><span class="nav-icon">📁</span><span style="flex:1">Meus Documentos</span><span class="nav-badge" id="badgeDocs">0</span></a>
+    <a class="nav-item" href="alertas.html"><span class="nav-icon">🔔</span><span style="flex:1">Alertas</span><span class="nav-badge" id="badgeAlertas">0</span></a>
+    <a class="nav-item" href="agendamentos.html"><span class="nav-icon">📅</span><span>Agendamentos</span></a>
     <div class="nav-section-title">Ferramentas</div>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">🤖</span>
-      <span class="nav-label">Assistente IA</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">👨‍👩‍👧</span>
-      <span class="nav-label">Família</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">📜</span>
-      <span class="nav-label">Histórico</span>
-    </a>
+    <a class="nav-item" href="#"><span class="nav-icon">🤖</span><span>Assistente IA</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👨‍👩‍👧</span><span>Família</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">📜</span><span>Histórico</span></a>
     <div class="nav-section-title">Conta</div>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">👤</span>
-      <span class="nav-label">Perfil</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">⚙️</span>
-      <span class="nav-label">Configurações</span>
-    </a>
+    <a class="nav-item" href="perfil.html"><span class="nav-icon">👤</span><span>Perfil</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Configurações</span></a>
   </nav>
   <div class="sidebar-footer">
-    <a class="nav-item" href="index.html" style="color: rgba(255,255,255,0.4);">
-      <span class="nav-icon">🚪</span>
-      <span class="nav-label">Sair</span>
-    </a>
+    <a class="nav-item" onclick="fazerLogout()" style="color: rgba(255,255,255,0.4); cursor:pointer;"><span class="nav-icon">🚪</span><span>Sair</span></a>
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- TOPBAR -->
   <header class="topbar">
     <div>
       <div class="topbar-title">Painel</div>
-      <div class="topbar-sub">Bem-vindo de volta, <span id="topbarName">Emanuel</span>!</div>
-    </div>
-    <div class="topbar-actions">
-      <div class="btn-icon" title="Notificações">
-        🔔
-        <div class="notif-dot"></div>
-      </div>
-      <div class="btn-icon" title="Ajuda">❓</div>
-      <button class="btn-primary" onclick="abrirModal()">
-        + Adicionar Documento
-      </button>
+      <div class="topbar-sub" id="topbarSub">Bem-vindo ao MeuDoc.app</div>
     </div>
   </header>
-
-  <!-- CONTENT -->
   <div class="content">
-
-    <!-- WELCOME -->
     <div class="welcome-banner">
-      <div class="welcome-text">
-        <div class="welcome-greeting">Domingo, 01 de março de 2026</div>
-        <div class="welcome-name">Olá, <span id="welcomeName">Emanuel</span>! 👋</div>
-        <div class="welcome-sub">Você tem 2 documentos que precisam de atenção.</div>
-      </div>
-      <div class="welcome-emoji">📋</div>
+      <div class="welcome-name" id="welcomeName">Olá! 👋</div>
+      <div class="welcome-sub">Aqui está um resumo dos seus documentos hoje.</div>
+      <div class="welcome-badge"><span>⚡</span><span class="welcome-badge-text">Plano Gratuito</span></div>
     </div>
-
-    <!-- STATS -->
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon blue">📁</div>
-        <div>
-          <div class="stat-number">5</div>
-          <div class="stat-label">Documentos salvos</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon green">✅</div>
-        <div>
-          <div class="stat-number">3</div>
-          <div class="stat-label">Em dia</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon orange">⚠️</div>
-        <div>
-          <div class="stat-number">2</div>
-          <div class="stat-label">Precisam de atenção</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon blue">🤖</div>
-        <div>
-          <div class="stat-number">5/5</div>
-          <div class="stat-label">Perguntas hoje</div>
-        </div>
-      </div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--sky);">📁</div><div><div class="stat-num" id="statDocs">—</div><div class="stat-label">Documentos</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--green-light);">✅</div><div><div class="stat-num" id="statOk">—</div><div class="stat-label">Em dia</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--orange-light);">⚠️</div><div><div class="stat-num" id="statWarn">—</div><div class="stat-label">Atenção</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--red-light);">🚨</div><div><div class="stat-num" id="statDanger">—</div><div class="stat-label">Urgentes</div></div></div>
     </div>
-
-    <!-- MAIN GRID -->
     <div class="main-grid">
-
-      <!-- LEFT -->
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-
-        <!-- DOCUMENTS -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Meus Documentos</div>
-            <a href="#" class="card-action">Ver todos →</a>
-          </div>
-          <div class="doc-list">
-            <div class="doc-row">
-              <div class="doc-emoji-wrap">🪪</div>
-              <div class="doc-info">
-                <div class="doc-name">Carteira de Identidade (CIN)</div>
-                <div class="doc-meta">Emitido em Jan 2024 • Válido por 10 anos</div>
-              </div>
-              <span class="doc-badge badge-new">Novo</span>
-              <span class="doc-arrow">›</span>
-            </div>
-            <div class="doc-row">
-              <div class="doc-emoji-wrap">🚗</div>
-              <div class="doc-info">
-                <div class="doc-name">CNH — Categoria B</div>
-                <div class="doc-meta">Vence em 15/04/2026 • 45 dias restantes</div>
-              </div>
-              <span class="doc-badge badge-alert">Vence em breve</span>
-              <span class="doc-arrow">›</span>
-            </div>
-            <div class="doc-row">
-              <div class="doc-emoji-wrap">✈️</div>
-              <div class="doc-info">
-                <div class="doc-name">Passaporte</div>
-                <div class="doc-meta">Vence em 03/03/2026 • 2 dias restantes</div>
-              </div>
-              <span class="doc-badge badge-danger">Urgente</span>
-              <span class="doc-arrow">›</span>
-            </div>
-            <div class="doc-row">
-              <div class="doc-emoji-wrap">💉</div>
-              <div class="doc-info">
-                <div class="doc-name">Carteira de Vacinação</div>
-                <div class="doc-meta">Atualizada em Dez 2025</div>
-              </div>
-              <span class="doc-badge badge-ok">Em dia</span>
-              <span class="doc-arrow">›</span>
-            </div>
-            <div class="doc-row">
-              <div class="doc-emoji-wrap">📋</div>
-              <div class="doc-info">
-                <div class="doc-name">CPF</div>
-                <div class="doc-meta">Situação regular • Receita Federal</div>
-              </div>
-              <span class="doc-badge badge-ok">Regular</span>
-              <span class="doc-arrow">›</span>
-            </div>
+          <div class="card-header"><div class="card-title">Documentos recentes</div><a class="card-link" href="documentos.html">Ver todos</a></div>
+          <div id="docsLista"><div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">Nenhum documento ainda</div><div class="empty-sub">Adicione seu primeiro documento para começar</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Ações rápidas</div></div>
+          <div class="actions-grid">
+            <a class="action-btn" href="documentos.html"><span class="action-icon">➕</span><span class="action-text">Adicionar documento</span></a>
+            <a class="action-btn" href="#"><span class="action-icon">🤖</span><span class="action-text">Perguntar à IA</span></a>
+            <a class="action-btn" href="agendamentos.html"><span class="action-icon">📅</span><span class="action-text">Agendar serviço</span></a>
+            <a class="action-btn" href="alertas.html"><span class="action-icon">🔔</span><span class="action-text">Ver alertas</span></a>
           </div>
         </div>
-
-        <!-- PROFILE COMPLETION -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Complete seu perfil</div>
-            <span style="font-size: 13px; color: var(--gray);">3 de 5 etapas</span>
-          </div>
-          <div class="progress-section">
-            <div class="progress-label">
-              <span class="progress-title">Progresso do perfil</span>
-              <span class="progress-pct">60%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 60%"></div>
-            </div>
-            <div class="progress-hint">Complete seu perfil para aproveitar todos os recursos do MeuDoc.app</div>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
-                <span style="color: var(--green);">✅</span> Conta criada
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
-                <span style="color: var(--green);">✅</span> Primeiro documento adicionado
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
-                <span style="color: var(--green);">✅</span> Perfil preenchido
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray);">
-                <span>⭕</span> Verificar e-mail
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray);">
-                <span>⭕</span> Ativar alertas de vencimento
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
-
-      <!-- RIGHT -->
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-
-        <!-- ALERTS -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Alertas</div>
-            <a href="#" class="card-action">Ver todos</a>
-          </div>
-          <div class="alert-list">
-            <div class="alert-item">
-              <div class="alert-dot dot-red"></div>
-              <div>
-                <div class="alert-title">Passaporte vence em 2 dias</div>
-                <div class="alert-desc">Renove seu passaporte urgentemente na Polícia Federal mais próxima.</div>
-                <div class="alert-time">Hoje, 08:00</div>
-              </div>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot dot-orange"></div>
-              <div>
-                <div class="alert-title">CNH vence em 45 dias</div>
-                <div class="alert-desc">Agende sua renovação no Detran para não ser pego de surpresa.</div>
-                <div class="alert-time">Ontem, 09:00</div>
-              </div>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot dot-blue"></div>
-              <div>
-                <div class="alert-title">Nova CIN disponível</div>
-                <div class="alert-desc">Você pode emitir a nova Carteira de Identidade Nacional gratuitamente.</div>
-                <div class="alert-time">3 dias atrás</div>
-              </div>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot dot-green"></div>
-              <div>
-                <div class="alert-title">Vacinação em dia</div>
-                <div class="alert-desc">Sua carteira de vacinação está atualizada. Próxima dose em Jun 2026.</div>
-                <div class="alert-time">1 semana atrás</div>
-              </div>
-            </div>
-          </div>
+          <div class="card-header"><div class="card-title">Alertas recentes</div><a class="card-link" href="alertas.html">Ver todos</a></div>
+          <div id="alertasLista"><div class="empty-state"><div class="empty-icon">🔔</div><div class="empty-title">Nenhum alerta</div><div class="empty-sub">Tudo em dia por aqui!</div></div></div>
         </div>
-
-        <!-- QUICK ACTIONS -->
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Ações Rápidas</div>
+          <div class="card-header"><div class="card-title">Uso do plano</div></div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Documentos</span><span id="progressDocsLabel">0 / 5</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progressDocs" style="width:0%;background:var(--blue);"></div></div>
           </div>
-          <div class="quick-grid">
-            <div class="quick-item" onclick="abrirModal()">
-              <div class="quick-icon">➕</div>
-              <div class="quick-label">Adicionar documento</div>
-            </div>
-            <div class="quick-item">
-              <div class="quick-icon">🤖</div>
-              <div class="quick-label">Perguntar ao assistente</div>
-            </div>
-            <div class="quick-item">
-              <div class="quick-icon">📅</div>
-              <div class="quick-label">Agendar atendimento</div>
-            </div>
-            <div class="quick-item">
-              <div class="quick-icon">👨‍👩‍👧</div>
-              <div class="quick-label">Adicionar familiar</div>
-            </div>
+          <div class="upgrade-card">
+            <div class="upgrade-title">⚡ Upgrade para Premium</div>
+            <div class="upgrade-desc">Documentos ilimitados, IA sem limites por apenas R$10,90/mês.</div>
+            <button class="upgrade-btn">Fazer upgrade</button>
           </div>
         </div>
-
-        <!-- UPGRADE -->
-        <div style="background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%); border-radius: 16px; padding: 24px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 12px;">⚡</div>
-          <div style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 8px;">Upgrade para Premium</div>
-          <div style="font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; line-height: 1.5;">Documentos ilimitados, IA sem limite e módulo família por apenas R$10,90/mês</div>
-          <button class="btn-primary" style="width: 100%; justify-content: center;">Assinar agora</button>
-        </div>
-
       </div>
     </div>
-  </div>
-</div>
-
-<!-- MODAL ADICIONAR DOCUMENTO -->
-<div class="modal-overlay" id="modalDoc">
-  <div class="modal">
-    <button class="modal-close" onclick="fecharModal()">×</button>
-    <div class="modal-title">Adicionar Documento</div>
-    <p class="modal-sub">Escolha o tipo e preencha os dados do documento.</p>
-    <div class="doc-types">
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">🪪</div><div class="doc-type-label">RG / CIN</div></div>
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">🚗</div><div class="doc-type-label">CNH</div></div>
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">✈️</div><div class="doc-type-label">Passaporte</div></div>
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">💉</div><div class="doc-type-label">Vacinação</div></div>
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">📋</div><div class="doc-type-label">CPF</div></div>
-      <div class="doc-type-item" onclick="selecionarTipo(this)"><div class="doc-type-emoji">📄</div><div class="doc-type-label">Outro</div></div>
-    </div>
-    <div class="form-group">
-      <label>Nome do documento</label>
-      <input type="text" placeholder="Ex: CNH — Categoria B">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-      <div class="form-group">
-        <label>Data de emissão</label>
-        <input type="date">
-      </div>
-      <div class="form-group">
-        <label>Data de vencimento</label>
-        <input type="date">
-      </div>
-    </div>
-    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📎</div>
-      <div class="upload-text">Clique para anexar o documento<br><strong>ou arraste aqui</strong></div>
-      <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf">
-    </div>
-    <button class="btn-full" onclick="fecharModal()">Salvar documento</button>
   </div>
 </div>
 
 <script>
-  // Modal
-  function abrirModal() {
-    document.getElementById('modalDoc').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  function fecharModal() {
-    document.getElementById('modalDoc').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  document.getElementById('modalDoc').addEventListener('click', function(e) {
-    if (e.target === this) fecharModal();
+const { createClient } = supabase;
+const sb = createClient('https://gwepkpbtcwvgxfgqhymb.supabase.co','sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J');
+
+window.addEventListener('load', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return window.location.href = 'login.html';
+  const usuario = session.user;
+
+  const { data: perfil } = await sb.from('profiles').select('*').eq('id', usuario.id).single();
+  const nome = perfil?.nome || usuario.email.split('@')[0];
+  const nomeCompleto = perfil ? (perfil.nome + ' ' + (perfil.sobrenome||'')).trim() : nome;
+
+  document.getElementById('sidebarAvatar').textContent = nome.charAt(0).toUpperCase();
+  document.getElementById('sidebarNome').textContent = nomeCompleto;
+  document.getElementById('welcomeName').textContent = 'Olá, ' + nome + '! 👋';
+  document.getElementById('topbarSub').textContent = 'Bem-vindo de volta, ' + nome;
+
+  const { data: docs } = await sb.from('documentos').select('*').eq('user_id', usuario.id).order('created_at', { ascending: false });
+  const documentos = docs || [];
+
+  const hoje = new Date();
+  const em7 = new Date(); em7.setDate(hoje.getDate()+7);
+  const em30 = new Date(); em30.setDate(hoje.getDate()+30);
+
+  let ok=0, warn=0, danger=0;
+  documentos.forEach(d => {
+    if (!d.data_vencimento) { ok++; return; }
+    const v = new Date(d.data_vencimento);
+    if (v <= em7) danger++; else if (v <= em30) warn++; else ok++;
   });
 
-  function selecionarTipo(el) {
-    document.querySelectorAll('.doc-type-item').forEach(i => i.classList.remove('selected'));
-    el.classList.add('selected');
+  document.getElementById('statDocs').textContent = documentos.length;
+  document.getElementById('statOk').textContent = ok;
+  document.getElementById('statWarn').textContent = warn;
+  document.getElementById('statDanger').textContent = danger;
+  document.getElementById('badgeDocs').textContent = documentos.length;
+
+  const pct = Math.min((documentos.length/5)*100,100);
+  document.getElementById('progressDocs').style.width = pct+'%';
+  document.getElementById('progressDocsLabel').textContent = documentos.length+' / 5';
+
+  const icones = {'RG':'🪪','CPF':'📋','CNH':'🚗','Passaporte':'✈️','Título de Eleitor':'🗳️','CTPS':'💼','Certidão':'📜','Outro':'📄'};
+
+  if (documentos.length > 0) {
+    document.getElementById('docsLista').innerHTML = documentos.slice(0,5).map(d => {
+      let st='status-ok', sl='Em dia';
+      if (d.data_vencimento) {
+        const v = new Date(d.data_vencimento);
+        if (v<=em7){st='status-danger';sl='Urgente';}
+        else if(v<=em30){st='status-warn';sl='Atenção';}
+      }
+      const ic = icones[d.tipo]||'📄';
+      const vs = d.data_vencimento ? new Date(d.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR') : 'Sem vencimento';
+      return `<div class="doc-item"><div class="doc-icon" style="background:var(--sky);">${ic}</div><div class="doc-info"><div class="doc-name">${d.nome}</div><div class="doc-meta">Vence: ${vs}</div></div><span class="doc-status ${st}">${sl}</span></div>`;
+    }).join('');
   }
 
-  // Animate stats on load
-  document.querySelectorAll('.stat-card, .card').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(16px)';
-    el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
-    setTimeout(() => {
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-    }, 100);
-  });
+  const alertas = documentos.filter(d => d.data_vencimento && new Date(d.data_vencimento) <= em30);
+  document.getElementById('badgeAlertas').textContent = alertas.length;
+
+  if (alertas.length > 0) {
+    document.getElementById('alertasLista').innerHTML = alertas.slice(0,4).map(d => {
+      const v = new Date(d.data_vencimento);
+      const dias = Math.ceil((v-hoje)/(1000*60*60*24));
+      const urgente = dias<=7;
+      return `<div class="alert-item"><div class="alert-dot" style="background:${urgente?'var(--red)':'var(--orange)'};"></div><div><div class="alert-body-title">${d.nome} vence em ${dias} dia${dias!==1?'s':''}!</div><div class="alert-body-desc">Providencie a renovação com antecedência.</div></div></div>`;
+    }).join('');
+  }
+});
+
+async function fazerLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'login.html';
+}
 </script>
 </body>
 </html>
+
