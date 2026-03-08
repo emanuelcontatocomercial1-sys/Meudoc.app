@@ -37,10 +37,13 @@
   .sidebar-footer{padding:16px 12px;border-top:1px solid rgba(255,255,255,0.08);}
   .main{margin-left:var(--sidebar-width);flex:1;display:flex;flex-direction:column;}
   .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
-  .topbar-left .topbar-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--navy);}
-  .topbar-left .topbar-sub{font-size:13px;color:var(--gray);margin-top:2px;}
-  .btn-primary{background:var(--orange);color:var(--white);padding:10px 20px;border-radius:10px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .25s;}
+  .topbar-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--navy);}
+  .topbar-sub{font-size:13px;color:var(--gray);margin-top:2px;}
+  .topbar-actions{display:flex;gap:10px;}
+  .btn-primary{background:var(--orange);color:var(--white);padding:10px 20px;border-radius:10px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:8px;}
   .btn-primary:hover{background:#E55A1A;}
+  .btn-outline{background:var(--white);color:var(--navy);padding:10px 20px;border-radius:10px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;border:1.5px solid var(--border);cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:8px;}
+  .btn-outline:hover{border-color:var(--navy);background:var(--sky);}
   .content{padding:32px;flex:1;}
   .filters-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
   .filter-tabs{display:flex;gap:8px;flex-wrap:wrap;}
@@ -74,10 +77,11 @@
   .empty-icon{font-size:56px;margin-bottom:16px;}
   .empty-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px;}
   .empty-sub{font-size:15px;color:var(--gray);}
+
   /* MODAL */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
   .modal-overlay.active{display:flex;}
-  .modal{background:var(--white);border-radius:20px;padding:40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease-out;}
+  .modal{background:var(--white);border-radius:20px;padding:40px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease-out;}
   @keyframes modalIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
   .modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray);}
   .modal-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px;}
@@ -92,13 +96,34 @@
   .btn-full:disabled{opacity:0.7;cursor:not-allowed;}
   .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle;}
   @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* OCR AREA */
+  .ocr-area{border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:24px;position:relative;overflow:hidden;}
+  .ocr-area:hover{border-color:var(--orange);background:var(--orange-light);}
+  .ocr-area.dragover{border-color:var(--orange);background:var(--orange-light);transform:scale(1.01);}
+  .ocr-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .ocr-icon{font-size:36px;margin-bottom:10px;}
+  .ocr-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .ocr-sub{font-size:13px;color:var(--gray);}
+  .ocr-preview{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
+  .ocr-processing{display:none;flex-direction:column;align-items:center;gap:12px;padding:20px;}
+  .ocr-processing-icon{font-size:40px;animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+  .ocr-processing-text{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--navy);}
+  .ocr-processing-sub{font-size:13px;color:var(--gray);}
+  .ocr-success{background:var(--green-light);border:1px solid rgba(0,179,126,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:var(--green);font-weight:600;display:none;align-items:center;gap:8px;}
+  .divider-or{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .divider-or-line{flex:1;height:1px;background:var(--border);}
+  .divider-or-text{font-size:12px;color:var(--gray);font-weight:600;}
+
   /* VIEW MODAL */
   .view-field{margin-bottom:16px;}
   .view-label{font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
   .view-value{font-size:15px;color:var(--navy);font-weight:500;}
   .btn-danger{background:var(--red-light);color:var(--red);border:1px solid rgba(229,57,53,0.2);padding:10px 20px;border-radius:10px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
   .btn-danger:hover{background:var(--red);color:white;}
-  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.content{padding:20px;}.topbar{padding:16px 20px;}}
+
+  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;}.content{padding:20px;}.topbar{padding:16px 20px;}.topbar-actions .btn-outline span:last-child{display:none;}}
 </style>
 </head>
 <body>
@@ -133,11 +158,14 @@
 
 <div class="main">
   <header class="topbar">
-    <div class="topbar-left">
+    <div>
       <div class="topbar-title">Meus Documentos</div>
       <div class="topbar-sub" id="topbarSub">Carregando...</div>
     </div>
-    <button class="btn-primary" onclick="abrirModal()">+ Adicionar documento</button>
+    <div class="topbar-actions">
+      <button class="btn-outline" onclick="abrirModalFoto()">📷 <span>Fotografar documento</span></button>
+      <button class="btn-primary" onclick="abrirModal()">+ Adicionar manual</button>
+    </div>
   </header>
 
   <div class="content">
@@ -164,19 +192,68 @@
   </div>
 </div>
 
-<!-- MODAL ADICIONAR -->
+<!-- MODAL FOTOGRAFAR (OCR) -->
+<div class="modal-overlay" id="modalFoto">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModalFoto()">×</button>
+    <div class="modal-title">📷 Fotografar documento</div>
+    <div class="modal-sub">Tire uma foto ou envie uma imagem — a IA preenche tudo automaticamente.</div>
+
+    <div class="ocr-success" id="ocrSuccess">✅ Dados preenchidos automaticamente pela IA!</div>
+
+    <div id="ocrUploadArea">
+      <div class="ocr-area" id="ocrArea">
+        <input type="file" accept="image/*" capture="environment" id="ocrInput" onchange="processarImagem(this)">
+        <div class="ocr-icon">📷</div>
+        <div class="ocr-title">Toque para fotografar ou enviar imagem</div>
+        <div class="ocr-sub">JPG, PNG • Máx. 5MB • A IA lê e preenche os campos</div>
+        <img id="ocrPreview" class="ocr-preview">
+      </div>
+
+      <div class="ocr-processing" id="ocrProcessing">
+        <div class="ocr-processing-icon">🤖</div>
+        <div class="ocr-processing-text">IA analisando o documento...</div>
+        <div class="ocr-processing-sub">Isso leva apenas alguns segundos</div>
+      </div>
+    </div>
+
+    <div class="divider-or"><div class="divider-or-line"></div><div class="divider-or-text">DADOS DO DOCUMENTO</div><div class="divider-or-line"></div></div>
+
+    <div class="form-group"><label>Nome do documento *</label><input type="text" id="fotoNome" placeholder="Ex: CNH de João Silva"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo *</label>
+        <select id="fotoTipo">
+          <option value="">Selecione</option>
+          <option value="RG">RG</option>
+          <option value="CPF">CPF</option>
+          <option value="CNH">CNH</option>
+          <option value="Passaporte">Passaporte</option>
+          <option value="Título de Eleitor">Título de Eleitor</option>
+          <option value="CTPS">Carteira de Trabalho</option>
+          <option value="Certidão">Certidão</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Número</label><input type="text" id="fotoNumero" placeholder="Número do documento"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Data de emissão</label><input type="date" id="fotoEmissao"></div>
+      <div class="form-group"><label>Data de vencimento</label><input type="date" id="fotoVencimento"></div>
+    </div>
+    <div class="form-group"><label>Órgão emissor</label><input type="text" id="fotoOrgao" placeholder="Ex: SSP/BA"></div>
+    <button class="btn-full" id="btnSalvarFoto" onclick="salvarDocumentoFoto()">Salvar documento</button>
+  </div>
+</div>
+
+<!-- MODAL MANUAL -->
 <div class="modal-overlay" id="modalAdicionar">
   <div class="modal">
     <button class="modal-close" onclick="fecharModal()">×</button>
     <div class="modal-title">Adicionar documento</div>
     <div class="modal-sub">Preencha os dados do seu documento.</div>
-    <div class="form-group">
-      <label>Nome do documento *</label>
-      <input type="text" id="docNome" placeholder="Ex: CNH de João Silva">
-    </div>
+    <div class="form-group"><label>Nome do documento *</label><input type="text" id="docNome" placeholder="Ex: CNH de João Silva"></div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Tipo *</label>
+      <div class="form-group"><label>Tipo *</label>
         <select id="docTipo">
           <option value="">Selecione</option>
           <option value="RG">RG</option>
@@ -189,8 +266,7 @@
           <option value="Outro">Outro</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Categoria</label>
+      <div class="form-group"><label>Categoria</label>
         <select id="docCategoria">
           <option value="Identidade">Identidade</option>
           <option value="Trânsito">Trânsito</option>
@@ -202,29 +278,14 @@
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Número do documento</label>
-        <input type="text" id="docNumero" placeholder="Ex: 1234567">
-      </div>
-      <div class="form-group">
-        <label>Órgão emissor</label>
-        <input type="text" id="docOrgao" placeholder="Ex: Detran BA">
-      </div>
+      <div class="form-group"><label>Número</label><input type="text" id="docNumero" placeholder="Ex: 1234567"></div>
+      <div class="form-group"><label>Órgão emissor</label><input type="text" id="docOrgao" placeholder="Ex: Detran BA"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Data de emissão</label>
-        <input type="date" id="docEmissao">
-      </div>
-      <div class="form-group">
-        <label>Data de vencimento</label>
-        <input type="date" id="docVencimento">
-      </div>
+      <div class="form-group"><label>Data de emissão</label><input type="date" id="docEmissao"></div>
+      <div class="form-group"><label>Data de vencimento</label><input type="date" id="docVencimento"></div>
     </div>
-    <div class="form-group">
-      <label>Observações</label>
-      <input type="text" id="docObs" placeholder="Informações adicionais...">
-    </div>
+    <div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Informações adicionais..."></div>
     <button class="btn-full" id="btnSalvar" onclick="salvarDocumento()">Salvar documento</button>
   </div>
 </div>
@@ -243,8 +304,6 @@ const sb = createClient('https://gwepkpbtcwvgxfgqhymb.supabase.co','sb_publishab
 
 let usuario = null;
 let todosDocumentos = [];
-let filtroAtual = 'todos';
-
 const icones = {'RG':'🪪','CPF':'📋','CNH':'🚗','Passaporte':'✈️','Título de Eleitor':'🗳️','CTPS':'💼','Certidão':'📜','Outro':'📄'};
 const cores = {'RG':'#E8F2FF','CPF':'#E6FAF4','CNH':'#FEF0E7','Passaporte':'#EDE9FE','Título de Eleitor':'#FFF7ED','CTPS':'#F0FDF4','Certidão':'#FEF9C3','Outro':'#F7F9FC'};
 
@@ -252,76 +311,195 @@ window.addEventListener('load', async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return window.location.href = 'login.html';
   usuario = session.user;
-
-  const { data: perfil } = await sb.from('profiles').select('*').eq('id', usuario.id).single();
-  const nome = perfil?.nome || usuario.email.split('@')[0];
+  const { data: p } = await sb.from('profiles').select('*').eq('id', usuario.id).single();
+  const nome = p?.nome || usuario.email.split('@')[0];
   document.getElementById('sidebarAvatar').textContent = nome.charAt(0).toUpperCase();
-  document.getElementById('sidebarNome').textContent = perfil ? (perfil.nome+' '+(perfil.sobrenome||'')).trim() : nome;
-
+  document.getElementById('sidebarNome').textContent = p ? (p.nome+' '+(p.sobrenome||'')).trim() : nome;
   await carregarDocumentos();
 });
 
 async function carregarDocumentos() {
-  const { data, error } = await sb.from('documentos').select('*').eq('user_id', usuario.id).order('created_at', { ascending: false });
+  const { data } = await sb.from('documentos').select('*').eq('user_id', usuario.id).order('created_at', { ascending: false });
   todosDocumentos = data || [];
   document.getElementById('badgeDocs').textContent = todosDocumentos.length;
   document.getElementById('topbarSub').textContent = `${todosDocumentos.length} documento${todosDocumentos.length !== 1 ? 's' : ''} salvos`;
   renderizarDocs(todosDocumentos);
 }
 
-function getStatus(vencimento) {
-  if (!vencimento) return { cls: 'status-none', label: 'Sem vencimento' };
-  const hoje = new Date();
-  const v = new Date(vencimento);
+function getStatus(v) {
+  if (!v) return { cls:'status-none', label:'Sem vencimento' };
+  const hoje = new Date(), vd = new Date(v);
   const em7 = new Date(); em7.setDate(hoje.getDate()+7);
   const em30 = new Date(); em30.setDate(hoje.getDate()+30);
-  if (v <= em7) return { cls: 'status-danger', label: 'Urgente' };
-  if (v <= em30) return { cls: 'status-warn', label: 'Atenção' };
-  return { cls: 'status-ok', label: 'Em dia' };
+  if (vd<=em7) return {cls:'status-danger',label:'Urgente'};
+  if (vd<=em30) return {cls:'status-warn',label:'Atenção'};
+  return {cls:'status-ok',label:'Em dia'};
 }
 
 function renderizarDocs(docs) {
   const grid = document.getElementById('docsGrid');
-  if (docs.length === 0) {
-    grid.innerHTML = `<div class="empty-full"><div class="empty-icon">📁</div><div class="empty-title">Nenhum documento encontrado</div><div class="empty-sub">Clique em "Adicionar documento" para começar</div></div>`;
+  if (!docs.length) {
+    grid.innerHTML = `<div class="empty-full"><div class="empty-icon">📁</div><div class="empty-title">Nenhum documento ainda</div><div class="empty-sub">Clique em "Fotografar documento" para adicionar com IA ou "Adicionar manual"</div></div>`;
     return;
   }
-  const cards = docs.map(doc => {
-    const st = getStatus(doc.data_vencimento);
-    const ic = icones[doc.tipo] || '📄';
-    const cor = cores[doc.tipo] || '#F7F9FC';
-    const vs = doc.data_vencimento ? new Date(doc.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR') : '—';
-    return `<div class="doc-card" onclick="verDoc('${doc.id}')">
+  grid.innerHTML = docs.map(d => {
+    const st = getStatus(d.data_vencimento);
+    const ic = icones[d.tipo]||'📄';
+    const cor = cores[d.tipo]||'#F7F9FC';
+    const vs = d.data_vencimento ? new Date(d.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR') : '—';
+    return `<div class="doc-card" onclick="verDoc('${d.id}')">
       <div class="doc-card-header">
         <div class="doc-card-icon" style="background:${cor};">${ic}</div>
-        <button class="doc-card-menu" onclick="event.stopPropagation();deletarDoc('${doc.id}','${doc.nome}')">⋯</button>
+        <button class="doc-card-menu" onclick="event.stopPropagation();deletarDoc('${d.id}','${d.nome}')">⋯</button>
       </div>
       <div class="doc-card-body">
-        <div class="doc-card-nome">${doc.nome}</div>
-        <div class="doc-card-tipo">${doc.tipo || 'Documento'}</div>
+        <div class="doc-card-nome">${d.nome}</div>
+        <div class="doc-card-tipo">${d.tipo||'Documento'}</div>
         <div class="doc-card-footer">
           <span class="doc-status ${st.cls}">${st.label}</span>
           <span class="doc-venc">${vs}</span>
         </div>
       </div>
     </div>`;
-  }).join('');
-  grid.innerHTML = cards + `<div class="add-card" onclick="abrirModal()"><div class="add-icon">➕</div><div class="add-text">Adicionar documento</div></div>`;
+  }).join('') + `<div class="add-card" onclick="abrirModalFoto()"><div class="add-icon">📷</div><div class="add-text">Fotografar documento</div></div>`;
 }
 
 function filtrar(tipo, el) {
-  filtroAtual = tipo;
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  const filtrados = tipo === 'todos' ? todosDocumentos : todosDocumentos.filter(d => d.tipo === tipo || (d.categoria === tipo));
-  renderizarDocs(filtrados);
+  renderizarDocs(tipo==='todos' ? todosDocumentos : todosDocumentos.filter(d=>d.tipo===tipo||d.categoria===tipo));
 }
 
 function buscar(q) {
-  const r = todosDocumentos.filter(d => d.nome.toLowerCase().includes(q.toLowerCase()) || (d.tipo||'').toLowerCase().includes(q.toLowerCase()));
-  renderizarDocs(r);
+  renderizarDocs(todosDocumentos.filter(d=>d.nome.toLowerCase().includes(q.toLowerCase())||(d.tipo||'').toLowerCase().includes(q.toLowerCase())));
 }
 
+// OCR MODAL
+function abrirModalFoto() {
+  document.getElementById('modalFoto').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalFoto() {
+  document.getElementById('modalFoto').classList.remove('active');
+  document.body.style.overflow = '';
+  document.getElementById('ocrPreview').style.display = 'none';
+  document.getElementById('ocrProcessing').style.display = 'none';
+  document.getElementById('ocrArea').style.display = 'block';
+  document.getElementById('ocrSuccess').style.display = 'none';
+  ['fotoNome','fotoNumero','fotoOrgao','fotoEmissao','fotoVencimento'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fotoTipo').value = '';
+}
+
+async function processarImagem(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Preview
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('ocrPreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  // Mostrar processing
+  document.getElementById('ocrArea').style.pointerEvents = 'none';
+  document.getElementById('ocrProcessing').style.display = 'flex';
+
+  try {
+    // Converter para base64
+    const base64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+
+    const mediaType = file.type || 'image/jpeg';
+
+    // Chamar API Anthropic
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: { type: 'base64', media_type: mediaType, data: base64 }
+            },
+            {
+              type: 'text',
+              text: `Analise este documento brasileiro e extraia as informações. Responda APENAS com JSON válido, sem texto adicional, sem markdown:
+{
+  "nome": "nome completo do titular",
+  "tipo": "RG ou CPF ou CNH ou Passaporte ou Título de Eleitor ou CTPS ou Certidão ou Outro",
+  "numero": "número do documento",
+  "orgao_emissor": "órgão emissor",
+  "data_emissao": "YYYY-MM-DD ou null",
+  "data_vencimento": "YYYY-MM-DD ou null"
+}`
+            }
+          ]
+        }]
+      })
+    });
+
+    const data = await response.json();
+    
+    if (data.content && data.content[0]) {
+      let texto = data.content[0].text.trim();
+      texto = texto.replace(/```json|```/g, '').trim();
+      const info = JSON.parse(texto);
+
+      // Preencher campos
+      if (info.nome) document.getElementById('fotoNome').value = info.nome + ' — ' + (info.tipo||'Documento');
+      if (info.tipo) document.getElementById('fotoTipo').value = info.tipo;
+      if (info.numero) document.getElementById('fotoNumero').value = info.numero;
+      if (info.orgao_emissor) document.getElementById('fotoOrgao').value = info.orgao_emissor;
+      if (info.data_emissao) document.getElementById('fotoEmissao').value = info.data_emissao;
+      if (info.data_vencimento) document.getElementById('fotoVencimento').value = info.data_vencimento;
+
+      document.getElementById('ocrSuccess').style.display = 'flex';
+    }
+
+  } catch(e) {
+    // Se API não disponível, apenas deixa campos para preenchimento manual
+    console.log('OCR indisponível:', e.message);
+    document.getElementById('ocrSuccess').style.display = 'none';
+  }
+
+  document.getElementById('ocrProcessing').style.display = 'none';
+  document.getElementById('ocrArea').style.pointerEvents = 'auto';
+}
+
+async function salvarDocumentoFoto() {
+  const nome = document.getElementById('fotoNome').value.trim();
+  const tipo = document.getElementById('fotoTipo').value;
+  if (!nome || !tipo) return alert('Preencha pelo menos o nome e tipo do documento.');
+  const btn = document.getElementById('btnSalvarFoto');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Salvando...';
+  const { error } = await sb.from('documentos').insert({
+    user_id: usuario.id,
+    nome,
+    tipo,
+    numero: document.getElementById('fotoNumero').value,
+    orgao_emissor: document.getElementById('fotoOrgao').value,
+    data_emissao: document.getElementById('fotoEmissao').value || null,
+    data_vencimento: document.getElementById('fotoVencimento').value || null,
+  });
+  btn.disabled = false; btn.innerHTML = 'Salvar documento';
+  if (error) return alert('Erro: ' + error.message);
+  fecharModalFoto();
+  await carregarDocumentos();
+}
+
+// MODAL MANUAL
 function abrirModal() {
   document.getElementById('modalAdicionar').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -330,95 +508,77 @@ function abrirModal() {
 function fecharModal() {
   document.getElementById('modalAdicionar').classList.remove('active');
   document.body.style.overflow = '';
-  document.getElementById('docNome').value = '';
-  document.getElementById('docTipo').value = '';
-  document.getElementById('docNumero').value = '';
-  document.getElementById('docOrgao').value = '';
-  document.getElementById('docEmissao').value = '';
-  document.getElementById('docVencimento').value = '';
-  document.getElementById('docObs').value = '';
+  ['docNome','docNumero','docOrgao','docEmissao','docVencimento','docObs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('docTipo').value='';
 }
 
 async function salvarDocumento() {
   const nome = document.getElementById('docNome').value.trim();
   const tipo = document.getElementById('docTipo').value;
-  if (!nome || !tipo) return alert('Preencha o nome e tipo do documento.');
-
+  if (!nome||!tipo) return alert('Preencha o nome e tipo do documento.');
   const btn = document.getElementById('btnSalvar');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Salvando...';
-
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Salvando...';
   const { error } = await sb.from('documentos').insert({
-    user_id: usuario.id,
-    nome,
-    tipo,
+    user_id: usuario.id, nome, tipo,
     categoria: document.getElementById('docCategoria').value,
     numero: document.getElementById('docNumero').value,
     orgao_emissor: document.getElementById('docOrgao').value,
-    data_emissao: document.getElementById('docEmissao').value || null,
-    data_vencimento: document.getElementById('docVencimento').value || null,
+    data_emissao: document.getElementById('docEmissao').value||null,
+    data_vencimento: document.getElementById('docVencimento').value||null,
     observacoes: document.getElementById('docObs').value
   });
-
-  btn.disabled = false;
-  btn.innerHTML = 'Salvar documento';
-
-  if (error) return alert('Erro ao salvar: ' + error.message);
-
+  btn.disabled=false; btn.innerHTML='Salvar documento';
+  if (error) return alert('Erro: '+error.message);
   fecharModal();
   await carregarDocumentos();
 }
 
+// VER DOC
 function verDoc(id) {
-  const doc = todosDocumentos.find(d => d.id === id);
-  if (!doc) return;
-  const st = getStatus(doc.data_vencimento);
-  const ic = icones[doc.tipo] || '📄';
-  const vs = doc.data_vencimento ? new Date(doc.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR') : '—';
-  const es = doc.data_emissao ? new Date(doc.data_emissao+'T00:00:00').toLocaleDateString('pt-BR') : '—';
-
+  const d = todosDocumentos.find(x=>x.id===id);
+  if (!d) return;
+  const st = getStatus(d.data_vencimento);
+  const ic = icones[d.tipo]||'📄';
+  const vs = d.data_vencimento ? new Date(d.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR') : '—';
+  const es = d.data_emissao ? new Date(d.data_emissao+'T00:00:00').toLocaleDateString('pt-BR') : '—';
   document.getElementById('modalVerContent').innerHTML = `
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-      <div style="width:56px;height:56px;border-radius:14px;background:${cores[doc.tipo]||'#F7F9FC'};display:flex;align-items:center;justify-content:center;font-size:26px;">${ic}</div>
+      <div style="width:56px;height:56px;border-radius:14px;background:${cores[d.tipo]||'#F7F9FC'};display:flex;align-items:center;justify-content:center;font-size:26px;">${ic}</div>
       <div>
-        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--navy);">${doc.nome}</div>
+        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--navy);">${d.nome}</div>
         <span class="doc-status ${st.cls}" style="margin-top:6px;display:inline-block;">${st.label}</span>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
-      <div class="view-field"><div class="view-label">Tipo</div><div class="view-value">${doc.tipo||'—'}</div></div>
-      <div class="view-field"><div class="view-label">Número</div><div class="view-value">${doc.numero||'—'}</div></div>
-      <div class="view-field"><div class="view-label">Órgão emissor</div><div class="view-value">${doc.orgao_emissor||'—'}</div></div>
+      <div class="view-field"><div class="view-label">Tipo</div><div class="view-value">${d.tipo||'—'}</div></div>
+      <div class="view-field"><div class="view-label">Número</div><div class="view-value">${d.numero||'—'}</div></div>
+      <div class="view-field"><div class="view-label">Órgão emissor</div><div class="view-value">${d.orgao_emissor||'—'}</div></div>
       <div class="view-field"><div class="view-label">Emissão</div><div class="view-value">${es}</div></div>
       <div class="view-field"><div class="view-label">Vencimento</div><div class="view-value">${vs}</div></div>
-      ${doc.observacoes ? `<div class="view-field"><div class="view-label">Observações</div><div class="view-value">${doc.observacoes}</div></div>` : ''}
+      ${d.observacoes?`<div class="view-field"><div class="view-label">Observações</div><div class="view-value">${d.observacoes}</div></div>`:''}
     </div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn-danger" onclick="deletarDoc('${doc.id}','${doc.nome}');fecharModalVer();">🗑️ Excluir documento</button>
-    </div>`;
-
+    <button class="btn-danger" onclick="deletarDoc('${d.id}','${d.nome}');fecharModalVer();">🗑️ Excluir documento</button>`;
   document.getElementById('modalVer').classList.add('active');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 
 function fecharModalVer() {
   document.getElementById('modalVer').classList.remove('active');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
 
 async function deletarDoc(id, nome) {
-  if (!confirm(`Excluir "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  if (!confirm(`Excluir "${nome}"?`)) return;
   await sb.from('documentos').delete().eq('id', id);
   await carregarDocumentos();
 }
 
-document.getElementById('modalAdicionar').addEventListener('click', e => { if (e.target === document.getElementById('modalAdicionar')) fecharModal(); });
-document.getElementById('modalVer').addEventListener('click', e => { if (e.target === document.getElementById('modalVer')) fecharModalVer(); });
+document.getElementById('modalAdicionar').addEventListener('click',e=>{if(e.target===document.getElementById('modalAdicionar'))fecharModal();});
+document.getElementById('modalVer').addEventListener('click',e=>{if(e.target===document.getElementById('modalVer'))fecharModalVer();});
+document.getElementById('modalFoto').addEventListener('click',e=>{if(e.target===document.getElementById('modalFoto'))fecharModalFoto();});
 
-async function fazerLogout() {
-  await sb.auth.signOut();
-  window.location.href = 'login.html';
-}
+async function fazerLogout() { await sb.auth.signOut(); window.location.href='login.html'; }
 </script>
 </body>
 </html>
+
