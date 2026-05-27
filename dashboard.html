@@ -340,6 +340,98 @@
 
   .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 49; }
   .sb-overlay.show { display: block; }
+
+  /* === BOTTOM NAV (inline pra garantir contra cache do Safari) === */
+  .bottom-nav { display: none; }
+  @media (max-width: 900px) {
+    .bottom-nav {
+      display: flex !important;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--branco);
+      border-top: 1px solid var(--borda);
+      padding: 6px 8px calc(8px + env(safe-area-inset-bottom)) 8px;
+      justify-content: space-around;
+      align-items: flex-end;
+      z-index: 999;
+      box-shadow: 0 -4px 20px rgba(15,23,42,0.08);
+    }
+    .content { padding-bottom: 90px !important; }
+  }
+  .bottom-nav .bn-item {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 6px 4px;
+    color: var(--cinza-claro);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--font-display);
+    flex: 1;
+    text-align: center;
+    transition: all 0.2s;
+    min-width: 0;
+  }
+  .bottom-nav .bn-item [data-lucide] { width: 22px; height: 22px; stroke-width: 2; }
+  .bottom-nav .bn-item.active { color: var(--coral); }
+  .bottom-nav .bn-item.active [data-lucide] { stroke-width: 2.5; }
+  .bottom-nav .bn-center {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dark) 100%);
+    color: var(--branco) !important;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    margin-top: -28px;
+    box-shadow: 0 8px 24px rgba(255,90,54,0.5);
+    flex: 0 0 auto;
+    padding: 0;
+  }
+  .bottom-nav .bn-center [data-lucide] { width: 26px; height: 26px; stroke-width: 2.3; color: white; }
+  .bottom-nav .bn-center span { display: none; }
+
+  /* === MOBILE VIBRANTE === */
+  @media (max-width: 640px) {
+    body { background: linear-gradient(180deg, var(--coral-light) 0%, var(--neve) 280px); }
+    .topbar { background: transparent; border-bottom: none; }
+    .greeting h1 {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--noite), var(--coral-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .score-card {
+      box-shadow: 0 12px 32px rgba(255,90,54,0.3) !important;
+    }
+    .kpi {
+      border: none !important;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+      background: var(--branco);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .kpi-streak::before { background: linear-gradient(90deg, var(--coral), var(--sol)); }
+    .kpi:nth-child(3)::before { background: linear-gradient(90deg, var(--menta), var(--menta-dark)); }
+    .kpi:nth-child(4)::before { background: linear-gradient(90deg, var(--alerta), var(--coral)); }
+    .conquista.unlocked {
+      animation: bounce-once 0.6s ease-out;
+    }
+    @keyframes bounce-once {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .carteira { box-shadow: 0 12px 32px rgba(15,23,42,0.25); }
+    .icon-btn {
+      background: var(--branco);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+    }
+  }
 </style>
 </head>
 <body>
