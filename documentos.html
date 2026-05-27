@@ -920,10 +920,11 @@
     }
     const docId = docResult.data.id;
 
-    // Upload das fotos pro Supabase Storage (se houver)
+    // Upload das fotos pro Supabase Storage (se houver imagens novas selecionadas)
     if (imagensSelecionadas.length > 0) {
       btn.textContent = 'Enviando fotos...';
       const updates = {};
+      const erros = [];
       for (let i = 0; i < Math.min(imagensSelecionadas.length, 2); i++) {
         const img = imagensSelecionadas[i];
         const lado = i === 0 ? 'frente' : 'verso';
@@ -933,12 +934,23 @@
           const { error: upErr } = await sb.storage
             .from('documentos')
             .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
-          if (!upErr) updates[`arquivo_${lado}_path`] = path;
-          else console.warn('Upload falhou:', lado, upErr);
-        } catch (e) { console.warn('Erro upload:', e); }
+          if (!upErr) {
+            updates[`arquivo_${lado}_path`] = path;
+          } else {
+            console.error('Upload falhou:', lado, upErr);
+            erros.push(`${lado}: ${upErr.message || JSON.stringify(upErr)}`);
+          }
+        } catch (e) {
+          console.error('Erro upload:', e);
+          erros.push(`${lado}: ${e.message || e}`);
+        }
       }
       if (Object.keys(updates).length > 0) {
-        await sb.from('documentos').update(updates).eq('id', docId);
+        const updResult = await sb.from('documentos').update(updates).eq('id', docId);
+        if (updResult.error) erros.push(`update arquivo_path: ${updResult.error.message}`);
+      }
+      if (erros.length > 0) {
+        alert('Documento salvo, mas houve erro no upload das fotos:\n\n' + erros.join('\n\n') + '\n\nVerifique se o SQL storage_setup.sql foi executado no Supabase.');
       }
     }
 
@@ -968,6 +980,34 @@
     document.getElementById('fCategoria').value = d.categoria || '';
     document.getElementById('fObs').value = d.observacoes || '';
     atualizarDisplayTipo();
+
+    // Limpa imagens selecionadas (vai permitir o user adicionar/trocar fotos)
+    imagensSelecionadas = [];
+
+    // Mostra fotos atuais (se houver) como thumbnails no preview
+    const cont = document.getElementById('previewsContainer');
+    const list = document.getElementById('previewsList');
+    list.innerHTML = '';
+    cont.style.display = 'block';
+    const fotosAtuais = [
+      { lado: 'Frente', path: d.arquivo_frente_path },
+      { lado: 'Verso', path: d.arquivo_verso_path }
+    ].filter(f => f.path);
+
+    if (fotosAtuais.length > 0) {
+      const labels = fotosAtuais.map(f => {
+        const { data } = sb.storage.from('documentos').getPublicUrl(f.path);
+        return `
+          <div style="position:relative; width:84px; height:84px; border-radius:var(--r-md); overflow:hidden; border:1px solid var(--borda);" title="${f.lado} (atual)">
+            <img src="${data?.publicUrl || ''}" style="width:100%; height:100%; object-fit:cover;">
+            <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(15,23,42,0.75); color:#fff; font-size:10px; text-align:center; padding:2px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${f.lado}</div>
+          </div>`;
+      }).join('');
+      list.innerHTML = labels + `<div style="display:flex; align-items:center; color:var(--cinza); font-size:11px; padding:4px 8px;">Foto(s) atual(is) — adicione novas pra substituir</div>`;
+    } else {
+      list.innerHTML = `<div style="color:var(--cinza); font-size:13px;">Nenhuma foto cadastrada ainda. Adicione abaixo:</div>`;
+    }
+
     document.getElementById('modalDoc').classList.add('show');
     lucide.createIcons();
   }
