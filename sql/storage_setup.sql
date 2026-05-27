@@ -60,12 +60,16 @@ using (
 );
 
 
--- 3. Adiciona coluna 'arquivo_frente_path' e 'arquivo_verso_path' em documentos
--- (se ainda nao existir)
+-- 3. Adiciona colunas necessarias em documentos (se ainda nao existirem)
 alter table public.documentos
+  add column if not exists updated_at timestamptz default now(),
   add column if not exists arquivo_frente_path text,
   add column if not exists arquivo_verso_path text,
-  add column if not exists hash_integridade text;
+  add column if not exists hash_integridade text,
+  add column if not exists arquivo_url text;
+
+alter table public.profiles
+  add column if not exists updated_at timestamptz default now();
 
 
 -- 4. Funcao publica pra gerar URL de visualizacao de carteira via QR code
