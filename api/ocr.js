@@ -67,31 +67,50 @@ export default async function handler(req, res) {
     ? `${SYSTEM_PROMPT}\n\nVoce esta vendo ${images.length} fotos do MESMO documento (ex: frente e verso). CONSOLIDE as informacoes de todas as fotos em UM unico JSON. Cada foto pode trazer dados diferentes (frente: foto+nome+numero; verso: filiacao+observacoes; assim por diante). Responda APENAS com o JSON.`
     : `${SYSTEM_PROMPT}\n\nAnalise a imagem e responda APENAS com o JSON dos dados extraidos.`;
 
+  const callGroq = async () => fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: promptText },
+            ...imageContent
+          ]
+        }
+      ],
+      max_tokens: 1024,
+      temperature: 0.1
+    })
+  });
+
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-        messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: promptText },
-              ...imageContent
-            ]
-          }
-        ],
-        max_tokens: 1024,
-        temperature: 0.1
-      })
-    });
+    let response = await callGroq();
+
+    // Retry automatico em rate limit (Groq devolve 429 com try-again hint)
+    if (response.status === 429) {
+      const errBody = await response.clone().json().catch(() => ({}));
+      const retryMsg = errBody?.error?.message || '';
+      // Extrai segundos do hint "try again in X.XXXs"
+      const match = retryMsg.match(/try again in ([\d.]+)s/i);
+      const waitSec = match ? Math.min(parseFloat(match[1]) + 0.5, 6) : 2.5;
+      await new Promise(r => setTimeout(r, waitSec * 1000));
+      response = await callGroq();
+    }
 
     const data = await response.json();
-    if (!response.ok) return res.status(response.status).json({ error: data });
+    if (!response.ok) {
+      // Mensagem amigavel pra rate limit que ainda persistir
+      if (response.status === 429) {
+        return res.status(429).json({ error: { message: 'O servidor da IA está com muito uso agora. Aguarde uns segundos e tente de novo.' } });
+      }
+      return res.status(response.status).json({ error: data });
+    }
 
     const raw = data.choices?.[0]?.message?.content || '{}';
 

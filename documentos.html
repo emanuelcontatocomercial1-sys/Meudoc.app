@@ -523,14 +523,14 @@
     renderPreviews();
   }
 
-  // Comprime imagem pra max 1600px e ~500KB (limite do modelo: ~4MB)
+  // Comprime imagem pra max 1100px e ~150-200KB (reduz tokens consumidos no OCR)
   async function comprimirImagem(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const MAX_DIM = 1600;
+          const MAX_DIM = 1100; // suficiente pra OCR de RG/CNH/CPF
           let w = img.width, h = img.height;
           if (Math.max(w, h) > MAX_DIM) {
             if (w >= h) { h = (h * MAX_DIM) / w; w = MAX_DIM; }
@@ -542,7 +542,7 @@
           ctx.fillStyle = '#fff';
           ctx.fillRect(0, 0, w, h);
           ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
           resolve({
             base64: dataUrl.split(',')[1],
             mediaType: 'image/jpeg',
