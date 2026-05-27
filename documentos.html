@@ -611,14 +611,19 @@
     status.onclick = null;
   }
 
-  async function analisarComIA() {
+  async function analisarComIA(tentativa = 1) {
     if (imagensSelecionadas.length === 0) return;
     cancelAutoAnalyze();
     const btn = document.getElementById('btnAnalyze');
     btn.disabled = true;
     const status = document.getElementById('ocrStatus');
     const span = status.querySelector('span:last-child');
-    span.innerHTML = '<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span> A Bia está lendo o documento...';
+    const msgs = [
+      'A Bia está lendo o documento...',
+      'Analisando os detalhes...',
+      'Quase lá, identificando os dados...'
+    ];
+    span.innerHTML = `<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span> ${tentativa > 1 ? 'Tentando de novo... ' : ''}${msgs[Math.floor(Math.random()*msgs.length)]}`;
     status.classList.add('show');
     try {
       const r = await fetch('/api/ocr', {
@@ -632,17 +637,33 @@
       if (json.data) {
         fillFromOcr(json.data);
       } else {
-        // Mensagem de erro detalhada pra debug
+        // Retry automatico 1x em caso de erro (Groq vision as vezes falha na 1a tentativa)
+        if (tentativa === 1) {
+          return analisarComIA(2);
+        }
         console.error('OCR error response:', json);
-        const msg = json.error?.error?.message || json.error?.message || json.error || 'erro desconhecido';
-        alert('A Bia não conseguiu ler o documento.\n\nMotivo: ' + (typeof msg === 'string' ? msg : JSON.stringify(msg)) + '\n\nPreencha manualmente abaixo.');
+        // Erro inline (nao alert, melhor UX)
+        showFormStep();
+        const msg = json.error?.error?.message || json.error?.message || (typeof json.error === 'string' ? json.error : null) || 'A Bia teve dificuldade com essa foto. Tente outra mais nítida ou preencha manualmente abaixo.';
+        mostrarErroInline(msg);
       }
     } catch (err) {
       status.classList.remove('show');
       btn.disabled = false;
+      if (tentativa === 1) return analisarComIA(2);
       console.error('OCR network error:', err);
-      alert('Erro de conexão ao ler o documento: ' + err.message + '\n\nPreencha manualmente abaixo.');
+      mostrarErroInline('Erro de conexão. Verifique sua internet e tente de novo, ou preencha manualmente.');
     }
+  }
+
+  function mostrarErroInline(msg) {
+    const status = document.getElementById('ocrStatus');
+    status.innerHTML = `<div style="background:var(--perigo-light); color:#991B1B; padding:10px 14px; border-radius:var(--r-md); font-size:13px; display:flex; align-items:flex-start; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${msg}</span></div>`;
+    status.classList.add('show');
+    setTimeout(() => {
+      status.classList.remove('show');
+      status.innerHTML = '<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span><span>A Bia está lendo o documento...</span>';
+    }, 6000);
   }
 
   // Calcula vencimento automaticamente baseado em tipo, emissao e data nascimento
