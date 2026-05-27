@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bia — Sua assistente · MeuDoc.app</title>
+<title>Lia — Sua assistente · MeuDoc.app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -223,7 +223,7 @@
     <a href="documentos.html" class="sb-link"><i data-lucide="folder"></i> Documentos</a>
     <a href="alertas.html" class="sb-link"><i data-lucide="bell"></i> Alertas</a>
     <a href="agendamentos.html" class="sb-link"><i data-lucide="calendar"></i> Agenda</a>
-    <a href="assistente.html" class="sb-link active"><i data-lucide="sparkles"></i> Bia (assistente)</a>
+    <a href="assistente.html" class="sb-link active"><i data-lucide="sparkles"></i> Lia (assistente)</a>
     <div class="sb-section">Conta</div>
     <a href="perfil.html" class="sb-link"><i data-lucide="user"></i> Perfil</a>
   </nav>
@@ -239,10 +239,10 @@
       <button class="menu-toggle-mobile" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
       <div style="display:flex; align-items:center; gap:12px;">
         <div style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--coral-light);">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia" style="width:100%; height:100%; object-fit:cover;">
+          <img src="https://api.dicebear.com/9.x/notionists/svg?seed=lia-meudoc&backgroundColor=ffe5d9" alt="Lia" style="width:100%; height:100%; object-fit:cover;">
         </div>
         <div class="greeting">
-          <h1>Bia · sua assistente</h1>
+          <h1>Lia · sua assistente</h1>
           <p><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--menta); margin-right:6px; animation:pulse 2s infinite;"></span>Online · responde em segundos</p>
         </div>
       </div>
@@ -257,9 +257,9 @@
       <div class="chat-inner" id="chatInner">
         <div class="welcome" id="welcomeBlock">
           <div class="welcome-avatar">
-            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=240&q=90&auto=format&fit=crop" alt="Bia">
+            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=lia-meudoc&backgroundColor=ffe5d9" alt="Lia">
           </div>
-          <h2>Oi! Eu sou a Bia</h2>
+          <h2>Oi! Eu sou a Lia</h2>
           <p>Sua assistente carinhosa de documentos brasileiros. Pode perguntar tudo: como tirar, renovar, valores, prazos, onde fazer. Vou te ajudar passo a passo.</p>
           <div class="suggestions">
             <button class="sugg-card" onclick="enviarSugestao('Como tirar passaporte pela primeira vez?')"><i data-lucide="plane"></i> Como tirar passaporte?</button>
@@ -284,7 +284,7 @@
 <nav class="bottom-nav">
   <a href="dashboard.html" class="bn-item"><i data-lucide="home"></i><span>Início</span></a>
   <a href="documentos.html" class="bn-item"><i data-lucide="folder"></i><span>Docs</span></a>
-  <a href="assistente.html" class="bn-item bn-center active"><i data-lucide="sparkles"></i><span>Bia</span></a>
+  <a href="assistente.html" class="bn-item bn-center active"><i data-lucide="sparkles"></i><span>Lia</span></a>
   <a href="alertas.html" class="bn-item"><i data-lucide="bell"></i><span>Alertas</span></a>
   <a href="perfil.html" class="bn-item"><i data-lucide="user"></i><span>Perfil</span></a>
 </nav>
@@ -334,7 +334,7 @@
   }
 
   function limparHistorico() {
-    if (!confirm('Tem certeza que quer apagar toda a conversa com a Bia?')) return;
+    if (!confirm('Tem certeza que quer apagar toda a conversa com a Lia?')) return;
     conversa = [];
     localStorage.removeItem(STORAGE_KEY());
     document.getElementById('chatInner').innerHTML = '';
@@ -362,8 +362,8 @@
     const userInicial = (profile.nome || currentUser.email)[0].toUpperCase();
     const avatarHtml = isUser
       ? `<div class="msg-avatar user">${userInicial}</div>`
-      : `<div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>`;
-    const nameHtml = isUser ? (profile.nome || 'Você') : 'Bia';
+      : `<div class="msg-avatar"><img src="https://api.dicebear.com/9.x/notionists/svg?seed=lia-meudoc&backgroundColor=ffe5d9" alt="Lia"></div>`;
+    const nameHtml = isUser ? (profile.nome || 'Você') : 'Lia';
     const bodyHtml = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     div.innerHTML = `
       ${avatarHtml}
@@ -414,9 +414,9 @@
     const cta = document.createElement('div');
     cta.className = 'msg bot';
     cta.innerHTML = `
-      <div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>
+      <div class="msg-avatar"><img src="https://api.dicebear.com/9.x/notionists/svg?seed=lia-meudoc&backgroundColor=ffe5d9" alt="Lia"></div>
       <div class="msg-content">
-        <div class="msg-name">Bia</div>
+        <div class="msg-name">Lia</div>
         <div class="msg-bubble" style="background: linear-gradient(135deg, var(--coral-light), var(--lavanda-light)); border-left: 3px solid var(--coral);">
           <strong>Você atingiu o limite de hoje no plano grátis.</strong><br><br>
           Pra continuar conversando comigo sem limites, fazer perguntas detalhadas e ainda receber alertas por WhatsApp, faça upgrade pro <strong>Premium</strong>.
@@ -452,9 +452,9 @@
     tip.className = 'msg bot';
     tip.id = 'typingMsg';
     tip.innerHTML = `
-      <div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>
+      <div class="msg-avatar"><img src="https://api.dicebear.com/9.x/notionists/svg?seed=lia-meudoc&backgroundColor=ffe5d9" alt="Lia"></div>
       <div class="msg-content">
-        <div class="msg-name">Bia</div>
+        <div class="msg-name">Lia</div>
         <div class="typing"><span></span><span></span><span></span></div>
       </div>`;
     inner.appendChild(tip);

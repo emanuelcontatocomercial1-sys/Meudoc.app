@@ -222,7 +222,7 @@
     <a href="documentos.html" class="sb-link active"><i data-lucide="folder"></i> Documentos</a>
     <a href="alertas.html" class="sb-link"><i data-lucide="bell"></i> Alertas</a>
     <a href="agendamentos.html" class="sb-link"><i data-lucide="calendar"></i> Agenda</a>
-    <a href="assistente.html" class="sb-link"><i data-lucide="sparkles"></i> Bia (assistente)</a>
+    <a href="assistente.html" class="sb-link"><i data-lucide="sparkles"></i> Lia (assistente)</a>
     <div class="sb-section">Conta</div>
     <a href="perfil.html" class="sb-link"><i data-lucide="user"></i> Perfil</a>
   </nav>
@@ -266,7 +266,7 @@
 <nav class="bottom-nav">
   <a href="dashboard.html" class="bn-item"><i data-lucide="home"></i><span>Início</span></a>
   <a href="documentos.html" class="bn-item active"><i data-lucide="folder"></i><span>Docs</span></a>
-  <a href="assistente.html" class="bn-item bn-center"><i data-lucide="sparkles"></i><span>Bia</span></a>
+  <a href="assistente.html" class="bn-item bn-center"><i data-lucide="sparkles"></i><span>Lia</span></a>
   <a href="alertas.html" class="bn-item"><i data-lucide="bell"></i><span>Alertas</span></a>
   <a href="perfil.html" class="bn-item"><i data-lucide="user"></i><span>Perfil</span></a>
 </nav>
@@ -295,7 +295,7 @@
             <div class="add-opt-sub">Foto(s) ou PDF</div>
           </label>
         </div>
-        <p style="font-size:12px; color:var(--cinza); margin-top:12px; text-align:center;">Dica: tire foto da <strong>frente e verso</strong> pra Bia ler tudo certo.</p>
+        <p style="font-size:12px; color:var(--cinza); margin-top:12px; text-align:center;">Dica: tire foto da <strong>frente e verso</strong> pra Lia ler tudo certo.</p>
         <div style="text-align:center; margin: 12px 0; color: var(--cinza-claro); font-size: 13px;">ou</div>
         <button class="btn btn-secondary btn-full" onclick="showFormStep()"><i data-lucide="keyboard" class="icon-sm"></i> Preencher manualmente</button>
       </div>
@@ -311,7 +311,7 @@
         </div>
         <div class="ocr-status" id="ocrStatus">
           <span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span>
-          <span>A Bia está lendo o documento...</span>
+          <span>A Lia está lendo o documento...</span>
         </div>
 
         <input type="hidden" id="fDocId">
@@ -497,7 +497,7 @@
           <div class="empty-state">
             <div class="icon-box icon-box-lg coral"><i data-lucide="folder-plus" class="icon-xl"></i></div>
             <h3>Nenhum documento ainda</h3>
-            <p>Comece adicionando RG, CPF, CNH ou qualquer outro documento. A Bia pode ler a foto e preencher tudo automaticamente.</p>
+            <p>Comece adicionando RG, CPF, CNH ou qualquer outro documento. A Lia pode ler a foto e preencher tudo automaticamente.</p>
             <button class="btn btn-primary" onclick="openAddModal()"><i data-lucide="plus" class="icon-sm"></i> Adicionar primeiro documento</button>
           </div>`;
       } else {
@@ -680,7 +680,7 @@
     const status = document.getElementById('ocrStatus');
     const span = status.querySelector('span:last-child');
     const msgs = [
-      'A Bia está lendo o documento...',
+      'A Lia está lendo o documento...',
       'Analisando os detalhes...',
       'Quase lá, identificando os dados...'
     ];
@@ -705,7 +705,7 @@
         console.error('OCR error response:', json);
         // Erro inline (nao alert, melhor UX)
         showFormStep();
-        const msg = json.error?.error?.message || json.error?.message || (typeof json.error === 'string' ? json.error : null) || 'A Bia teve dificuldade com essa foto. Tente outra mais nítida ou preencha manualmente abaixo.';
+        const msg = json.error?.error?.message || json.error?.message || (typeof json.error === 'string' ? json.error : null) || 'A Lia teve dificuldade com essa foto. Tente outra mais nítida ou preencha manualmente abaixo.';
         mostrarErroInline(msg);
       }
     } catch (err) {
@@ -723,7 +723,7 @@
     status.classList.add('show');
     setTimeout(() => {
       status.classList.remove('show');
-      status.innerHTML = '<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span><span>A Bia está lendo o documento...</span>';
+      status.innerHTML = '<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span><span>A Lia está lendo o documento...</span>';
     }, 6000);
   }
 
