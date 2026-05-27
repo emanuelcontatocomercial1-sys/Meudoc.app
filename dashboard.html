@@ -519,8 +519,8 @@
       </div>
     </div>
 
-    <!-- CTA PREMIUM (so plano gratis) -->
-    <div class="page-section" id="ctaPremium" style="display:none;">
+    <!-- CTA PREMIUM (so plano gratis — escondido pra premium/familia via JS) -->
+    <div class="page-section" id="ctaPremium">
       <div style="background: linear-gradient(135deg, var(--coral) 0%, var(--sol) 100%); border-radius: var(--r-lg); padding: 28px; color: var(--branco); position: relative; overflow: hidden;">
         <div style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);"></div>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; position:relative;">
@@ -696,10 +696,10 @@
     document.getElementById('sbAvatar').textContent = nome.charAt(0).toUpperCase();
     const planoLabel = { gratis: 'Plano grátis', premium: 'Premium', familia: 'Família' }[profile.plano] || 'Plano grátis';
     document.getElementById('sbUserPlan').textContent = planoLabel;
-    // CTA Premium so aparece pra plano gratis
+    // CTA Premium aparece por default — esconder so pra premium/familia
     const plano = profile.plano || 'gratis';
-    if (plano === 'gratis') {
-      document.getElementById('ctaPremium').style.display = 'block';
+    if (plano === 'premium' || plano === 'familia') {
+      document.getElementById('ctaPremium').style.display = 'none';
     }
   }
 
