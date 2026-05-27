@@ -1,23 +1,18 @@
 // OCR de documentos brasileiros via Groq (Llama 3.2 Vision, free tier)
 // Recebe imagem base64, retorna dados estruturados
 
-const SYSTEM_PROMPT = `Voce e um OCR especializado em documentos brasileiros. Analise a foto e extraia os dados.
-Retorne SOMENTE um JSON valido (sem markdown, sem texto antes ou depois) com este schema exato:
-{
-  "tipo": "RG" ou "CIN" ou "CPF" ou "CNH" ou "PASSAPORTE" ou "TITULO_ELEITOR" ou "CERTIDAO_NASCIMENTO" ou "CERTIDAO_CASAMENTO" ou "CARTEIRA_TRABALHO" ou "CARTEIRA_VACINACAO" ou "OUTRO",
-  "nome": string ou null,
-  "numero": string ou null,
-  "cpf": string ou null,
-  "data_nascimento": "YYYY-MM-DD" ou null,
-  "data_emissao": "YYYY-MM-DD" ou null,
-  "data_vencimento": "YYYY-MM-DD" ou null,
-  "orgao_emissor": string ou null,
-  "categoria": string ou null,
-  "observacoes": string ou null,
-  "confianca": "alta" ou "media" ou "baixa"
-}
+const SYSTEM_PROMPT = `Voce e um OCR de documentos brasileiros. Analise a foto e extraia os dados em formato JSON.
 
-Use null para campos nao identificados. Numeros sem formatacao (so digitos). Se nao for documento, retorne tipo="OUTRO" e confianca="baixa".`;
+Responda APENAS com o JSON, sem texto antes ou depois, sem explicacoes, sem markdown. So o objeto JSON.
+
+Schema obrigatorio (todos os campos, use null quando nao encontrar):
+{"tipo":"RG|CIN|CPF|CNH|PASSAPORTE|TITULO_ELEITOR|CERTIDAO_NASCIMENTO|CERTIDAO_CASAMENTO|CARTEIRA_TRABALHO|CARTEIRA_VACINACAO|OUTRO","nome":"nome completo ou null","numero":"so digitos ou null","cpf":"so digitos ou null","data_nascimento":"YYYY-MM-DD ou null","data_emissao":"YYYY-MM-DD ou null","data_vencimento":"YYYY-MM-DD ou null","orgao_emissor":"sigla ou null","categoria":"categoria CNH ou null","observacoes":"info extra ou null","confianca":"alta|media|baixa"}
+
+Regras importantes:
+- Numeros sem formatacao (so digitos, sem pontos/tracos)
+- Datas no formato YYYY-MM-DD (ex: 2025-03-15)
+- Se nao for documento, tipo="OUTRO" e confianca="baixa"
+- Sempre retorne o JSON completo, mesmo com varios campos null`;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,19 +38,18 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'llama-3.2-11b-vision-preview',
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
         messages: [
           {
             role: 'user',
             content: [
-              { type: 'text', text: SYSTEM_PROMPT + '\n\nExtraia os dados desse documento e retorne SOMENTE o JSON.' },
+              { type: 'text', text: SYSTEM_PROMPT + '\n\nAnalise a imagem e responda APENAS com o JSON dos dados extraidos.' },
               { type: 'image_url', image_url: { url: dataUrl } }
             ]
           }
         ],
         max_tokens: 1024,
-        temperature: 0.2,
-        response_format: { type: 'json_object' }
+        temperature: 0.1
       })
     });
 
@@ -63,12 +57,30 @@ export default async function handler(req, res) {
     if (!response.ok) return res.status(response.status).json({ error: data });
 
     const raw = data.choices?.[0]?.message?.content || '{}';
-    const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
-    let parsed;
-    try { parsed = JSON.parse(cleaned); }
-    catch (e) { return res.status(500).json({ error: 'Resposta da IA nao foi JSON valido', raw }); }
 
-    return res.status(200).json({ data: parsed });
+    // Parser defensivo: extrai JSON do meio do texto se necessario
+    let parsed;
+    try {
+      // 1. Tenta direto
+      parsed = JSON.parse(raw);
+    } catch (_) {
+      // 2. Remove markdown fences
+      let cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (_) {
+        // 3. Extrai primeiro bloco { ... } do texto
+        const match = cleaned.match(/\{[\s\S]*\}/);
+        if (match) {
+          try { parsed = JSON.parse(match[0]); }
+          catch (_) { return res.status(500).json({ error: 'Resposta da IA nao foi JSON valido', raw }); }
+        } else {
+          return res.status(500).json({ error: 'Resposta da IA sem JSON', raw });
+        }
+      }
+    }
+
+    return res.status(200).json({ data: parsed, _raw: raw });
   } catch (e) {
     return res.status(500).json({ error: 'Erro interno: ' + e.message });
   }
