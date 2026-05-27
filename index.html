@@ -698,8 +698,9 @@
     el.classList.toggle('open');
   }
 
-  // Chat demo (limite 3 mensagens, depois CTA cadastro)
-  const DEMO_LIMIT = 3;
+  // Chat demo (limite 10 mensagens, depois CTA cadastro)
+  // A Bia ja chama pro CTA em cada resposta — limite serve so como freio final
+  const DEMO_LIMIT = 10;
   const chatHistory = [];
 
   function getMsgCount() {
