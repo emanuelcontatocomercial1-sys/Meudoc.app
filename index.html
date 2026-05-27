@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   /* === NAV === */
   .nav {
@@ -33,15 +34,14 @@
   .nav-links a:hover { color: var(--noite); }
   .nav-cta { display: flex; gap: 12px; align-items: center; }
   .nav-cta .btn-ghost { color: var(--noite); font-weight: 600; }
-  .menu-toggle { display: none; background: none; border: none; padding: 8px; font-size: 24px; color: var(--noite); }
+  .menu-toggle { display: none; background: none; border: none; padding: 8px; color: var(--noite); cursor: pointer; }
 
   @media (max-width: 768px) {
     .nav-links, .nav-cta .btn-primary { display: none; }
-    .menu-toggle { display: block; }
+    .menu-toggle { display: flex; }
     .nav-cta { gap: 8px; }
   }
 
-  /* === MENU MOBILE === */
   .mobile-menu {
     position: fixed; top: 64px; left: 0; right: 0;
     background: var(--branco);
@@ -58,16 +58,16 @@
 
   /* === HERO === */
   .hero {
-    padding: 140px 0 80px;
+    padding: 140px 0 100px;
     background: linear-gradient(180deg, var(--coral-light) 0%, var(--branco) 70%);
     position: relative; overflow: hidden;
   }
   .hero-grid {
-    display: grid; grid-template-columns: 1.1fr 1fr;
+    display: grid; grid-template-columns: 1.05fr 1fr;
     gap: 64px; align-items: center;
   }
   .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: var(--branco);
     border: 1px solid var(--borda);
     border-radius: var(--r-full);
@@ -91,39 +91,40 @@
     .stat-num { font-size: 24px; }
   }
 
-  /* === HERO VISUAL === */
+  /* === HERO PHOTO + CARD === */
   .hero-visual {
     position: relative;
-    background: var(--branco);
+    aspect-ratio: 4/5;
     border-radius: var(--r-xl);
-    padding: 28px;
+    overflow: hidden;
     box-shadow: var(--sh-lg);
+    background: linear-gradient(135deg, var(--coral) 0%, var(--lavanda) 100%);
+  }
+  .hero-photo {
+    width: 100%; height: 100%; object-fit: cover; object-position: center;
+    display: block;
+  }
+  .hero-photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(15,23,42,0.5) 100%);
+  }
+  .hero-floating-card {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    box-shadow: var(--sh-md);
     animation: float 6s ease-in-out infinite;
   }
-  .hero-visual::before {
-    content: ''; position: absolute; inset: -20px;
-    background: radial-gradient(ellipse, rgba(255,217,61,0.15), transparent 70%);
-    z-index: -1;
-  }
-  .hv-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  .hv-avatar { width: 44px; height: 44px; border-radius: var(--r-md); background: var(--coral); display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .hv-info { flex: 1; }
-  .hv-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--noite); }
-  .hv-meta { font-size: 12px; color: var(--cinza); }
-  .doc-list { display: flex; flex-direction: column; gap: 10px; }
-  .doc-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
-    background: var(--neve);
-    border-radius: var(--r-md);
-    border: 1px solid var(--borda);
-    transition: all var(--t);
-  }
-  .doc-row:hover { background: var(--branco); border-color: var(--coral-light); }
-  .doc-emoji { font-size: 22px; }
-  .doc-info { flex: 1; }
-  .doc-name { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--noite); }
-  .doc-sub { font-size: 12px; color: var(--cinza); margin-top: 2px; }
+  .hfc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .hfc-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--noite); }
+  .hfc-sub { font-size: 12px; color: var(--cinza); }
+  .hfc-list { display: flex; flex-direction: column; gap: 8px; }
+  .hfc-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--neve); border-radius: var(--r-sm); }
+  .hfc-row .icon-box { width: 32px; height: 32px; }
+  .hfc-row .icon-box [data-lucide] { width: 16px; height: 16px; }
+  .hfc-name { font-size: 13px; font-weight: 600; color: var(--noite); flex: 1; }
 
   /* === SECTION === */
   .section { padding: 100px 0; }
@@ -147,25 +148,22 @@
   .section-center .section-sub { margin-left: auto; margin-right: auto; }
 
   /* === COMO FUNCIONA === */
-  .steps {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-  }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .step {
     background: var(--branco);
     border: 2px solid var(--borda);
     border-radius: var(--r-lg);
     padding: 32px;
-    position: relative;
     transition: all var(--t);
   }
   .step:hover { border-color: var(--coral); transform: translateY(-4px); box-shadow: var(--sh-md); }
   .step-num {
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     background: var(--coral);
     color: var(--branco);
-    border-radius: var(--r-full);
+    border-radius: var(--r-md);
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-weight: 800; font-size: 16px;
+    font-family: var(--font-display); font-weight: 800; font-size: 18px;
     margin-bottom: 20px;
   }
   .step:nth-child(2) .step-num { background: var(--lavanda); }
@@ -175,9 +173,7 @@
   @media (max-width: 768px) { .steps { grid-template-columns: 1fr; } }
 
   /* === FUNCIONALIDADES === */
-  .features {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-  }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .feature {
     background: var(--branco);
     border: 1px solid var(--borda);
@@ -186,43 +182,29 @@
     transition: all var(--t);
   }
   .feature:hover { transform: translateY(-4px); box-shadow: var(--sh-md); border-color: var(--cinza-claro); }
-  .feature-icon {
-    width: 52px; height: 52px;
-    border-radius: var(--r-md);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    margin-bottom: 18px;
-  }
-  .feature-icon.coral { background: var(--coral-light); }
-  .feature-icon.menta { background: var(--menta-light); }
-  .feature-icon.lavanda { background: var(--lavanda-light); }
-  .feature-icon.sol { background: var(--sol-light); }
-  .feature-icon.alerta { background: var(--alerta-light); }
-  .feature-icon.perigo { background: var(--perigo-light); }
+  .feature .icon-box { margin-bottom: 18px; }
   .feature h3 { font-size: 18px; margin-bottom: 10px; }
   .feature p { color: var(--cinza); font-size: 15px; line-height: 1.6; }
   @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
 
-  /* === IA DEMO === */
-  .ia-section { background: var(--noite); color: var(--branco); border-radius: var(--r-xl); padding: 56px 48px; }
+  /* === IA SECTION === */
+  .ia-section { background: var(--noite); color: var(--branco); border-radius: var(--r-xl); padding: 64px 48px; }
   .ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-  .ia-section .section-title, .ia-section h2 { color: var(--branco); }
+  .ia-section h2, .ia-section .section-title { color: var(--branco); }
   .ia-section .section-sub { color: rgba(255,255,255,0.7); margin-bottom: 24px; }
   .ia-features { display: flex; flex-direction: column; gap: 14px; }
-  .ia-feat { display: flex; align-items: center; gap: 12px; font-size: 15px; color: rgba(255,255,255,0.85); }
-  .ia-check { width: 22px; height: 22px; border-radius: var(--r-full); background: var(--menta); color: var(--noite); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+  .ia-feat { display: flex; align-items: center; gap: 12px; font-size: 15px; color: rgba(255,255,255,0.9); }
+  .ia-check { width: 22px; height: 22px; border-radius: var(--r-full); background: var(--menta); color: var(--noite); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ia-check [data-lucide] { width: 14px; height: 14px; stroke-width: 3; }
 
-  .chat-card {
-    background: var(--branco);
-    border-radius: var(--r-lg);
-    padding: 0;
-    overflow: hidden;
-    color: var(--noite);
-    box-shadow: var(--sh-lg);
+  .chat-card { background: var(--branco); border-radius: var(--r-lg); overflow: hidden; color: var(--noite); box-shadow: var(--sh-lg); }
+  .chat-header { padding: 18px 20px; border-bottom: 1px solid var(--borda); display: flex; align-items: center; gap: 12px; }
+  .chat-avatar-img {
+    width: 44px; height: 44px; border-radius: var(--r-full); overflow: hidden;
+    border: 2px solid var(--coral-light); flex-shrink: 0;
   }
-  .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--borda); display: flex; align-items: center; gap: 12px; }
-  .chat-avatar { width: 36px; height: 36px; border-radius: var(--r-md); background: linear-gradient(135deg, var(--coral), var(--lavanda)); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--branco); }
+  .chat-avatar-img img { width: 100%; height: 100%; object-fit: cover; }
   .chat-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
   .chat-status { font-size: 12px; color: var(--menta-dark); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
   .chat-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--menta); animation: pulse 2s infinite; }
@@ -244,16 +226,24 @@
     .ia-grid { grid-template-columns: 1fr; gap: 32px; }
   }
 
-  /* === PREÇOS === */
-  .prices {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  /* === FAMILIA SECTION (com foto) === */
+  .familia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .familia-photo {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover;
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-lg);
   }
+  @media (max-width: 768px) { .familia-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* === PREÇOS === */
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .price {
     background: var(--branco);
     border: 2px solid var(--borda);
     border-radius: var(--r-lg);
     padding: 32px;
     transition: all var(--t);
+    text-align: left;
   }
   .price.popular { border-color: var(--coral); position: relative; transform: scale(1.02); box-shadow: var(--sh-lg); }
   .price-badge { position: absolute; top: -12px; right: 24px; background: var(--coral); color: var(--branco); padding: 4px 12px; border-radius: var(--r-full); font-family: var(--font-display); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -263,7 +253,7 @@
   .price-sub { font-size: 14px; color: var(--cinza); margin-bottom: 24px; }
   .price-list { list-style: none; margin-bottom: 28px; }
   .price-list li { padding: 8px 0; font-size: 14px; color: var(--noite); display: flex; align-items: center; gap: 10px; }
-  .price-list li::before { content: '✓'; color: var(--menta-dark); font-weight: 800; font-size: 16px; }
+  .price-list li [data-lucide] { width: 16px; height: 16px; color: var(--menta-dark); stroke-width: 3; flex-shrink: 0; }
   @media (max-width: 900px) {
     .prices { grid-template-columns: 1fr; }
     .price.popular { transform: none; }
@@ -271,31 +261,12 @@
 
   /* === FAQ === */
   .faq { max-width: 760px; margin: 0 auto; }
-  .faq-item {
-    background: var(--branco);
-    border: 1px solid var(--borda);
-    border-radius: var(--r-md);
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  .faq-q {
-    padding: 18px 24px;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center;
-    color: var(--noite);
-  }
-  .faq-a {
-    max-height: 0; overflow: hidden;
-    transition: max-height var(--t-slow), padding var(--t-slow);
-    padding: 0 24px;
-    color: var(--cinza); font-size: 15px; line-height: 1.7;
-  }
+  .faq-item { background: var(--branco); border: 1px solid var(--borda); border-radius: var(--r-md); margin-bottom: 12px; overflow: hidden; }
+  .faq-q { padding: 18px 24px; font-family: var(--font-display); font-weight: 700; font-size: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--noite); }
+  .faq-q [data-lucide] { color: var(--coral); transition: transform var(--t); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height var(--t-slow), padding var(--t-slow); padding: 0 24px; color: var(--cinza); font-size: 15px; line-height: 1.7; }
   .faq-item.open .faq-a { max-height: 500px; padding: 0 24px 20px; }
-  .faq-item.open .faq-q i { transform: rotate(180deg); }
-  .faq-q i { font-style: normal; transition: transform var(--t); color: var(--coral); }
+  .faq-item.open .faq-q [data-lucide] { transform: rotate(180deg); }
 
   /* === CTA FINAL === */
   .cta-final {
@@ -304,10 +275,17 @@
     border-radius: var(--r-xl);
     padding: 72px 40px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
   }
-  .cta-final h2 { color: var(--branco); margin-bottom: 16px; }
-  .cta-final p { font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 32px; max-width: 540px; margin-left: auto; margin-right: auto; }
-  .cta-final .btn-primary { background: var(--branco); color: var(--coral); }
+  .cta-final::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,217,61,0.25), transparent 70%);
+  }
+  .cta-final h2 { color: var(--branco); margin-bottom: 16px; position: relative; }
+  .cta-final p { font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 32px; max-width: 540px; margin-left: auto; margin-right: auto; position: relative; }
+  .cta-final .btn-primary { background: var(--branco); color: var(--coral); position: relative; }
   .cta-final .btn-primary:hover { background: var(--neve); }
 
   /* === FOOTER === */
@@ -323,6 +301,7 @@
   .footer-col a { font-size: 14px; color: rgba(255,255,255,0.6); transition: color var(--t); }
   .footer-col a:hover { color: var(--branco); }
   .footer-bottom { padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; flex-wrap: wrap; gap: 12px; }
+  .footer-bottom [data-lucide] { color: var(--coral); width: 14px; height: 14px; }
   @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
   @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
 </style>
@@ -342,7 +321,7 @@
     <div class="nav-cta">
       <a href="login.html" class="btn btn-ghost btn-sm">Entrar</a>
       <a href="login.html#cadastro" class="btn btn-primary btn-sm">Criar conta grátis</a>
-      <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+      <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu"><i data-lucide="menu" class="icon-lg"></i></button>
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
@@ -362,7 +341,7 @@
       <div>
         <div class="hero-badge"><span class="dot"></span> Novo · Assistente IA para documentos</div>
         <h1>Seus documentos.<br><em>Sempre em dia.</em></h1>
-        <p class="hero-sub">Organize CPF, RG, CNH, certidões e tudo mais num só lugar. Receba alertas antes de vencer e tire dúvidas burocráticas com nossa IA — em segundos.</p>
+        <p class="hero-sub">Organize CPF, RG, CNH, certidões e tudo mais num só lugar. Receba alertas antes de vencer e tire dúvidas burocráticas em segundos.</p>
         <div class="hero-cta">
           <a href="login.html#cadastro" class="btn btn-primary btn-lg">Criar conta grátis</a>
           <a href="#como-funciona" class="btn btn-secondary btn-lg">Como funciona</a>
@@ -378,50 +357,37 @@
           </div>
           <div>
             <div class="stat-num">24/7</div>
-            <div class="stat-label">IA disponível</div>
+            <div class="stat-label">Assistente disponível</div>
           </div>
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hv-header">
-          <div class="hv-avatar">📁</div>
-          <div class="hv-info">
-            <div class="hv-name">Documentos da Maria</div>
-            <div class="hv-meta">12 documentos · 2 vencendo</div>
-          </div>
-        </div>
-        <div class="doc-list">
-          <div class="doc-row">
-            <div class="doc-emoji">🪪</div>
-            <div class="doc-info">
-              <div class="doc-name">CNH</div>
-              <div class="doc-sub">Vence em 23 dias</div>
+        <img class="hero-photo" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=900&q=85&auto=format&fit=crop" alt="Pessoa organizando documentos no celular" loading="eager">
+        <div class="hero-photo-overlay"></div>
+        <div class="hero-floating-card">
+          <div class="hfc-header">
+            <div class="avatar avatar-sm" style="background: var(--coral);"><i data-lucide="folder" class="icon-md"></i></div>
+            <div>
+              <div class="hfc-title">Documentos da Maria</div>
+              <div class="hfc-sub">12 documentos · 2 vencendo</div>
             </div>
-            <span class="badge badge-alerta">Atenção</span>
           </div>
-          <div class="doc-row">
-            <div class="doc-emoji">🆔</div>
-            <div class="doc-info">
-              <div class="doc-name">RG / CIN</div>
-              <div class="doc-sub">Sem vencimento</div>
+          <div class="hfc-list">
+            <div class="hfc-row">
+              <div class="icon-box coral"><i data-lucide="credit-card"></i></div>
+              <div class="hfc-name">CNH</div>
+              <span class="badge badge-alerta">23 dias</span>
             </div>
-            <span class="badge badge-menta">Em dia</span>
-          </div>
-          <div class="doc-row">
-            <div class="doc-emoji">📋</div>
-            <div class="doc-info">
-              <div class="doc-name">Comprovante INSS</div>
-              <div class="doc-sub">Atualizado mês passado</div>
+            <div class="hfc-row">
+              <div class="icon-box menta"><i data-lucide="badge-check"></i></div>
+              <div class="hfc-name">RG / CIN</div>
+              <span class="badge badge-menta">Em dia</span>
             </div>
-            <span class="badge badge-menta">Em dia</span>
-          </div>
-          <div class="doc-row">
-            <div class="doc-emoji">✈️</div>
-            <div class="doc-info">
-              <div class="doc-name">Passaporte</div>
-              <div class="doc-sub">Vence em 4 meses</div>
+            <div class="hfc-row">
+              <div class="icon-box lavanda"><i data-lucide="plane"></i></div>
+              <div class="hfc-name">Passaporte</div>
+              <span class="badge badge-sol">Renovar</span>
             </div>
-            <span class="badge badge-sol">Renovar</span>
           </div>
         </div>
       </div>
@@ -444,12 +410,12 @@
       <div class="step">
         <div class="step-num">2</div>
         <h3>Adicione seus documentos</h3>
-        <p>Foto, PDF ou só os dados. Nosso OCR lê automaticamente número, validade e órgão emissor.</p>
+        <p>Foto, PDF ou só os dados. Nosso sistema lê automaticamente número, validade e órgão emissor.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>Receba alertas e ajuda</h3>
-        <p>A gente te avisa antes de vencer. E quando precisar tirar ou renovar, nossa IA te guia passo a passo.</p>
+        <p>A gente te avisa antes de vencer. E quando precisar tirar ou renovar, te guiamos passo a passo.</p>
       </div>
     </div>
   </div>
@@ -465,32 +431,32 @@
     </div>
     <div class="features">
       <div class="feature">
-        <div class="feature-icon coral">🗂️</div>
+        <div class="icon-box icon-box-lg coral"><i data-lucide="folder-lock" class="icon-xl"></i></div>
         <h3>Cofre digital</h3>
         <p>RG, CPF, CNH, certidões, passaporte. Tudo num lugar só, criptografado e acessível do celular.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon alerta">🔔</div>
+        <div class="icon-box icon-box-lg alerta"><i data-lucide="bell-ring" class="icon-xl"></i></div>
         <h3>Alertas de vencimento</h3>
         <p>Avisamos com 30, 15 e 5 dias de antecedência. Por e-mail, push ou WhatsApp.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon lavanda">🤖</div>
-        <h3>Assistente IA</h3>
+        <div class="icon-box icon-box-lg lavanda"><i data-lucide="sparkles" class="icon-xl"></i></div>
+        <h3>Assistente inteligente</h3>
         <p>"Como renovo o passaporte?" Pergunte e receba o passo a passo, valores e tempo estimado.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon menta">📸</div>
-        <h3>OCR automático</h3>
+        <div class="icon-box icon-box-lg menta"><i data-lucide="scan-line" class="icon-xl"></i></div>
+        <h3>Leitor automático</h3>
         <p>Tire foto do documento e a gente preenche número, validade e órgão emissor automaticamente.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon sol">📅</div>
+        <div class="icon-box icon-box-lg sol"><i data-lucide="calendar-clock" class="icon-xl"></i></div>
         <h3>Agendamentos</h3>
         <p>Marque emissões e renovações com lembretes. Tudo sincronizado com seu calendário.</p>
       </div>
       <div class="feature">
-        <div class="feature-icon perigo">👨‍👩‍👧</div>
+        <div class="icon-box icon-box-lg perigo"><i data-lucide="users" class="icon-xl"></i></div>
         <h3>Família toda</h3>
         <p>Gerencie documentos de filhos, cônjuge e pais. Um app, todos os documentos da casa.</p>
       </div>
@@ -498,7 +464,7 @@
   </div>
 </section>
 
-<!-- IA DEMO -->
+<!-- IA SECTION -->
 <section class="section">
   <div class="container">
     <div class="ia-section">
@@ -506,24 +472,26 @@
         <div>
           <span class="section-tag lavanda">Nosso diferencial</span>
           <h2 class="section-title">Um assistente que entende de burocracia brasileira.</h2>
-          <p class="section-sub">Pergunte sobre qualquer documento — CIN, passaporte, INSS, MEI, certidões. Nossa IA responde com clareza, sem juridiquês.</p>
+          <p class="section-sub">Pergunte sobre qualquer documento — CIN, passaporte, INSS, MEI, certidões. Respostas claras, sem juridiquês.</p>
           <div class="ia-features">
-            <div class="ia-feat"><span class="ia-check">✓</span> Sabe os requisitos de cada documento</div>
-            <div class="ia-feat"><span class="ia-check">✓</span> Te diz exatamente onde fazer (Poupatempo, cartório, etc)</div>
-            <div class="ia-feat"><span class="ia-check">✓</span> Informa valores e prazos atualizados</div>
-            <div class="ia-feat"><span class="ia-check">✓</span> Personaliza pra sua cidade</div>
+            <div class="ia-feat"><span class="ia-check"><i data-lucide="check"></i></span> Sabe os requisitos de cada documento</div>
+            <div class="ia-feat"><span class="ia-check"><i data-lucide="check"></i></span> Te diz onde fazer (Poupatempo, cartório, etc)</div>
+            <div class="ia-feat"><span class="ia-check"><i data-lucide="check"></i></span> Informa valores e prazos atualizados</div>
+            <div class="ia-feat"><span class="ia-check"><i data-lucide="check"></i></span> Personaliza pra sua cidade</div>
           </div>
         </div>
         <div class="chat-card">
           <div class="chat-header">
-            <div class="chat-avatar">🤖</div>
+            <div class="chat-avatar-img">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia, assistente MeuDoc">
+            </div>
             <div>
-              <div class="chat-title">Assistente MeuDoc</div>
+              <div class="chat-title">Bia · Assistente MeuDoc</div>
               <div class="chat-status">Online agora</div>
             </div>
           </div>
           <div class="chat-body" id="chatBody">
-            <div class="msg msg-bot">Oi! Sou o assistente do MeuDoc. Em que posso te ajudar hoje? 😊</div>
+            <div class="msg msg-bot">Oi! Sou a Bia, sua assistente de documentos. Como posso te ajudar hoje?</div>
           </div>
           <div class="chat-input-wrap">
             <input type="text" id="chatInput" placeholder="Ex: Como tiro o passaporte?" />
@@ -535,8 +503,27 @@
   </div>
 </section>
 
+<!-- FAMILIA -->
+<section class="section" style="background: var(--neve);">
+  <div class="container">
+    <div class="familia-grid">
+      <img class="familia-photo" src="https://images.unsplash.com/photo-1542740348-39501cd6e2b4?w=900&q=85&auto=format&fit=crop" alt="Família organizando documentos juntos">
+      <div>
+        <span class="section-tag sol">Família toda</span>
+        <h2 class="section-title">Cuide dos documentos de quem você ama.</h2>
+        <p class="section-sub">Cadastre marido, filhos, pais. Receba alertas de toda a família num só lugar e nunca mais esqueça uma renovação.</p>
+        <div class="ia-features" style="margin-top: 8px;">
+          <div class="ia-feat" style="color: var(--noite);"><span class="ia-check" style="background: var(--coral); color: var(--branco);"><i data-lucide="check"></i></span> Até 5 perfis no plano Família</div>
+          <div class="ia-feat" style="color: var(--noite);"><span class="ia-check" style="background: var(--coral); color: var(--branco);"><i data-lucide="check"></i></span> Dashboard consolidado de todos</div>
+          <div class="ia-feat" style="color: var(--noite);"><span class="ia-check" style="background: var(--coral); color: var(--branco);"><i data-lucide="check"></i></span> Compartilhamento entre membros</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PREÇOS -->
-<section class="section" id="precos" style="background: var(--neve);">
+<section class="section" id="precos">
   <div class="container section-center">
     <span class="section-tag sol">Preços simples</span>
     <h2 class="section-title">Grátis pra começar. Premium quando precisar de mais.</h2>
@@ -547,10 +534,10 @@
         <div class="price-value">R$ 0<small>/mês</small></div>
         <div class="price-sub">Pra quem quer só organizar</div>
         <ul class="price-list">
-          <li>Até 10 documentos</li>
-          <li>Alertas por e-mail</li>
-          <li>Acesso ao app</li>
-          <li>Histórico de 6 meses</li>
+          <li><i data-lucide="check"></i> Até 5 documentos</li>
+          <li><i data-lucide="check"></i> Alertas por e-mail</li>
+          <li><i data-lucide="check"></i> Acesso pelo celular</li>
+          <li><i data-lucide="check"></i> Histórico de 6 meses</li>
         </ul>
         <a href="login.html#cadastro" class="btn btn-secondary btn-full">Começar grátis</a>
       </div>
@@ -560,12 +547,12 @@
         <div class="price-value">R$ 14,90<small>/mês</small></div>
         <div class="price-sub">Pra quem cuida da família</div>
         <ul class="price-list">
-          <li>Documentos ilimitados</li>
-          <li>Alertas por WhatsApp + push</li>
-          <li>Assistente IA ilimitado</li>
-          <li>OCR automático por foto</li>
-          <li>Histórico completo</li>
-          <li>Suporte prioritário</li>
+          <li><i data-lucide="check"></i> Documentos ilimitados</li>
+          <li><i data-lucide="check"></i> Alertas por WhatsApp + push</li>
+          <li><i data-lucide="check"></i> Assistente IA ilimitado</li>
+          <li><i data-lucide="check"></i> Leitor automático por foto</li>
+          <li><i data-lucide="check"></i> Histórico completo</li>
+          <li><i data-lucide="check"></i> Suporte prioritário</li>
         </ul>
         <a href="login.html#cadastro" class="btn btn-primary btn-full">Assinar agora</a>
       </div>
@@ -574,11 +561,11 @@
         <div class="price-value">R$ 24,90<small>/mês</small></div>
         <div class="price-sub">Até 5 pessoas</div>
         <ul class="price-list">
-          <li>Tudo do Premium</li>
-          <li>Até 5 perfis</li>
-          <li>Compartilhamento entre membros</li>
-          <li>Dashboard familiar</li>
-          <li>Agendamentos coletivos</li>
+          <li><i data-lucide="check"></i> Tudo do Premium</li>
+          <li><i data-lucide="check"></i> Até 5 perfis</li>
+          <li><i data-lucide="check"></i> Compartilhamento entre membros</li>
+          <li><i data-lucide="check"></i> Dashboard familiar</li>
+          <li><i data-lucide="check"></i> Agendamentos coletivos</li>
         </ul>
         <a href="login.html#cadastro" class="btn btn-secondary btn-full">Escolher Família</a>
       </div>
@@ -587,7 +574,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="section" id="faq">
+<section class="section" id="faq" style="background: var(--neve);">
   <div class="container section-center">
     <span class="section-tag">Perguntas frequentes</span>
     <h2 class="section-title">Tirando as dúvidas mais comuns.</h2>
@@ -595,24 +582,24 @@
   <div class="container">
     <div class="faq">
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">Meus documentos ficam seguros? <i>▼</i></div>
+        <div class="faq-q">Meus documentos ficam seguros? <i data-lucide="chevron-down"></i></div>
         <div class="faq-a">Sim. Todos os dados são criptografados em trânsito e em repouso. Usamos infraestrutura do Supabase (mesma tecnologia que bancos digitais usam) com autenticação segura.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">Preciso pagar pra começar? <i>▼</i></div>
-        <div class="faq-a">Não. O plano grátis é pra sempre — até 10 documentos e alertas por e-mail. Você só assina o Premium quando precisar de mais.</div>
+        <div class="faq-q">Preciso pagar pra começar? <i data-lucide="chevron-down"></i></div>
+        <div class="faq-a">Não. O plano grátis é pra sempre — até 5 documentos e alertas por e-mail. Você só assina o Premium quando precisar de mais.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">Posso cancelar quando quiser? <i>▼</i></div>
+        <div class="faq-q">Posso cancelar quando quiser? <i data-lucide="chevron-down"></i></div>
         <div class="faq-a">Pode. Sem multa, sem fidelidade. Cancelou, voltou pro plano grátis na hora.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">Funciona no celular? <i>▼</i></div>
+        <div class="faq-q">Funciona no celular? <i data-lucide="chevron-down"></i></div>
         <div class="faq-a">Funciona em qualquer dispositivo — celular, tablet, computador. É um app web responsivo, não precisa baixar nada.</div>
       </div>
       <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">Tem login com Google ou gov.br? <i>▼</i></div>
-        <div class="faq-a">Google sim, já disponível. Gov.br está em processo de credenciamento — em breve.</div>
+        <div class="faq-q">Tem login com Google ou gov.br? <i data-lucide="chevron-down"></i></div>
+        <div class="faq-a">Google sim, em configuração final. gov.br está em processo de credenciamento — em breve.</div>
       </div>
     </div>
   </div>
@@ -665,12 +652,15 @@
     </div>
     <div class="footer-bottom">
       <div>© 2026 MeuDoc.app · Todos os direitos reservados</div>
-      <div>Feito com 🧡 no Brasil</div>
+      <div style="display:flex; align-items:center; gap:6px;">Feito com <i data-lucide="heart"></i> no Brasil</div>
     </div>
   </div>
 </footer>
 
 <script>
+  // Inicializa Lucide icons
+  lucide.createIcons();
+
   // Menu mobile
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
@@ -688,22 +678,18 @@
     const body = document.getElementById('chatBody');
     const msg = input.value.trim();
     if (!msg) return;
-
     const u = document.createElement('div');
     u.className = 'msg msg-user';
     u.textContent = msg;
     body.appendChild(u);
     input.value = '';
     body.scrollTop = body.scrollHeight;
-
     chatHistory.push({ role: 'user', content: msg });
-
     const typing = document.createElement('div');
     typing.className = 'typing';
     typing.innerHTML = '<span></span><span></span><span></span>';
     body.appendChild(typing);
     body.scrollTop = body.scrollHeight;
-
     try {
       const r = await fetch('/api/chat', {
         method: 'POST',
@@ -727,12 +713,9 @@
       body.appendChild(err);
     }
   }
-
   document.getElementById('chatInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') sendMsg();
   });
-
-  // Smooth scroll close mobile menu
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', () => {
       document.getElementById('mobileMenu').classList.remove('open');

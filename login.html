@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   body { min-height: 100vh; display: flex; background: var(--neve); }
 
@@ -168,10 +169,10 @@
     <div class="brand-title">Seus documentos.<br><em>Sempre em dia.</em></div>
     <div class="brand-sub">Junte-se a quem já organizou a vida documental num só lugar.</div>
     <div class="brand-features">
-      <div class="bf"><div class="bf-icon">🗂️</div><div>Todos seus documentos num cofre digital</div></div>
-      <div class="bf"><div class="bf-icon">🔔</div><div>Alertas automáticos antes de vencer</div></div>
-      <div class="bf"><div class="bf-icon">🤖</div><div>IA pra tirar dúvidas burocráticas</div></div>
-      <div class="bf"><div class="bf-icon">🔒</div><div>Criptografia em todos os dados</div></div>
+      <div class="bf"><div class="bf-icon"><i data-lucide="folder-lock"></i></div><div>Todos seus documentos num cofre digital</div></div>
+      <div class="bf"><div class="bf-icon"><i data-lucide="bell-ring"></i></div><div>Alertas automáticos antes de vencer</div></div>
+      <div class="bf"><div class="bf-icon"><i data-lucide="sparkles"></i></div><div>Assistente pra tirar dúvidas burocráticas</div></div>
+      <div class="bf"><div class="bf-icon"><i data-lucide="shield-check"></i></div><div>Criptografia em todos os dados</div></div>
     </div>
   </div>
 </div>
@@ -179,7 +180,7 @@
 <!-- Painel direito (form) -->
 <div class="form-panel">
   <div class="auth-box">
-    <a href="index.html" class="back-link">← Voltar pra home</a>
+    <a href="index.html" class="back-link"><i data-lucide="arrow-left" class="icon-sm"></i> Voltar pra home</a>
 
     <div class="auth-tabs">
       <button class="auth-tab active" id="tabEntrar" onclick="trocarTab('entrar')">Entrar</button>
@@ -190,7 +191,7 @@
 
     <!-- FORM ENTRAR -->
     <div id="formEntrar">
-      <h2 class="auth-title">Bem-vindo de volta 👋</h2>
+      <h2 class="auth-title">Bem-vindo de volta</h2>
       <p class="auth-sub">Entre pra acessar seus documentos.</p>
 
       <button class="btn-social" onclick="loginGoogle()">
@@ -198,7 +199,7 @@
         Continuar com Google
       </button>
       <button class="btn-social" onclick="loginGovBr()" style="opacity:0.6;">
-        🏛️ Entrar com gov.br <span style="font-size:11px; padding:2px 8px; background:var(--sol-light); color:#8A6500; border-radius:var(--r-full); font-weight:700;">EM BREVE</span>
+        <i data-lucide="landmark"></i> Entrar com gov.br <span style="font-size:11px; padding:2px 8px; background:var(--sol-light); color:#8A6500; border-radius:var(--r-full); font-weight:700;">EM BREVE</span>
       </button>
 
       <div class="divider">
@@ -224,7 +225,7 @@
 
     <!-- FORM CADASTRO -->
     <div id="formCadastro" style="display:none;">
-      <h2 class="auth-title">Crie sua conta grátis ✨</h2>
+      <h2 class="auth-title">Crie sua conta grátis</h2>
       <p class="auth-sub">Em menos de 1 minuto. Sem cartão de crédito.</p>
 
       <button class="btn-social" onclick="loginGoogle()">
@@ -253,7 +254,7 @@
           <button class="password-toggle" onclick="toggleSenha('cadSenha', this)" type="button">👁️</button>
         </div>
       </div>
-      <button class="btn btn-primary btn-full btn-lg" id="btnCadastro" onclick="fazerCadastro()">🚀 Criar conta grátis</button>
+      <button class="btn btn-primary btn-full btn-lg" id="btnCadastro" onclick="fazerCadastro()">Criar conta grátis</button>
 
       <div class="terms">
         Ao criar sua conta você concorda com nossos<br>
@@ -263,10 +264,10 @@
 
     <!-- SUCESSO -->
     <div class="success-screen" id="successScreen">
-      <div class="success-icon">✅</div>
-      <div class="success-title">Conta criada com sucesso!</div>
-      <div class="success-sub">Enviamos um e-mail de confirmação. Verifique sua caixa de entrada pra ativar sua conta.</div>
-      <button class="btn btn-primary btn-full" onclick="trocarTab('entrar')">Fazer login agora</button>
+      <div class="success-icon"><i data-lucide="check" style="width:44px; height:44px; color:var(--menta-dark); stroke-width:3;"></i></div>
+      <div class="success-title">Sua conta foi criada!</div>
+      <div class="success-sub">Tudo pronto. Pode entrar com seu e-mail e senha e começar a organizar seus documentos.</div>
+      <button class="btn btn-primary btn-full" onclick="trocarTab('entrar')">Entrar agora</button>
     </div>
   </div>
 </div>
@@ -325,6 +326,9 @@
       : defaultText;
   }
 
+  // Inicializa Lucide
+  lucide.createIcons();
+
   async function fazerLogin() {
     const email = document.getElementById('loginEmail').value.trim();
     const senha = document.getElementById('loginSenha').value;
@@ -359,17 +363,15 @@
       if (error.message.includes('already registered')) return mostrarAlerta('Este e-mail já tem conta. Tente entrar.', 'error');
       return mostrarAlerta(error.message, 'error');
     }
+    // Profile criado automaticamente pelo trigger handle_new_user no Supabase
     if (data.user) {
-      await sb.from('profiles').upsert({
-        id: data.user.id,
-        nome,
-        email,
-        plano: 'gratis'
-      });
+      // Atualiza o nome (o trigger ja criou profile, mas com nome do raw_user_meta_data)
+      await sb.from('profiles').update({ nome, email }).eq('id', data.user.id);
     }
-    setLoading('btnCadastro', false, '🚀 Criar conta grátis');
+    setLoading('btnCadastro', false, 'Criar conta grátis');
     document.getElementById('formCadastro').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
+    lucide.createIcons();
   }
 
   async function loginGoogle() {
