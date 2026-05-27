@@ -324,7 +324,54 @@
     enviarMensagem(text);
   }
 
+  // Limite diario por plano
+  const LIMITES = { gratis: 5, premium: Infinity, familia: Infinity };
+
+  function todayKey() {
+    const d = new Date();
+    return `meudoc_chat_uso_${currentUser.id}_${d.toISOString().slice(0,10)}`;
+  }
+  function usoHoje() { return parseInt(localStorage.getItem(todayKey()) || '0', 10); }
+  function incUso() {
+    const n = usoHoje() + 1;
+    localStorage.setItem(todayKey(), String(n));
+    return n;
+  }
+  function limiteDoUsuario() { return LIMITES[profile.plano || 'gratis'] || LIMITES.gratis; }
+
+  function mostrarCtaPremium() {
+    const inner = document.getElementById('chatInner');
+    const cta = document.createElement('div');
+    cta.className = 'msg bot';
+    cta.innerHTML = `
+      <div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>
+      <div class="msg-content">
+        <div class="msg-name">Bia</div>
+        <div class="msg-bubble" style="background: linear-gradient(135deg, var(--coral-light), var(--lavanda-light)); border-left: 3px solid var(--coral);">
+          <strong>Você atingiu o limite de hoje no plano grátis.</strong><br><br>
+          Pra continuar conversando comigo sem limites, fazer perguntas detalhadas e ainda receber alertas por WhatsApp, faça upgrade pro <strong>Premium</strong>.
+          <div style="margin-top:12px;">
+            <a href="perfil.html" style="display:inline-block; background:var(--coral); color:#fff; padding:8px 16px; border-radius:var(--r-md); font-weight:700; font-size:13px; font-family:var(--font-display); text-decoration:none;">Ver planos</a>
+            <span style="margin-left:10px; font-size:12px; color:var(--cinza);">Volta amanhã que zera o contador</span>
+          </div>
+        </div>
+      </div>`;
+    inner.appendChild(cta);
+    scrollDown();
+    const ta = document.getElementById('chatInput');
+    const btn = document.getElementById('sendBtn');
+    ta.disabled = true;
+    ta.placeholder = 'Limite diário atingido — upgrade pro Premium ou volte amanhã';
+    btn.disabled = true;
+  }
+
   async function enviarMensagem(text) {
+    // Verifica limite antes de enviar
+    if (usoHoje() >= limiteDoUsuario()) {
+      mostrarCtaPremium();
+      return;
+    }
+
     renderMsg('user', text, true);
     conversa.push({ role: 'user', content: text });
     salvarHistorico();
@@ -346,10 +393,11 @@
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
     try {
+      const mode = (profile.plano === 'premium' || profile.plano === 'familia') ? 'premium' : 'free';
       const r = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: conversa })
+        body: JSON.stringify({ messages: conversa, mode })
       });
       const data = await r.json();
       const reply = data.content || 'Tive um problema pra responder. Tenta de novo?';
@@ -357,6 +405,11 @@
       renderMsg('assistant', reply, true);
       conversa.push({ role: 'assistant', content: reply });
       salvarHistorico();
+      incUso();
+      // Se acabou de atingir o limite, ja mostra CTA na sequencia
+      if (usoHoje() >= limiteDoUsuario()) {
+        setTimeout(mostrarCtaPremium, 800);
+      }
     } catch (e) {
       const tm = document.getElementById('typingMsg');
       if (tm) tm.remove();

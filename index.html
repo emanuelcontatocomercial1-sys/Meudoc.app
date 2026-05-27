@@ -698,13 +698,46 @@
     el.classList.toggle('open');
   }
 
-  // Chat demo
+  // Chat demo (limite 3 mensagens, depois CTA cadastro)
+  const DEMO_LIMIT = 3;
   const chatHistory = [];
+
+  function getMsgCount() {
+    return parseInt(localStorage.getItem('meudoc_demo_count') || '0', 10);
+  }
+  function incMsgCount() {
+    const n = getMsgCount() + 1;
+    localStorage.setItem('meudoc_demo_count', String(n));
+    return n;
+  }
+
+  function showCtaCadastro() {
+    const body = document.getElementById('chatBody');
+    const cta = document.createElement('div');
+    cta.className = 'msg msg-bot';
+    cta.innerHTML = `
+      <div style="background: linear-gradient(135deg, var(--coral-light), var(--lavanda-light)); padding: 16px; border-radius: var(--r-md); border-left: 3px solid var(--coral);">
+        <strong style="color:var(--coral-dark);">Gostou da Bia?</strong><br>
+        <span style="font-size: 13px; color: var(--noite); line-height:1.5;">Crie sua conta gratuita pra continuar conversando, organizar seus documentos e receber alertas antes de vencer.</span><br>
+        <a href="login.html#cadastro" style="display:inline-block; margin-top:10px; background:var(--coral); color:#fff; padding:8px 16px; border-radius:var(--r-md); font-weight:700; font-size:13px; font-family:var(--font-display); text-decoration:none;">Criar conta grátis</a>
+      </div>`;
+    body.appendChild(cta);
+    body.scrollTop = body.scrollHeight;
+    // Desabilita input
+    const input = document.getElementById('chatInput');
+    input.disabled = true;
+    input.placeholder = 'Limite de demonstração atingido — crie sua conta pra continuar';
+    const btns = document.querySelectorAll('.chat-input-wrap button');
+    btns.forEach(b => b.disabled = true);
+  }
+
   async function sendMsg() {
     const input = document.getElementById('chatInput');
     const body = document.getElementById('chatBody');
     const msg = input.value.trim();
     if (!msg) return;
+    if (getMsgCount() >= DEMO_LIMIT) { showCtaCadastro(); return; }
+
     const u = document.createElement('div');
     u.className = 'msg msg-user';
     u.textContent = msg;
@@ -721,7 +754,7 @@
       const r = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: chatHistory })
+        body: JSON.stringify({ messages: chatHistory, mode: 'demo' })
       });
       const data = await r.json();
       typing.remove();
@@ -732,6 +765,8 @@
       body.appendChild(b);
       body.scrollTop = body.scrollHeight;
       chatHistory.push({ role: 'assistant', content: text });
+      const novo = incMsgCount();
+      if (novo >= DEMO_LIMIT) setTimeout(showCtaCadastro, 800);
     } catch (e) {
       typing.remove();
       const err = document.createElement('div');
@@ -743,6 +778,10 @@
   document.getElementById('chatInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') sendMsg();
   });
+  // Se ja atingiu limite na visita anterior, ja mostra CTA na carga
+  if (getMsgCount() >= DEMO_LIMIT) {
+    setTimeout(showCtaCadastro, 1000);
+  }
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', () => {
       document.getElementById('mobileMenu').classList.remove('open');
