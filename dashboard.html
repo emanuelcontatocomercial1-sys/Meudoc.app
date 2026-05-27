@@ -552,7 +552,9 @@
               <div class="carteira-title">Carteira Digital</div>
               <div class="carteira-name" id="carteiraName">Carregando...</div>
             </div>
-            <div class="icon-box" style="background: rgba(255,255,255,0.1); color: var(--branco);"><i data-lucide="credit-card"></i></div>
+            <a href="carteira.html" style="display: inline-flex; align-items: center; gap: 6px; background: var(--coral); color: var(--branco); padding: 10px 16px; border-radius: var(--r-md); font-family: var(--font-display); font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 4px 12px rgba(255,90,54,0.4);">
+              <i data-lucide="wallet" style="width:16px; height:16px;"></i> Mostrar
+            </a>
           </div>
           <div class="carteira-body">
             <div class="qr-wrap" id="qrWrap"></div>
@@ -785,11 +787,11 @@
     document.getElementById('carteiraRg').textContent = rg?.numero || '— Não cadastrado';
     document.getElementById('carteiraCnh').textContent = cnh?.numero || '— Não cadastrado';
 
+    // Payload do QR: uid + timestamp. A pagina verificar.html busca dados
+    // completos (incluindo fotos do Storage) via RPC publica.
     const payload = {
+      uid: currentUser.id,
       n: profile.nome || currentUser.email.split('@')[0],
-      cpf: profile.cpf || null,
-      rg: rg?.numero || null,
-      cnh: cnh?.numero || null,
       t: Math.floor(Date.now() / 1000)
     };
     const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))

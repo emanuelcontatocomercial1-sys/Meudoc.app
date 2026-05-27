@@ -870,6 +870,25 @@
     }
   }
 
+  // Converte base64 em Blob pra upload no Supabase Storage
+  function base64ToBlob(base64, mime) {
+    const bytes = atob(base64);
+    const buf = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i);
+    return new Blob([buf], { type: mime || 'image/jpeg' });
+  }
+
+  // Hash SHA-256 dos dados-chave do documento (integridade)
+  async function calcHash(p) {
+    const text = JSON.stringify({
+      tipo: p.tipo, numero: p.numero,
+      emissao: p.data_emissao, vencimento: p.data_vencimento,
+      orgao: p.orgao_emissor
+    });
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0, 16);
+  }
+
   async function saveDoc() {
     const id = document.getElementById('fDocId').value;
     const payload = {
@@ -883,16 +902,47 @@
       categoria: document.getElementById('fCategoria').value.trim() || null,
       observacoes: document.getElementById('fObs').value.trim() || null
     };
+    try { payload.hash_integridade = await calcHash(payload); } catch (e) {}
+
     const btn = document.getElementById('btnSave');
     btn.disabled = true; btn.textContent = 'Salvando...';
-    let result;
+
+    let docResult;
     if (id) {
-      result = await sb.from('documentos').update(payload).eq('id', id);
+      docResult = await sb.from('documentos').update(payload).eq('id', id).select().single();
     } else {
-      result = await sb.from('documentos').insert(payload);
+      docResult = await sb.from('documentos').insert(payload).select().single();
     }
+    if (docResult.error) {
+      btn.disabled = false; btn.textContent = 'Salvar documento';
+      alert('Erro ao salvar: ' + docResult.error.message);
+      return;
+    }
+    const docId = docResult.data.id;
+
+    // Upload das fotos pro Supabase Storage (se houver)
+    if (imagensSelecionadas.length > 0) {
+      btn.textContent = 'Enviando fotos...';
+      const updates = {};
+      for (let i = 0; i < Math.min(imagensSelecionadas.length, 2); i++) {
+        const img = imagensSelecionadas[i];
+        const lado = i === 0 ? 'frente' : 'verso';
+        const path = `${currentUser.id}/${docId}/${lado}.jpg`;
+        try {
+          const blob = base64ToBlob(img.data || img.base64, 'image/jpeg');
+          const { error: upErr } = await sb.storage
+            .from('documentos')
+            .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+          if (!upErr) updates[`arquivo_${lado}_path`] = path;
+          else console.warn('Upload falhou:', lado, upErr);
+        } catch (e) { console.warn('Erro upload:', e); }
+      }
+      if (Object.keys(updates).length > 0) {
+        await sb.from('documentos').update(updates).eq('id', docId);
+      }
+    }
+
     btn.disabled = false; btn.textContent = 'Salvar documento';
-    if (result.error) { alert('Erro ao salvar: ' + result.error.message); return; }
     closeModal();
     const wasFirst = documentos.length === 0 && !id;
     await loadDocs();

@@ -9,88 +9,195 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
+  html, body { min-height: 100%; }
   body {
-    background: linear-gradient(135deg, var(--coral) 0%, var(--lavanda) 100%);
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, var(--noite) 0%, #1e293b 60%, var(--noite) 100%);
+    color: var(--branco);
     padding: 20px;
-    position: relative; overflow: hidden;
+    font-family: var(--font-body);
+    min-height: 100vh;
   }
-  body::before { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(255,217,61,0.25), transparent 70%); }
-  body::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(6,214,160,0.2), transparent 70%); }
+  .container { max-width: 480px; margin: 0 auto; }
 
-  .card {
-    background: var(--branco);
+  .brand-top {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    padding: 16px 0 28px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+  }
+  .brand-top strong { color: var(--branco); font-family: var(--font-display); font-weight: 800; }
+  .brand-top strong span { color: var(--coral); }
+
+  .titular-card {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--lavanda) 100%);
     border-radius: var(--r-xl);
-    width: 100%; max-width: 440px;
-    box-shadow: var(--sh-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    color: var(--branco);
     position: relative;
     overflow: hidden;
-    z-index: 1;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
   }
-  .card-header {
-    background: var(--noite);
-    color: var(--branco);
-    padding: 24px;
-    position: relative; overflow: hidden;
+  .titular-card::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
   }
-  .card-header::before { content: ''; position: absolute; bottom: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,90,54,0.3), transparent 70%); }
-  .brand { font-family: var(--font-display); font-weight: 800; font-size: 18px; }
-  .brand span { color: var(--coral); }
-  .tag { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 16px; position: relative; }
-  .nome { font-family: var(--font-display); font-weight: 800; font-size: 26px; margin-top: 6px; position: relative; }
-
-  .card-body { padding: 28px; }
-  .field { padding: 14px 0; border-bottom: 1px solid var(--borda); }
-  .field:last-child { border-bottom: none; }
-  .field-label { font-size: 11px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
-  .field-val { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--noite); margin-top: 4px; letter-spacing: 0.5px; }
-  .field-empty .field-val { color: var(--cinza-claro); font-style: italic; font-family: var(--font-body); font-weight: 400; }
-
-  .footer {
-    padding: 18px 24px;
-    background: var(--neve);
-    border-top: 1px solid var(--borda);
-    text-align: center;
-    font-size: 11px; color: var(--cinza);
+  .titular-tag {
+    font-size: 11px; color: rgba(255,255,255,0.75);
+    text-transform: uppercase; letter-spacing: 2px; font-weight: 700;
+    margin-bottom: 6px; position: relative;
   }
-  .footer a { color: var(--coral); font-weight: 600; }
-  .footer-icon { display: inline-flex; align-items: center; gap: 6px; }
-  .footer-icon [data-lucide] { width: 14px; height: 14px; }
-
-  .error {
-    background: var(--branco);
-    border-radius: var(--r-lg);
-    padding: 40px 32px;
-    max-width: 420px;
-    text-align: center;
-    box-shadow: var(--sh-lg);
-    z-index: 1;
+  .titular-nome {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 28px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    position: relative;
   }
-  .error [data-lucide] { width: 48px; height: 48px; color: var(--perigo); margin-bottom: 12px; }
-  .error h2 { font-size: 20px; margin-bottom: 8px; }
-  .error p { color: var(--cinza); line-height: 1.6; margin-bottom: 20px; }
-
-  .badge-verify {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--menta-light);
-    color: var(--menta-dark);
-    padding: 6px 12px;
+  .titular-cpf {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    opacity: 0.9;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .badges-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    position: relative;
+  }
+  .verify-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    padding: 5px 10px;
     border-radius: var(--r-full);
-    font-size: 12px; font-weight: 700;
-    margin-top: 12px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .badge-verify [data-lucide] { width: 14px; height: 14px; }
+  .verify-badge [data-lucide] { width: 12px; height: 12px; stroke-width: 3; }
+
+  .docs-stack { display: flex; flex-direction: column; gap: 12px; }
+  .doc-item {
+    background: var(--branco);
+    color: var(--noite);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .doc-item-header {
+    padding: 14px 18px;
+    background: var(--neve);
+    border-bottom: 1px solid var(--borda);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .doc-item-tipo {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--noite);
+  }
+  .doc-item-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--menta-light); color: var(--menta-dark);
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .doc-item-badge [data-lucide] { width: 11px; height: 11px; stroke-width: 3; }
+
+  .doc-photo {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: var(--neve);
+    overflow: hidden;
+    position: relative;
+  }
+  .doc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .doc-photo-empty {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; color: var(--cinza-claro); font-size: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+  .doc-photo-empty [data-lucide] { width: 36px; height: 36px; }
+
+  .doc-data {
+    padding: 14px 18px;
+    display: grid; gap: 8px;
+  }
+  .doc-line {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--borda);
+  }
+  .doc-line:last-child { border-bottom: none; }
+  .doc-line-label { color: var(--cinza); }
+  .doc-line-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--noite); }
+
+  .meta {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--r-md);
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+  .meta a { color: var(--coral); font-weight: 600; }
+  .meta-icon { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .meta-icon [data-lucide] { width: 14px; height: 14px; }
+
+  .error-card {
+    background: var(--branco);
+    color: var(--noite);
+    border-radius: var(--r-lg);
+    padding: 32px;
+    text-align: center;
+    max-width: 420px;
+    margin: 40px auto;
+  }
+  .error-card [data-lucide] { width: 44px; height: 44px; color: var(--perigo); margin-bottom: 12px; }
+  .error-card h2 { font-size: 20px; margin-bottom: 8px; }
+  .error-card p { color: var(--cinza); line-height: 1.6; margin-bottom: 16px; }
+
+  .skel { background: rgba(255,255,255,0.08); border-radius: var(--r-lg); animation: pulse 2s infinite; }
 </style>
 </head>
 <body>
 
-<div id="root"></div>
+<div class="container">
+  <div class="brand-top">
+    Carteira digital · <strong>MeuDoc<span>.app</span></strong>
+  </div>
+  <div id="root"></div>
+</div>
 
 <script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
+
+  const tipoLabel = {
+    RG: 'Carteira de Identidade',
+    CIN: 'Carteira de Identidade Nacional',
+    CPF: 'CPF',
+    CNH: 'Carteira de Habilitação',
+    PASSAPORTE: 'Passaporte'
+  };
+
   function decodeData() {
     const params = new URLSearchParams(window.location.search);
     const d = params.get('d');
@@ -103,13 +210,6 @@
     }
   }
 
-  function mask(num, keep) {
-    if (!num) return null;
-    const s = String(num);
-    if (s.length <= keep) return s;
-    return '*'.repeat(s.length - keep) + s.slice(-keep);
-  }
-
   function fmtCpf(c) {
     if (!c) return null;
     const v = String(c).replace(/\D/g, '');
@@ -117,55 +217,105 @@
     return `***.${v.slice(3,6)}.${v.slice(6,9)}-**`;
   }
 
-  function render() {
-    const data = decodeData();
-    const root = document.getElementById('root');
+  function fmtDate(s) {
+    if (!s) return '—';
+    return new Date(s).toLocaleDateString('pt-BR');
+  }
 
-    if (!data || !data.n) {
-      root.innerHTML = `
-        <div class="error">
-          <i data-lucide="alert-circle"></i>
-          <h2>Carteira inválida</h2>
-          <p>Esse QR Code não contém uma carteira válida do MeuDoc.app. Verifique se está apontando pra um QR gerado pelo aplicativo.</p>
-          <a href="/" class="btn btn-primary">Conhecer o MeuDoc.app</a>
-        </div>`;
-      lucide.createIcons();
+  function mask(num, keep = 3) {
+    if (!num) return null;
+    const s = String(num);
+    if (s.length <= keep) return s;
+    return '•'.repeat(Math.max(s.length - keep, 3)) + s.slice(-keep);
+  }
+
+  function getPublicUrl(path) {
+    if (!path) return null;
+    const { data } = sb.storage.from('documentos').getPublicUrl(path);
+    return data?.publicUrl || null;
+  }
+
+  function showError(msg) {
+    document.getElementById('root').innerHTML = `
+      <div class="error-card">
+        <i data-lucide="alert-circle"></i>
+        <h2>Carteira não encontrada</h2>
+        <p>${msg}</p>
+        <a href="/" class="btn btn-primary">Conhecer o MeuDoc.app</a>
+      </div>`;
+    lucide.createIcons();
+  }
+
+  async function render() {
+    const data = decodeData();
+    if (!data || (!data.uid && !data.n)) {
+      return showError('Esse link não é uma carteira válida. Verifique se o QR Code foi gerado pelo MeuDoc.app.');
+    }
+
+    // Se tem uid (formato novo), busca dados completos via RPC publica
+    if (data.uid) {
+      const { data: rows, error } = await sb.rpc('carteira_publica', { p_user_id: data.uid });
+      if (error || !rows || rows.length === 0) {
+        return showError('Não consegui carregar essa carteira. Pode ter sido removida ou expirada.');
+      }
+      const row = rows[0];
+      const docs = Array.isArray(row.documentos) ? row.documentos : (typeof row.documentos === 'string' ? JSON.parse(row.documentos) : []);
+      renderCarteira(row.nome || data.n || 'Titular', row.cpf, docs, data.t);
       return;
     }
 
-    const ts = data.t ? new Date(data.t * 1000) : new Date();
-    const dataStr = ts.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    // Formato antigo (so dados no QR, sem foto) — fallback
+    const docsLegacy = [];
+    if (data.rg) docsLegacy.push({ tipo: 'RG', numero: data.rg });
+    if (data.cnh) docsLegacy.push({ tipo: 'CNH', numero: data.cnh });
+    renderCarteira(data.n, data.cpf, docsLegacy, data.t);
+  }
 
-    const rows = [];
-    if (data.cpf) rows.push({ label: 'CPF', val: fmtCpf(data.cpf) });
-    else rows.push({ label: 'CPF', val: 'Não informado', empty: true });
+  function renderCarteira(nome, cpf, docs, timestamp) {
+    const ts = timestamp ? new Date(timestamp * 1000) : new Date();
+    const dataGen = ts.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    if (data.rg) rows.push({ label: 'RG / CIN', val: mask(data.rg, 3) });
-    else rows.push({ label: 'RG / CIN', val: 'Não informado', empty: true });
+    const docsHtml = (docs || []).filter(d => d).map(d => {
+      const tipoLbl = tipoLabel[d.tipo] || d.tipo || 'Documento';
+      const frenteUrl = getPublicUrl(d.arquivo_frente_path);
+      const photoBlock = frenteUrl
+        ? `<div class="doc-photo"><img src="${frenteUrl}" alt="${tipoLbl}" loading="lazy"></div>`
+        : `<div class="doc-photo"><div class="doc-photo-empty"><i data-lucide="image-off"></i><div>Foto não cadastrada<br><span style="font-size:11px; opacity:0.7;">Titular precisa adicionar a foto no app</span></div></div></div>`;
+      return `
+        <div class="doc-item">
+          <div class="doc-item-header">
+            <div class="doc-item-tipo">${tipoLbl}</div>
+            <div class="doc-item-badge"><i data-lucide="shield-check"></i> Verificado</div>
+          </div>
+          ${photoBlock}
+          <div class="doc-data">
+            ${d.numero ? `<div class="doc-line"><span class="doc-line-label">Número</span><span class="doc-line-val">${mask(d.numero, 3)}</span></div>` : ''}
+            ${d.orgao_emissor ? `<div class="doc-line"><span class="doc-line-label">Órgão emissor</span><span class="doc-line-val">${d.orgao_emissor}</span></div>` : ''}
+            ${d.data_emissao ? `<div class="doc-line"><span class="doc-line-label">Emissão</span><span class="doc-line-val">${fmtDate(d.data_emissao)}</span></div>` : ''}
+            ${d.data_vencimento ? `<div class="doc-line"><span class="doc-line-label">Vencimento</span><span class="doc-line-val">${fmtDate(d.data_vencimento)}</span></div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
 
-    if (data.cnh) rows.push({ label: 'CNH', val: mask(data.cnh, 3) });
-    else rows.push({ label: 'CNH', val: 'Não informado', empty: true });
-
-    root.innerHTML = `
-      <div class="card">
-        <div class="card-header">
-          <div class="brand">MeuDoc<span>.app</span></div>
-          <div class="tag">Carteira Digital</div>
-          <div class="nome">${data.n}</div>
-          <div class="badge-verify"><i data-lucide="shield-check"></i> Validado</div>
+    document.getElementById('root').innerHTML = `
+      <div class="titular-card">
+        <div class="titular-tag">Titular da carteira</div>
+        <div class="titular-nome">${nome || 'Titular'}</div>
+        <div class="titular-cpf">${cpf ? 'CPF ' + fmtCpf(cpf) : ''}</div>
+        <div class="badges-row">
+          <div class="verify-badge"><i data-lucide="shield-check"></i> Cadastrado por foto</div>
+          <div class="verify-badge"><i data-lucide="lock"></i> Integridade verificada</div>
         </div>
-        <div class="card-body">
-          ${rows.map(r => `
-            <div class="field ${r.empty ? 'field-empty' : ''}">
-              <div class="field-label">${r.label}</div>
-              <div class="field-val">${r.val}</div>
-            </div>
-          `).join('')}
-        </div>
-        <div class="footer">
-          <div class="footer-icon"><i data-lucide="clock"></i> Gerada em ${dataStr}</div>
-          <div style="margin-top:6px;">Carteira digital · <a href="/">meudoc.app</a></div>
-        </div>
+      </div>
+
+      ${docs && docs.length > 0
+        ? `<div class="docs-stack">${docsHtml}</div>`
+        : '<div class="meta" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.85);">Esse titular ainda não tem documentos cadastrados na carteira.</div>'}
+
+      <div class="meta">
+        <div class="meta-icon"><i data-lucide="clock"></i> Gerada em ${dataGen}</div>
+        Carteira do MeuDoc.app · <a href="/">conhecer o app</a><br>
+        <span style="font-size:11px; opacity:0.7;">Verificação privada, não substitui documento oficial.</span>
       </div>
     `;
     lucide.createIcons();

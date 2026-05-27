@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carteira Digital — MeuDoc.app</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css?v=2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: linear-gradient(180deg, var(--noite) 0%, #1e293b 100%);
+    color: var(--branco);
+    display: flex; flex-direction: column;
+    font-family: var(--font-body);
+  }
+
+  /* Top bar */
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    flex-shrink: 0;
+  }
+  .top-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+  .top-btn {
+    width: 40px; height: 40px;
+    border-radius: var(--r-full);
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: var(--branco);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all var(--t);
+  }
+  .top-btn:hover { background: rgba(255,255,255,0.15); }
+
+  /* Wallet area */
+  .wallet {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 16px 20px 40px;
+  }
+  .wallet::-webkit-scrollbar { display: none; }
+  .wallet-track {
+    display: flex; gap: 16px;
+    min-height: 100%;
+    padding-bottom: 20px;
+  }
+
+  /* Card de documento (estilo carteira fisica) */
+  .doc-card {
+    flex: 0 0 calc(100vw - 40px);
+    max-width: 420px;
+    scroll-snap-align: center;
+    background: var(--branco);
+    color: var(--noite);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+    display: flex; flex-direction: column;
+    min-height: 480px;
+  }
+  .doc-card-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--coral) 0%, var(--lavanda) 100%);
+    color: var(--branco);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .doc-card-tipo {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 1.5px;
+  }
+  .doc-card-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .doc-card-badge [data-lucide] { width: 12px; height: 12px; stroke-width: 3; }
+
+  /* Foto do documento (se tiver) */
+  .doc-card-photo {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: var(--neve);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .doc-card-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .doc-card-photo.no-photo {
+    background: linear-gradient(135deg, var(--neve) 0%, var(--coral-light) 100%);
+    color: var(--cinza-claro);
+    font-size: 13px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  .doc-card-photo.no-photo [data-lucide] { width: 36px; height: 36px; color: var(--cinza-claro); }
+
+  /* Verso button */
+  .flip-btn {
+    position: absolute; bottom: 12px; right: 12px;
+    background: rgba(15,23,42,0.7);
+    color: var(--branco);
+    border: none;
+    padding: 6px 12px;
+    border-radius: var(--r-full);
+    font-size: 11px; font-weight: 700;
+    font-family: var(--font-display);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    backdrop-filter: blur(8px);
+  }
+  .flip-btn [data-lucide] { width: 12px; height: 12px; }
+
+  /* Body com dados */
+  .doc-card-body {
+    padding: 20px;
+    flex: 1;
+  }
+  .doc-card-nome {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 20px;
+    color: var(--noite);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .doc-card-sub {
+    font-size: 12px; color: var(--cinza);
+    margin-bottom: 16px;
+  }
+  .doc-card-fields {
+    display: grid; gap: 10px;
+  }
+  .doc-card-field {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--borda);
+    font-size: 13px;
+  }
+  .doc-card-field:last-child { border-bottom: none; }
+  .doc-card-label { color: var(--cinza); }
+  .doc-card-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--noite);
+  }
+  .doc-card-foot {
+    padding: 14px 20px;
+    background: var(--neve);
+    border-top: 1px solid var(--borda);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--cinza);
+  }
+  .doc-card-foot a { color: var(--coral); font-weight: 600; }
+
+  /* Estado vazio */
+  .empty {
+    flex: 0 0 calc(100vw - 40px);
+    max-width: 420px;
+    scroll-snap-align: center;
+    background: var(--branco);
+    border: 2px dashed var(--borda);
+    border-radius: 20px;
+    padding: 60px 32px;
+    text-align: center;
+    color: var(--cinza);
+  }
+  .empty [data-lucide] { width: 48px; height: 48px; color: var(--coral); margin-bottom: 16px; }
+  .empty h3 { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--noite); margin-bottom: 8px; }
+  .empty p { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+
+  /* Bottom actions */
+  .actions {
+    padding: 16px 20px calc(20px + env(safe-area-inset-bottom));
+    flex-shrink: 0;
+    display: flex; gap: 10px; justify-content: center;
+  }
+  .action-btn {
+    flex: 1; max-width: 200px;
+    padding: 14px 20px;
+    background: var(--branco);
+    color: var(--noite);
+    border: none;
+    border-radius: var(--r-md);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    transition: all var(--t);
+  }
+  .action-btn:hover { transform: translateY(-2px); }
+  .action-btn [data-lucide] { width: 16px; height: 16px; }
+
+  /* Indicador de página (dots) */
+  .dots {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 8px 0;
+    flex-shrink: 0;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transition: all 0.3s;
+  }
+  .dot.active { background: var(--coral); width: 20px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <button class="top-btn" onclick="voltar()" aria-label="Fechar"><i data-lucide="x"></i></button>
+  <div class="top-title">Minha Carteira</div>
+  <button class="top-btn" onclick="compartilhar()" aria-label="Compartilhar"><i data-lucide="share-2"></i></button>
+</div>
+
+<div class="wallet" id="wallet">
+  <div class="wallet-track" id="walletTrack">
+    <!-- Cards inseridos por JS -->
+  </div>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<div class="actions">
+  <button class="action-btn" onclick="window.location='documentos.html'"><i data-lucide="plus"></i> Adicionar</button>
+  <button class="action-btn" onclick="window.location='dashboard.html'"><i data-lucide="layout-dashboard"></i> Dashboard</button>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
+
+  let currentUser = null, profile = null, documentos = [];
+  let viewMode = {}; // {docId: 'frente'|'verso'}
+
+  const tipoLabel = {
+    RG: 'Carteira de Identidade',
+    CIN: 'Carteira de Identidade Nacional',
+    CPF: 'CPF',
+    CNH: 'Carteira de Habilitação',
+    PASSAPORTE: 'Passaporte',
+    TITULO_ELEITOR: 'Título de Eleitor',
+    CERTIDAO_NASCIMENTO: 'Certidão de Nascimento',
+    CERTIDAO_CASAMENTO: 'Certidão de Casamento',
+    CARTEIRA_TRABALHO: 'Carteira de Trabalho',
+    CARTEIRA_VACINACAO: 'Carteira de Vacinação',
+    OUTRO: 'Outro documento'
+  };
+
+  (async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    currentUser = session.user;
+    const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    profile = p || { id: currentUser.id, nome: '', email: currentUser.email };
+    const { data: docs } = await sb.from('documentos').select('*').eq('user_id', currentUser.id).order('tipo');
+    documentos = docs || [];
+    renderCards();
+    lucide.createIcons();
+  })();
+
+  function getPublicUrl(path) {
+    if (!path) return null;
+    const { data } = sb.storage.from('documentos').getPublicUrl(path);
+    return data?.publicUrl || null;
+  }
+
+  async function renderCards() {
+    const track = document.getElementById('walletTrack');
+    if (documentos.length === 0) {
+      track.innerHTML = `
+        <div class="empty">
+          <i data-lucide="wallet"></i>
+          <h3>Sua carteira está vazia</h3>
+          <p>Adicione seus documentos e eles aparecem aqui, prontos pra mostrar quando precisar.</p>
+          <button class="action-btn" onclick="window.location='documentos.html'" style="background:var(--coral); color:var(--branco);">
+            <i data-lucide="plus"></i> Adicionar primeiro documento
+          </button>
+        </div>`;
+      lucide.createIcons();
+      return;
+    }
+    // Cards de documentos
+    const cards = await Promise.all(documentos.map(async d => {
+      const frenteUrl = getPublicUrl(d.arquivo_frente_path);
+      const versoUrl = getPublicUrl(d.arquivo_verso_path);
+      return { doc: d, frenteUrl, versoUrl };
+    }));
+    track.innerHTML = cards.map((c, i) => cardHtml(c, i)).join('');
+    setupDots();
+    lucide.createIcons();
+  }
+
+  function cardHtml({ doc, frenteUrl, versoUrl }, i) {
+    const tipoLbl = tipoLabel[doc.tipo] || 'Documento';
+    const lado = viewMode[doc.id] || 'frente';
+    const photoUrl = lado === 'verso' ? versoUrl : frenteUrl;
+    const photoBlock = photoUrl
+      ? `<div class="doc-card-photo"><img src="${photoUrl}" alt="${tipoLbl}">${versoUrl ? `<button class="flip-btn" onclick="flip('${doc.id}')"><i data-lucide="refresh-cw"></i> ${lado === 'frente' ? 'Verso' : 'Frente'}</button>` : ''}</div>`
+      : `<div class="doc-card-photo no-photo"><i data-lucide="image-off"></i><div>Sem foto cadastrada<br><span style="font-size:11px; opacity:0.7;">Edite o documento e adicione uma foto</span></div></div>`;
+    const fmt = v => v ? new Date(v).toLocaleDateString('pt-BR') : '—';
+    const nome = profile.nome || currentUser.email.split('@')[0];
+    return `
+      <div class="doc-card" data-doc-id="${doc.id}" data-idx="${i}">
+        <div class="doc-card-header">
+          <div class="doc-card-tipo">${tipoLbl}</div>
+          <div class="doc-card-badge"><i data-lucide="shield-check"></i> Verificado</div>
+        </div>
+        ${photoBlock}
+        <div class="doc-card-body">
+          <div class="doc-card-nome">${nome}</div>
+          <div class="doc-card-sub">${doc.nome || tipoLbl}</div>
+          <div class="doc-card-fields">
+            ${doc.numero ? `<div class="doc-card-field"><span class="doc-card-label">Número</span><span class="doc-card-val">${doc.numero}</span></div>` : ''}
+            ${doc.orgao_emissor ? `<div class="doc-card-field"><span class="doc-card-label">Órgão emissor</span><span class="doc-card-val">${doc.orgao_emissor}</span></div>` : ''}
+            ${doc.data_emissao ? `<div class="doc-card-field"><span class="doc-card-label">Emissão</span><span class="doc-card-val">${fmt(doc.data_emissao)}</span></div>` : ''}
+            ${doc.data_vencimento ? `<div class="doc-card-field"><span class="doc-card-label">Vencimento</span><span class="doc-card-val">${fmt(doc.data_vencimento)}</span></div>` : ''}
+            ${doc.categoria ? `<div class="doc-card-field"><span class="doc-card-label">Categoria</span><span class="doc-card-val">${doc.categoria}</span></div>` : ''}
+          </div>
+        </div>
+        <div class="doc-card-foot">
+          <span>Cadastrado e verificado por foto</span>
+          ${doc.hash_integridade ? `<span style="font-family:monospace;">#${doc.hash_integridade.slice(0,8)}</span>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function flip(docId) {
+    viewMode[docId] = viewMode[docId] === 'verso' ? 'frente' : 'verso';
+    renderCards();
+  }
+
+  function setupDots() {
+    const dots = document.getElementById('dots');
+    dots.innerHTML = documentos.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('');
+    const wallet = document.getElementById('wallet');
+    wallet.addEventListener('scroll', () => {
+      const idx = Math.round(wallet.scrollLeft / (window.innerWidth - 40));
+      document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    });
+  }
+
+  function voltar() {
+    if (document.referrer && document.referrer.includes(window.location.host)) history.back();
+    else window.location.href = 'dashboard.html';
+  }
+
+  async function compartilhar() {
+    const payload = {
+      n: profile.nome || currentUser.email.split('@')[0],
+      cpf: profile.cpf || null,
+      uid: currentUser.id,
+      t: Math.floor(Date.now() / 1000)
+    };
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const url = `${window.location.origin}/verificar.html?d=${b64}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Minha Carteira MeuDoc', url }); return; } catch (e) {}
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('Link copiado! Cole onde quiser mostrar sua carteira.');
+    } catch (e) {
+      prompt('Copie este link:', url);
+    }
+  }
+</script>
+</body>
+</html>
