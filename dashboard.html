@@ -97,10 +97,24 @@
   .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
+  /* Tablet: score card vira full row no topo, os 3 KPIs ficam em 3 colunas */
   @media (max-width: 1024px) {
-    .grid-kpi { grid-template-columns: repeat(2, 1fr); }
+    .grid-kpi { grid-template-columns: repeat(3, 1fr); }
+    .grid-kpi > .score-card { grid-column: 1 / -1; }
     .grid-2 { grid-template-columns: 1fr; }
     .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Mobile: score card empilhado vertical, KPIs em 3 col compactos */
+  @media (max-width: 640px) {
+    .grid-kpi { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .grid-kpi > .score-card { grid-column: 1 / -1; flex-direction: column; text-align: center; gap: 14px; padding: 20px; }
+    .grid-kpi > .score-card .score-ring-wrap { margin: 0 auto; }
+    .grid-3 { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi { padding: 14px; }
+    .kpi-value { font-size: 24px; }
+    .kpi-label { font-size: 10px; }
+    .kpi-sub { font-size: 11px; }
   }
 
   /* === SCORE CARD === */
@@ -303,10 +317,24 @@
     .sidebar.open { left: 0; }
     .content { margin-left: 0; }
     .menu-toggle-mobile { display: inline-flex; }
-    .page { padding: 20px 16px; }
-    .topbar { padding: 16px; }
-    .carteira-body { flex-direction: column; align-items: stretch; }
+    .page { padding: 16px 14px; }
+    .page-section { margin-bottom: 20px; }
+    .topbar { padding: 14px 16px; }
+    .greeting h1 { font-size: 18px; }
+    .greeting p { font-size: 12px; }
+    .carteira { padding: 22px; }
+    .carteira-body { flex-direction: column; align-items: stretch; gap: 16px; }
     .qr-wrap { align-self: center; }
+    .carteira-name { font-size: 18px; }
+    .conquistas-grid { gap: 8px; }
+    .conquista-icon { width: 44px; height: 44px; }
+    .conquista-icon [data-lucide] { width: 20px; height: 20px; }
+    .conquista-label { font-size: 9px; }
+    .score-info h3 { font-size: 16px; }
+    .score-info p { font-size: 13px; }
+    .insight-card { padding: 16px; }
+    .insight-msg { font-size: 13px; }
+    .cal-mini { padding: 16px; }
   }
   .menu-toggle-mobile { display: none; background: var(--neve); border: 1px solid var(--borda); width: 40px; height: 40px; border-radius: var(--r-md); align-items: center; justify-content: center; color: var(--noite); cursor: pointer; }
 
