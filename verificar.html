@@ -113,16 +113,32 @@
   }
   .doc-item-badge [data-lucide] { width: 11px; height: 11px; stroke-width: 3; }
 
-  .doc-photo {
+  .doc-photos { width: 100%; background: var(--neve); }
+  .doc-photo-slot {
     width: 100%;
-    aspect-ratio: 16/10;
+    aspect-ratio: 8/5;
     background: var(--neve);
     overflow: hidden;
     position: relative;
+    border-bottom: 1px solid var(--borda);
   }
-  .doc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .doc-photo-slot:last-child { border-bottom: none; }
+  .doc-photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .doc-photo-label {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(15,23,42,0.75);
+    backdrop-filter: blur(8px);
+    color: var(--branco);
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    font-size: 10px; font-weight: 800;
+    font-family: var(--font-display);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
   .doc-photo-empty {
     width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--neve) 0%, var(--coral-light) 100%);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 8px; color: var(--cinza-claro); font-size: 12px;
     padding: 24px;
@@ -278,9 +294,16 @@
     const docsHtml = (docs || []).filter(d => d).map(d => {
       const tipoLbl = tipoLabel[d.tipo] || d.tipo || 'Documento';
       const frenteUrl = getPublicUrl(d.arquivo_frente_path);
-      const photoBlock = frenteUrl
-        ? `<div class="doc-photo"><img src="${frenteUrl}" alt="${tipoLbl}" loading="lazy"></div>`
-        : `<div class="doc-photo"><div class="doc-photo-empty"><i data-lucide="image-off"></i><div>Foto não cadastrada<br><span style="font-size:11px; opacity:0.7;">Titular precisa adicionar a foto no app</span></div></div></div>`;
+      const versoUrl = getPublicUrl(d.arquivo_verso_path);
+      let photoBlock = '';
+      if (frenteUrl || versoUrl) {
+        photoBlock = '<div class="doc-photos">';
+        if (frenteUrl) photoBlock += `<div class="doc-photo-slot"><span class="doc-photo-label">Frente</span><img src="${frenteUrl}" alt="${tipoLbl} (frente)" loading="lazy"></div>`;
+        if (versoUrl) photoBlock += `<div class="doc-photo-slot"><span class="doc-photo-label">Verso</span><img src="${versoUrl}" alt="${tipoLbl} (verso)" loading="lazy"></div>`;
+        photoBlock += '</div>';
+      } else {
+        photoBlock = `<div class="doc-photo-slot"><div class="doc-photo-empty"><i data-lucide="image-off"></i><div>Foto não cadastrada<br><span style="font-size:11px; opacity:0.7;">Titular precisa adicionar a foto no app</span></div></div></div>`;
+      }
       return `
         <div class="doc-item">
           <div class="doc-item-header">

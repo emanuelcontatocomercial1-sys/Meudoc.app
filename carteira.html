@@ -68,7 +68,6 @@
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
     display: flex; flex-direction: column;
-    min-height: 480px;
   }
   .doc-card-header {
     padding: 16px 20px;
@@ -91,44 +90,47 @@
   }
   .doc-card-badge [data-lucide] { width: 12px; height: 12px; stroke-width: 3; }
 
-  /* Foto do documento (se tiver) */
-  .doc-card-photo {
+  /* Fotos do documento (frente + verso empilhadas) */
+  .doc-photos {
     width: 100%;
-    aspect-ratio: 16/10;
     background: var(--neve);
-    display: flex; align-items: center; justify-content: center;
+  }
+  .doc-photo-slot {
+    width: 100%;
+    aspect-ratio: 8/5;
+    background: var(--neve);
     overflow: hidden;
     position: relative;
+    border-bottom: 1px solid var(--borda);
   }
-  .doc-card-photo img {
-    width: 100%; height: 100%; object-fit: cover;
+  .doc-photo-slot:last-child { border-bottom: none; }
+  .doc-photo-slot img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
-  .doc-card-photo.no-photo {
+  .doc-photo-label {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(15,23,42,0.75);
+    backdrop-filter: blur(8px);
+    color: var(--branco);
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    font-size: 10px; font-weight: 800;
+    font-family: var(--font-display);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .doc-photo-empty {
+    width: 100%; height: 100%;
     background: linear-gradient(135deg, var(--neve) 0%, var(--coral-light) 100%);
     color: var(--cinza-claro);
-    font-size: 13px;
-    flex-direction: column;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     gap: 8px;
     padding: 24px;
     text-align: center;
+    font-size: 13px;
   }
-  .doc-card-photo.no-photo [data-lucide] { width: 36px; height: 36px; color: var(--cinza-claro); }
-
-  /* Verso button */
-  .flip-btn {
-    position: absolute; bottom: 12px; right: 12px;
-    background: rgba(15,23,42,0.7);
-    color: var(--branco);
-    border: none;
-    padding: 6px 12px;
-    border-radius: var(--r-full);
-    font-size: 11px; font-weight: 700;
-    font-family: var(--font-display);
-    cursor: pointer;
-    display: inline-flex; align-items: center; gap: 4px;
-    backdrop-filter: blur(8px);
-  }
-  .flip-btn [data-lucide] { width: 12px; height: 12px; }
+  .doc-photo-empty [data-lucide] { width: 32px; height: 32px; color: var(--cinza-claro); }
 
   /* Body com dados */
   .doc-card-body {
@@ -255,7 +257,6 @@
   );
 
   let currentUser = null, profile = null, documentos = [];
-  let viewMode = {}; // {docId: 'frente'|'verso'}
 
   const tipoLabel = {
     RG: 'Carteira de Identidade',
@@ -317,20 +318,31 @@
 
   function cardHtml({ doc, frenteUrl, versoUrl }, i) {
     const tipoLbl = tipoLabel[doc.tipo] || 'Documento';
-    const lado = viewMode[doc.id] || 'frente';
-    const photoUrl = lado === 'verso' ? versoUrl : frenteUrl;
-    const photoBlock = photoUrl
-      ? `<div class="doc-card-photo"><img src="${photoUrl}" alt="${tipoLbl}">${versoUrl ? `<button class="flip-btn" onclick="flip('${doc.id}')"><i data-lucide="refresh-cw"></i> ${lado === 'frente' ? 'Verso' : 'Frente'}</button>` : ''}</div>`
-      : `<div class="doc-card-photo no-photo"><i data-lucide="image-off"></i><div>Sem foto cadastrada<br><span style="font-size:11px; opacity:0.7;">Edite o documento e adicione uma foto</span></div></div>`;
     const fmt = v => v ? new Date(v).toLocaleDateString('pt-BR') : '—';
     const nome = profile.nome || currentUser.email.split('@')[0];
+
+    // Bloco de fotos: frente em cima + verso embaixo (ambas grandes e visiveis)
+    let photosBlock = '';
+    if (frenteUrl || versoUrl) {
+      photosBlock = '<div class="doc-photos">';
+      if (frenteUrl) {
+        photosBlock += `<div class="doc-photo-slot"><span class="doc-photo-label">Frente</span><img src="${frenteUrl}" alt="${tipoLbl} (frente)"></div>`;
+      }
+      if (versoUrl) {
+        photosBlock += `<div class="doc-photo-slot"><span class="doc-photo-label">Verso</span><img src="${versoUrl}" alt="${tipoLbl} (verso)"></div>`;
+      }
+      photosBlock += '</div>';
+    } else {
+      photosBlock = `<div class="doc-photo-slot"><div class="doc-photo-empty"><i data-lucide="image-off"></i><div>Sem foto cadastrada<br><span style="font-size:11px; opacity:0.7;">Edite o documento e adicione uma foto</span></div></div></div>`;
+    }
+
     return `
       <div class="doc-card" data-doc-id="${doc.id}" data-idx="${i}">
         <div class="doc-card-header">
           <div class="doc-card-tipo">${tipoLbl}</div>
           <div class="doc-card-badge"><i data-lucide="shield-check"></i> Verificado</div>
         </div>
-        ${photoBlock}
+        ${photosBlock}
         <div class="doc-card-body">
           <div class="doc-card-nome">${nome}</div>
           <div class="doc-card-sub">${doc.nome || tipoLbl}</div>
@@ -348,11 +360,6 @@
         </div>
       </div>
     `;
-  }
-
-  function flip(docId) {
-    viewMode[docId] = viewMode[docId] === 'verso' ? 'frente' : 'verso';
-    renderCards();
   }
 
   function setupDots() {
