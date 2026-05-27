@@ -247,7 +247,7 @@
             <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="onFilesSelected(event)">
             <i data-lucide="plus" style="width:14px; height:14px;"></i> Adicionar foto
           </label>
-          <button class="btn btn-primary btn-sm" id="btnAnalyze" onclick="analisarComIA()" style="margin-left:8px;"><i data-lucide="sparkles" class="icon-sm"></i> Analisar com IA</button>
+          <button class="btn btn-primary btn-sm" id="btnAnalyze" onclick="analisarComIA()" style="margin-left:8px;"><i data-lucide="sparkles" class="icon-sm"></i> Analisar agora</button>
         </div>
         <div class="ocr-status" id="ocrStatus">
           <span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span>
@@ -468,6 +468,7 @@
     document.getElementById('modalFooter').style.display = 'flex';
   }
   let imagensSelecionadas = []; // [{data, mediaType, dataUrl}]
+  let autoTriggerTimer = null;
 
   function clearForm() {
     ['fDocId','fNome','fNumero','fEmissao','fVencimento','fOrgao','fCategoria','fObs'].forEach(id => document.getElementById(id).value = '');
@@ -505,9 +506,11 @@
     if (files.length === 0) return;
     showFormStep();
 
-    // Processa cada arquivo
+    // Cancela auto-trigger anterior (vai ser reiniciado depois de processar tudo)
+    if (autoTriggerTimer) { clearTimeout(autoTriggerTimer); autoTriggerTimer = null; }
+
     for (const file of files) {
-      if (!file.type.startsWith('image/')) continue; // PDF pulamos por enquanto
+      if (!file.type.startsWith('image/')) continue;
       const dataUrl = await new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = ev => resolve(ev.target.result);
@@ -517,14 +520,53 @@
       imagensSelecionadas.push({ data: base64, mediaType: file.type, dataUrl });
     }
     renderPreviews();
-    e.target.value = ''; // permite re-selecionar mesma foto
+    e.target.value = '';
+
+    // Auto-dispara analise depois de 2.5s sem nova foto
+    scheduleAutoAnalyze();
+  }
+
+  function scheduleAutoAnalyze() {
+    if (autoTriggerTimer) clearTimeout(autoTriggerTimer);
+    if (imagensSelecionadas.length === 0) return;
+    const status = document.getElementById('ocrStatus');
+    const span = status.querySelector('span:last-child');
+    let count = 2;
+    span.textContent = `Analisando em ${count}s... (clique aqui pra adicionar verso primeiro)`;
+    status.classList.add('show');
+    status.style.cursor = 'pointer';
+    status.onclick = () => { cancelAutoAnalyze(); };
+    const tick = () => {
+      count--;
+      if (count <= 0) {
+        status.style.cursor = '';
+        status.onclick = null;
+        analisarComIA();
+        return;
+      }
+      span.textContent = `Analisando em ${count}s... (clique aqui pra adicionar verso primeiro)`;
+      autoTriggerTimer = setTimeout(tick, 1000);
+    };
+    autoTriggerTimer = setTimeout(tick, 1000);
+  }
+
+  function cancelAutoAnalyze() {
+    if (autoTriggerTimer) { clearTimeout(autoTriggerTimer); autoTriggerTimer = null; }
+    const status = document.getElementById('ocrStatus');
+    status.classList.remove('show');
+    status.style.cursor = '';
+    status.onclick = null;
   }
 
   async function analisarComIA() {
     if (imagensSelecionadas.length === 0) return;
+    cancelAutoAnalyze();
     const btn = document.getElementById('btnAnalyze');
     btn.disabled = true;
-    document.getElementById('ocrStatus').classList.add('show');
+    const status = document.getElementById('ocrStatus');
+    const span = status.querySelector('span:last-child');
+    span.innerHTML = '<span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span> A Bia está lendo o documento...';
+    status.classList.add('show');
     try {
       const r = await fetch('/api/ocr', {
         method: 'POST',
@@ -532,12 +574,12 @@
         body: JSON.stringify({ images: imagensSelecionadas.map(i => ({ data: i.data, mediaType: i.mediaType })) })
       });
       const json = await r.json();
-      document.getElementById('ocrStatus').classList.remove('show');
+      status.classList.remove('show');
       btn.disabled = false;
       if (json.data) fillFromOcr(json.data);
       else alert('A Bia não conseguiu ler. Preencha manualmente.');
     } catch (err) {
-      document.getElementById('ocrStatus').classList.remove('show');
+      status.classList.remove('show');
       btn.disabled = false;
       alert('Erro ao ler o documento. Preencha manualmente.');
     }
@@ -612,9 +654,13 @@
     if (data.orgao_emissor) document.getElementById('fOrgao').value = data.orgao_emissor;
     if (data.categoria) document.getElementById('fCategoria').value = data.categoria;
     if (data.observacoes) document.getElementById('fObs').value = data.observacoes;
+    // Nome inteligente: tipo + nome da pessoa (extraido do doc ou do profile)
     if (!document.getElementById('fNome').value) {
       const tipoNome = tipoLabel[data.tipo] || 'Documento';
-      document.getElementById('fNome').value = tipoNome;
+      const nomeFonte = data.nome || profile.nome || '';
+      const primeiroNome = nomeFonte.trim().split(/\s+/)[0];
+      const capitalizado = primeiroNome ? primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase() : '';
+      document.getElementById('fNome').value = capitalizado ? `${tipoNome} de ${capitalizado}` : tipoNome;
     }
     // Se CPF veio no doc, atualiza profile
     if (data.cpf && !profile.cpf) {
