@@ -654,13 +654,20 @@
     if (data.orgao_emissor) document.getElementById('fOrgao').value = data.orgao_emissor;
     if (data.categoria) document.getElementById('fCategoria').value = data.categoria;
     if (data.observacoes) document.getElementById('fObs').value = data.observacoes;
-    // Nome inteligente: tipo + nome da pessoa (extraido do doc ou do profile)
+    // Nome do documento = nome da pessoa (tipo ja tem campo proprio)
     if (!document.getElementById('fNome').value) {
-      const tipoNome = tipoLabel[data.tipo] || 'Documento';
       const nomeFonte = data.nome || profile.nome || '';
-      const primeiroNome = nomeFonte.trim().split(/\s+/)[0];
-      const capitalizado = primeiroNome ? primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase() : '';
-      document.getElementById('fNome').value = capitalizado ? `${tipoNome} de ${capitalizado}` : tipoNome;
+      const partes = nomeFonte.trim().split(/\s+/).filter(Boolean);
+      // Primeiro nome + ultimo sobrenome capitalizados (ex: "Joao Silva")
+      const capitalize = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+      let nomeFinal = '';
+      if (partes.length >= 2) {
+        nomeFinal = `${capitalize(partes[0])} ${capitalize(partes[partes.length - 1])}`;
+      } else if (partes.length === 1) {
+        nomeFinal = capitalize(partes[0]);
+      }
+      // Fallback: tipo do documento se nao tem nome nenhum
+      document.getElementById('fNome').value = nomeFinal || (tipoLabel[data.tipo] || 'Documento');
     }
     // Se CPF veio no doc, atualiza profile
     if (data.cpf && !profile.cpf) {
