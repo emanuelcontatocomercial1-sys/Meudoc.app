@@ -600,8 +600,12 @@
           ctx.fillRect(0, 0, w, h);
           ctx.drawImage(img, 0, 0, w, h);
           const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          // Sanitiza base64: remove whitespace/newlines
+          let base64 = dataUrl.split(',')[1] || '';
+          base64 = base64.replace(/\s/g, '');
           resolve({
-            base64: dataUrl.split(',')[1],
+            data: base64,
+            base64,
             mediaType: 'image/jpeg',
             dataUrl
           });
