@@ -3,493 +3,347 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MeuDoc.app — Perfil</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>Perfil — MeuDoc.app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/app-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-  :root {
-    --navy: #0B1F3A;
-    --blue: #1560BD;
-    --sky: #E8F2FF;
-    --green: #00B37E;
-    --green-light: #E6FAF4;
-    --orange: #F76E2A;
-    --orange-light: #FEF0E7;
-    --red: #E53935;
-    --red-light: #FEECEC;
-    --white: #FFFFFF;
-    --off-white: #F7F9FC;
-    --gray: #8A99B0;
-    --border: #DCE4F0;
-    --text: #1A2B40;
-    --sidebar-width: 260px;
+  .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
+  @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+
+  .profile-card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    text-align: center;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); display: flex; min-height: 100vh; }
-
-  /* SIDEBAR */
-  .sidebar { width: var(--sidebar-width); background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 50; }
-  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .logo { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); text-decoration: none; }
-  .logo span { color: var(--orange); }
-  .sidebar-user { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); flex-shrink: 0; }
-  .user-name { font-size: 14px; font-weight: 600; color: var(--white); }
-  .user-plan { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
-  .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; cursor: pointer; transition: all .2s; border: none; background: none; width: 100%; text-align: left; }
-  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
-  .nav-item.active { background: rgba(247,110,42,0.15); color: var(--white); }
-  .nav-icon { font-size: 18px; width: 22px; text-align: center; }
-  .nav-badge { background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
-  .nav-section-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 14px 6px; }
-  .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
-
-  /* MAIN */
-  .main { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
-
-  /* TOPBAR */
-  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
-  .topbar-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); }
-  .topbar-sub { font-size: 13px; color: var(--gray); margin-top: 2px; }
-  .btn-primary { background: var(--orange); color: var(--white); padding: 10px 20px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .25s; display: flex; align-items: center; gap: 8px; }
-  .btn-primary:hover { background: #E55A1A; }
-
-  /* CONTENT */
-  .content { padding: 32px; flex: 1; }
-  .content-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
-
-  /* PROFILE CARD */
-  .profile-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-
-  .profile-cover {
-    height: 100px;
-    background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%);
-    position: relative;
-  }
-
-  .profile-cover::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 80% 50%, rgba(247,110,42,0.2) 0%, transparent 60%);
-  }
-
-  .profile-avatar-wrap {
-    padding: 0 24px;
-    margin-top: -40px;
-    position: relative; z-index: 1;
-  }
-
   .profile-avatar-big {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: var(--orange); border: 4px solid var(--white);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Sora', sans-serif; font-weight: 800; font-size: 28px; color: var(--white);
-    cursor: pointer; position: relative; transition: all .2s;
+    width: 96px; height: 96px;
+    border-radius: var(--r-full);
+    background: linear-gradient(135deg, var(--coral), var(--lavanda));
+    color: var(--branco);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 40px;
+    margin-bottom: 16px;
   }
+  .profile-name { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .profile-email { font-size: 13px; color: var(--cinza); margin-bottom: 16px; }
+  .profile-plano-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--r-full); font-family: var(--font-display); font-size: 12px; font-weight: 700; }
+  .profile-plano-badge.gratis { background: var(--neve); color: var(--noite); border: 1px solid var(--borda); }
+  .profile-plano-badge.premium, .profile-plano-badge.familia { background: linear-gradient(135deg, var(--coral), var(--sol)); color: var(--branco); }
+  .profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--borda); }
+  .profile-stat { text-align: center; }
+  .profile-stat-num { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+  .profile-stat-label { font-size: 11px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
-  .profile-avatar-big:hover .avatar-overlay { opacity: 1; }
-
-  .avatar-overlay {
-    position: absolute; inset: 0; border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; opacity: 0; transition: opacity .2s;
+  .form-card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-lg);
+    padding: 28px;
   }
+  .form-card h3 { font-size: 16px; margin-bottom: 4px; }
+  .form-card .form-sub { font-size: 13px; color: var(--cinza); margin-bottom: 24px; }
+  .form-section { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--borda); }
+  .form-section:last-child { border-bottom: none; padding-bottom: 0; }
+  .form-section-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--noite); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .form-section-title [data-lucide] { width: 16px; height: 16px; color: var(--coral); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
 
-  .profile-info { padding: 16px 24px 24px; }
-  .profile-name { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
-  .profile-email { font-size: 14px; color: var(--gray); margin-bottom: 16px; }
-
-  .profile-plan {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--orange-light); border: 1px solid var(--orange);
-    border-radius: 10px; padding: 8px 14px; margin-bottom: 20px;
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--noite); color: var(--branco);
+    padding: 14px 20px;
+    border-radius: var(--r-md);
+    font-size: 14px; font-weight: 600;
+    box-shadow: var(--sh-lg);
+    display: none;
+    align-items: center; gap: 10px;
+    z-index: 200;
   }
-  .plan-icon { font-size: 16px; }
-  .plan-name { font-size: 13px; font-weight: 700; color: var(--orange); }
-  .plan-desc { font-size: 12px; color: var(--gray); margin-top: 2px; }
-
-  .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  .pstat { text-align: center; padding: 12px; background: var(--off-white); border-radius: 12px; }
-  .pstat-num { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); }
-  .pstat-label { font-size: 11px; color: var(--gray); margin-top: 3px; }
-
-  .upgrade-btn {
-    width: 100%; padding: 12px; background: var(--navy); color: var(--white);
-    border: none; border-radius: 12px; font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: all .25s;
-  }
-  .upgrade-btn:hover { background: var(--blue); }
-
-  /* RIGHT PANEL */
-  .right-panel { display: flex; flex-direction: column; gap: 24px; }
-
-  /* CARD */
-  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); }
-  .card-body { padding: 24px; }
-
-  /* FORM */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-  .form-group label { font-size: 13px; font-weight: 600; color: var(--navy); }
-  .form-group input, .form-group select { border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: all .2s; background: var(--white); }
-  .form-group input:focus, .form-group select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,96,189,0.08); }
-  .form-group input:disabled { background: var(--off-white); color: var(--gray); cursor: not-allowed; }
-
-  .save-btn { margin-top: 20px; padding: 13px 28px; background: var(--orange); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .25s; }
-  .save-btn:hover { background: #E55A1A; transform: translateY(-1px); }
-
-  /* SECURITY */
-  .security-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); }
-  .security-item:last-child { border-bottom: none; }
-  .security-info { flex: 1; }
-  .security-name { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
-  .security-desc { font-size: 13px; color: var(--gray); }
-  .security-status { display: flex; align-items: center; gap: 8px; }
-  .status-badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
-  .status-ok { background: var(--green-light); color: var(--green); }
-  .status-pending { background: var(--orange-light); color: var(--orange); }
-
-  .btn-small { padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; transition: all .2s; }
-  .btn-small:hover { border-color: var(--blue); background: var(--sky); }
-  .btn-small-danger { border-color: var(--red-light); color: var(--red); }
-  .btn-small-danger:hover { border-color: var(--red); background: var(--red-light); }
-
-  /* TOGGLE */
-  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: .3s; }
-  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: .3s; }
-  .toggle input:checked + .toggle-slider { background: var(--green); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
-
-  /* DANGER ZONE */
-  .danger-zone { background: var(--red-light); border: 1px solid rgba(229,57,53,0.2); border-radius: 16px; padding: 24px; }
-  .danger-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--red); margin-bottom: 6px; }
-  .danger-desc { font-size: 13px; color: var(--gray); margin-bottom: 16px; line-height: 1.6; }
-  .btn-danger { padding: 10px 20px; background: var(--red); color: var(--white); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; }
-  .btn-danger:hover { background: #C62828; }
-
-  @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .main { margin-left: 0; }
-    .content { padding: 20px; }
-    .topbar { padding: 16px 20px; }
-    .form-grid { grid-template-columns: 1fr; }
-  }
+  .toast.show { display: flex; animation: fadeIn 0.3s ease-out; }
+  .toast.success { background: var(--menta-dark); }
+  .toast.error { background: var(--perigo); }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <a href="index.html" class="logo">MeuDoc<span>.app</span></a>
-  </div>
-  <div class="sidebar-user">
-    <div class="user-avatar">E</div>
-    <div>
-      <div class="user-name">Emanuel Silva</div>
-      <div class="user-plan">Plano Gratuito</div>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">MeuDoc<span>.app</span></div>
+  <div class="sb-user">
+    <div class="avatar" id="sbAvatar">M</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sbUserName">Carregando...</div>
+      <div class="sb-user-plan" id="sbUserPlan">Plano grátis</div>
     </div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-title">Principal</div>
-    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span>Painel</span></a>
-    <a class="nav-item" href="documentos.html"><span class="nav-icon">📁</span><span style="flex:1">Meus Documentos</span><span class="nav-badge">5</span></a>
-    <a class="nav-item" href="alertas.html"><span class="nav-icon">🔔</span><span style="flex:1">Alertas</span><span class="nav-badge">3</span></a>
-    <a class="nav-item" href="#"><span class="nav-icon">📅</span><span>Agendamentos</span></a>
-    <div class="nav-section-title">Ferramentas</div>
-    <a class="nav-item" href="#"><span class="nav-icon">🤖</span><span>Assistente IA</span></a>
-    <a class="nav-item" href="#"><span class="nav-icon">👨‍👩‍👧</span><span>Família</span></a>
-    <a class="nav-item" href="#"><span class="nav-icon">📜</span><span>Histórico</span></a>
-    <div class="nav-section-title">Conta</div>
-    <a class="nav-item active" href="perfil.html"><span class="nav-icon">👤</span><span>Perfil</span></a>
-    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Configurações</span></a>
+  <nav class="sb-nav">
+    <a href="dashboard.html" class="sb-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+    <a href="documentos.html" class="sb-link"><i data-lucide="folder"></i> Documentos</a>
+    <a href="alertas.html" class="sb-link"><i data-lucide="bell"></i> Alertas</a>
+    <a href="agendamentos.html" class="sb-link"><i data-lucide="calendar"></i> Agenda</a>
+    <a href="assistente.html" class="sb-link"><i data-lucide="sparkles"></i> Bia (assistente)</a>
+    <div class="sb-section">Conta</div>
+    <a href="perfil.html" class="sb-link active"><i data-lucide="user"></i> Perfil</a>
   </nav>
-  <div class="sidebar-footer">
-    <a class="nav-item" href="index.html" style="color: rgba(255,255,255,0.4);"><span class="nav-icon">🚪</span><span>Sair</span></a>
+  <div class="sb-footer">
+    <a href="#" class="sb-link" onclick="logout();return false;"><i data-lucide="log-out"></i> Sair</a>
   </div>
 </aside>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
 
-<!-- MAIN -->
-<div class="main">
+<main class="content">
   <header class="topbar">
-    <div>
-      <div class="topbar-title">Meu Perfil</div>
-      <div class="topbar-sub">Gerencie suas informações pessoais e preferências</div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="menu-toggle-mobile" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="greeting">
+        <h1>Meu Perfil</h1>
+        <p>Atualize seus dados pessoais e configurações.</p>
+      </div>
     </div>
-    <button class="btn-primary" onclick="salvarPerfil()">💾 Salvar alterações</button>
   </header>
 
-  <div class="content">
-    <div class="content-grid">
-
-      <!-- LEFT — PROFILE CARD -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-
+  <div class="page">
+    <div class="profile-grid">
+      <div>
         <div class="profile-card">
-          <div class="profile-cover"></div>
-          <div class="profile-avatar-wrap">
-            <div class="profile-avatar-big" onclick="trocarFoto()" title="Trocar foto">
-              E
-              <div class="avatar-overlay">📷</div>
+          <div class="profile-avatar-big" id="bigAvatar">M</div>
+          <div class="profile-name" id="bigName">Carregando...</div>
+          <div class="profile-email" id="bigEmail">—</div>
+          <div class="profile-plano-badge gratis" id="bigPlano">Plano grátis</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-num" id="statDocs">0</div>
+              <div class="profile-stat-label">Documentos</div>
             </div>
-          </div>
-          <div class="profile-info">
-            <div class="profile-name">Emanuel Silva</div>
-            <div class="profile-email">emanuel@email.com</div>
-            <div class="profile-plan">
-              <span class="plan-icon">⚡</span>
-              <div>
-                <div class="plan-name">Plano Gratuito</div>
-                <div class="plan-desc">5 documentos • 5 perguntas/dia</div>
-              </div>
-            </div>
-            <div class="profile-stats">
-              <div class="pstat"><div class="pstat-num">5</div><div class="pstat-label">Documentos</div></div>
-              <div class="pstat"><div class="pstat-num">12</div><div class="pstat-label">Perguntas</div></div>
-              <div class="pstat"><div class="pstat-num">2</div><div class="pstat-label">Alertas</div></div>
-            </div>
-            <button class="upgrade-btn">⚡ Fazer upgrade para Premium</button>
-          </div>
-        </div>
-
-        <!-- PLAN DETAILS -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Seu plano</div>
-          </div>
-          <div class="card-body">
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                <span style="color: var(--gray);">Documentos</span>
-                <span style="font-weight: 600;">2 / 5 usados</span>
-              </div>
-              <div style="height: 8px; background: var(--border); border-radius: 100px; overflow: hidden;">
-                <div style="width: 40%; height: 100%; background: var(--blue); border-radius: 100px;"></div>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
-                <span style="color: var(--gray);">Perguntas hoje</span>
-                <span style="font-weight: 600;">3 / 5 usadas</span>
-              </div>
-              <div style="height: 8px; background: var(--border); border-radius: 100px; overflow: hidden;">
-                <div style="width: 60%; height: 100%; background: var(--orange); border-radius: 100px;"></div>
-              </div>
-              <div style="margin-top: 8px; padding: 14px; background: var(--sky); border-radius: 12px; text-align: center;">
-                <div style="font-size: 13px; color: var(--blue); font-weight: 600;">Premium por R$10,90/mês</div>
-                <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Documentos ilimitados + IA sem limite</div>
-              </div>
+            <div class="profile-stat">
+              <div class="profile-stat-num" id="statDias">1</div>
+              <div class="profile-stat-label">Dias usando</div>
             </div>
           </div>
         </div>
-
       </div>
 
-      <!-- RIGHT PANEL -->
-      <div class="right-panel">
+      <div class="form-card">
+        <h3>Dados pessoais</h3>
+        <p class="form-sub">Mantenha seus dados atualizados pra carteira digital funcionar corretamente.</p>
 
-        <!-- PERSONAL DATA -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Dados pessoais</div>
+        <div class="form-section">
+          <div class="form-section-title"><i data-lucide="user"></i> Identificação</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label">Nome</label>
+              <input class="input" id="pNome" placeholder="Seu primeiro nome">
+            </div>
+            <div class="form-group">
+              <label class="label">Sobrenome</label>
+              <input class="input" id="pSobrenome" placeholder="Seu sobrenome">
+            </div>
           </div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Nome</label>
-                <input type="text" value="Emanuel">
-              </div>
-              <div class="form-group">
-                <label>Sobrenome</label>
-                <input type="text" value="Silva">
-              </div>
-              <div class="form-group">
-                <label>Data de nascimento</label>
-                <input type="date" value="2005-03-15">
-              </div>
-              <div class="form-group">
-                <label>CPF</label>
-                <input type="text" value="000.000.000-00" disabled>
-              </div>
-              <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" value="emanuel@email.com">
-              </div>
-              <div class="form-group">
-                <label>Telefone / WhatsApp</label>
-                <input type="tel" value="(71) 99999-9999">
-              </div>
-              <div class="form-group full">
-                <label>CEP</label>
-                <input type="text" value="40000-000" style="max-width: 160px;" oninput="buscarCep(this.value)">
-              </div>
-              <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" value="Salvador" id="cidade">
-              </div>
-              <div class="form-group">
-                <label>Estado</label>
-                <input type="text" value="BA" id="estado">
-              </div>
-              <div class="form-group full">
-                <label>Endereço</label>
-                <input type="text" value="Rua das Flores, 123 — Pituba" id="rua">
-              </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label">CPF</label>
+              <input class="input" id="pCpf" placeholder="000.000.000-00" maxlength="14">
             </div>
-            <button class="save-btn" onclick="salvarPerfil()">Salvar dados pessoais</button>
-          </div>
-        </div>
-
-        <!-- SECURITY -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Segurança</div>
-          </div>
-          <div class="card-body" style="padding: 0 24px;">
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Senha</div>
-                <div class="security-desc">Última alteração há 30 dias</div>
-              </div>
-              <div class="security-status">
-                <span class="status-badge status-ok">Segura</span>
-                <button class="btn-small">Alterar</button>
-              </div>
-            </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">E-mail verificado</div>
-                <div class="security-desc">emanuel@email.com</div>
-              </div>
-              <div class="security-status">
-                <span class="status-badge status-pending">Pendente</span>
-                <button class="btn-small">Verificar</button>
-              </div>
-            </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Autenticação em dois fatores</div>
-                <div class="security-desc">Proteja sua conta com 2FA</div>
-              </div>
-              <div class="security-status">
-                <span class="status-badge status-pending">Desativado</span>
-                <button class="btn-small">Ativar</button>
-              </div>
-            </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Sessões ativas</div>
-                <div class="security-desc">1 dispositivo conectado</div>
-              </div>
-              <div class="security-status">
-                <button class="btn-small btn-small-danger">Encerrar</button>
-              </div>
+            <div class="form-group">
+              <label class="label">Data de nascimento</label>
+              <input class="input" type="date" id="pDataNasc">
             </div>
           </div>
         </div>
 
-        <!-- NOTIFICATIONS -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Notificações</div>
-          </div>
-          <div class="card-body" style="padding: 0 24px;">
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Alertas por e-mail</div>
-                <div class="security-desc">Vencimentos e novidades</div>
-              </div>
-              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        <div class="form-section">
+          <div class="form-section-title"><i data-lucide="phone"></i> Contato</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label">E-mail</label>
+              <input class="input" type="email" id="pEmail" readonly style="background:var(--neve); cursor:not-allowed;">
             </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Alertas por WhatsApp</div>
-                <div class="security-desc">Lembretes direto no seu WhatsApp</div>
-              </div>
-              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-            </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Novidades do produto</div>
-                <div class="security-desc">Novas funcionalidades e melhorias</div>
-              </div>
-              <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
-            </div>
-            <div class="security-item">
-              <div class="security-info">
-                <div class="security-name">Dicas e tutoriais</div>
-                <div class="security-desc">Aprenda a usar melhor o MeuDoc.app</div>
-              </div>
-              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            <div class="form-group">
+              <label class="label">Telefone / WhatsApp</label>
+              <input class="input" id="pTelefone" placeholder="(71) 99999-9999">
             </div>
           </div>
         </div>
 
-        <!-- DANGER ZONE -->
-        <div class="danger-zone">
-          <div class="danger-title">⚠️ Zona de perigo</div>
-          <div class="danger-desc">Essas ações são irreversíveis. Ao excluir sua conta, todos os seus documentos e dados serão permanentemente apagados dos nossos servidores.</div>
-          <div style="display: flex; gap: 12px;">
-            <button class="btn-small btn-small-danger">Exportar meus dados</button>
-            <button class="btn-danger" onclick="confirmarExclusao()">Excluir minha conta</button>
+        <div class="form-section">
+          <div class="form-section-title"><i data-lucide="map-pin"></i> Endereço</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label">CEP</label>
+              <input class="input" id="pCep" placeholder="00000-000" maxlength="9" onblur="buscarCep()">
+            </div>
+            <div class="form-group">
+              <label class="label">Estado</label>
+              <input class="input" id="pEstado" placeholder="BA" maxlength="2">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label">Cidade</label>
+              <input class="input" id="pCidade" placeholder="Salvador">
+            </div>
+            <div class="form-group">
+              <label class="label">Endereço completo</label>
+              <input class="input" id="pEndereco" placeholder="Rua, número, bairro">
+            </div>
           </div>
         </div>
 
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="window.location='dashboard.html'">Cancelar</button>
+          <button class="btn btn-primary" id="btnSavePerfil" onclick="savePerfil()"><i data-lucide="check" class="icon-sm"></i> Salvar alterações</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</main>
+
+<div class="toast" id="toast"></div>
 
 <script>
-  function salvarPerfil() {
-    const btn = document.querySelector('.btn-primary');
-    btn.textContent = '✅ Salvo!';
-    btn.style.background = 'var(--green)';
-    setTimeout(() => {
-      btn.textContent = '💾 Salvar alterações';
-      btn.style.background = 'var(--orange)';
-    }, 2000);
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
+
+  let currentUser = null, profile = null;
+
+  (async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    currentUser = session.user;
+    const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    profile = p || { id: currentUser.id, email: currentUser.email, plano: 'gratis' };
+    const { count: docsCount } = await sb.from('documentos').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
+    renderUser(docsCount || 0);
+    fillForm();
+    setupMasks();
+    lucide.createIcons();
+  })();
+
+  function renderUser(docsCount) {
+    const nome = profile.nome || currentUser.email.split('@')[0];
+    const inicial = nome.charAt(0).toUpperCase();
+    document.getElementById('sbUserName').textContent = nome;
+    document.getElementById('sbAvatar').textContent = inicial;
+    document.getElementById('bigAvatar').textContent = inicial;
+    document.getElementById('bigName').textContent = `${profile.nome || nome} ${profile.sobrenome || ''}`.trim();
+    document.getElementById('bigEmail').textContent = currentUser.email;
+
+    const planoLabel = { gratis: 'Plano grátis', premium: 'Premium', familia: 'Família' }[profile.plano] || 'Plano grátis';
+    document.getElementById('sbUserPlan').textContent = planoLabel;
+    const bigP = document.getElementById('bigPlano');
+    bigP.textContent = planoLabel;
+    bigP.className = `profile-plano-badge ${profile.plano || 'gratis'}`;
+
+    document.getElementById('statDocs').textContent = docsCount;
+    const created = profile.created_at ? new Date(profile.created_at) : new Date();
+    const dias = Math.max(1, Math.floor((new Date() - created) / (1000*60*60*24)));
+    document.getElementById('statDias').textContent = dias;
   }
 
-  function trocarFoto() {
-    alert('Funcionalidade de foto em breve!');
+  function fillForm() {
+    document.getElementById('pNome').value = profile.nome || '';
+    document.getElementById('pSobrenome').value = profile.sobrenome || '';
+    document.getElementById('pCpf').value = profile.cpf ? formatCpf(profile.cpf) : '';
+    document.getElementById('pDataNasc').value = profile.data_nascimento || '';
+    document.getElementById('pEmail').value = currentUser.email;
+    document.getElementById('pTelefone').value = profile.telefone || '';
+    document.getElementById('pCep').value = profile.cep || '';
+    document.getElementById('pEstado').value = profile.estado || '';
+    document.getElementById('pCidade').value = profile.cidade || '';
+    document.getElementById('pEndereco').value = profile.endereco || '';
   }
 
-  function confirmarExclusao() {
-    if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
-      alert('Conta excluída. Você será redirecionado.');
-      window.location.href = 'index.html';
-    }
+  function setupMasks() {
+    const cpfEl = document.getElementById('pCpf');
+    cpfEl.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      e.target.value = v;
+    });
+    const cepEl = document.getElementById('pCep');
+    cepEl.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      v = v.replace(/(\d{5})(\d)/, '$1-$2');
+      e.target.value = v;
+    });
+    const telEl = document.getElementById('pTelefone');
+    telEl.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+      else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+      e.target.value = v;
+    });
   }
 
-  async function buscarCep(cep) {
-    cep = cep.replace(/\D/g, '');
-    if (cep.length === 8) {
-      try {
-        const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const d = await r.json();
-        if (!d.erro) {
-          document.getElementById('rua').value = d.logradouro || '';
-          document.getElementById('cidade').value = d.localidade || '';
-          document.getElementById('estado').value = d.uf || '';
-        }
-      } catch(e) {}
-    }
+  function formatCpf(cpf) {
+    const v = (cpf || '').replace(/\D/g, '');
+    if (v.length !== 11) return v;
+    return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 
-  // Animate on load
-  document.querySelectorAll('.profile-card, .card, .danger-zone').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(12px)';
-    el.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
-    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 80);
-  });
+  async function buscarCep() {
+    const cep = document.getElementById('pCep').value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await r.json();
+      if (data.erro) return;
+      document.getElementById('pEstado').value = data.uf || '';
+      document.getElementById('pCidade').value = data.localidade || '';
+      const end = [data.logradouro, data.bairro].filter(Boolean).join(', ');
+      if (end && !document.getElementById('pEndereco').value) document.getElementById('pEndereco').value = end;
+    } catch (e) {}
+  }
+
+  async function savePerfil() {
+    const btn = document.getElementById('btnSavePerfil');
+    btn.disabled = true;
+    const payload = {
+      nome: document.getElementById('pNome').value.trim(),
+      sobrenome: document.getElementById('pSobrenome').value.trim(),
+      cpf: document.getElementById('pCpf').value.replace(/\D/g, '') || null,
+      data_nascimento: document.getElementById('pDataNasc').value || null,
+      telefone: document.getElementById('pTelefone').value.trim() || null,
+      cep: document.getElementById('pCep').value.replace(/\D/g, '') || null,
+      estado: document.getElementById('pEstado').value.trim().toUpperCase() || null,
+      cidade: document.getElementById('pCidade').value.trim() || null,
+      endereco: document.getElementById('pEndereco').value.trim() || null,
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+    btn.disabled = false;
+    if (error) return toast('Erro: ' + error.message, 'error');
+    profile = { ...profile, ...payload };
+    renderUser(parseInt(document.getElementById('statDocs').textContent));
+    toast('Perfil atualizado com sucesso!', 'success');
+  }
+
+  function toast(msg, tipo) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast show ${tipo || ''}`;
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sbOverlay').classList.toggle('show');
+  }
+  async function logout() { await sb.auth.signOut(); window.location.href = 'index.html'; }
 </script>
 </body>
 </html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bia — Sua assistente · MeuDoc.app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/app-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  .content { display: flex; flex-direction: column; height: 100vh; }
+  .topbar { flex-shrink: 0; }
+
+  .chat-wrap {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    background: var(--neve);
+  }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+  }
+  .chat-inner { max-width: 760px; margin: 0 auto; }
+
+  .welcome {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .welcome-avatar {
+    width: 88px; height: 88px;
+    border-radius: var(--r-full);
+    overflow: hidden;
+    margin: 0 auto 20px;
+    border: 4px solid var(--coral-light);
+    box-shadow: var(--sh-md);
+  }
+  .welcome-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .welcome h2 { font-size: 24px; margin-bottom: 8px; }
+  .welcome p { color: var(--cinza); max-width: 480px; margin: 0 auto 28px; line-height: 1.6; }
+
+  .suggestions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 600px; margin: 0 auto; }
+  @media (max-width: 600px) { .suggestions { grid-template-columns: 1fr; } }
+  .sugg-card {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--t);
+    display: flex;
+    align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 500;
+    color: var(--noite);
+  }
+  .sugg-card:hover { border-color: var(--coral); background: var(--coral-light); }
+  .sugg-card [data-lucide] { color: var(--coral); flex-shrink: 0; width: 18px; height: 18px; }
+
+  .msg { display: flex; gap: 12px; margin-bottom: 16px; max-width: 760px; }
+  .msg-avatar {
+    width: 36px; height: 36px;
+    border-radius: var(--r-full);
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--coral-light);
+  }
+  .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .msg-avatar.user { background: var(--coral); color: var(--branco); display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; border-color: transparent; }
+  .msg-content { flex: 1; min-width: 0; }
+  .msg-name { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--noite); margin-bottom: 4px; }
+  .msg-bubble {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--noite);
+    word-wrap: break-word;
+  }
+  .msg.user { flex-direction: row-reverse; }
+  .msg.user .msg-content { text-align: right; }
+  .msg.user .msg-bubble { background: var(--coral); color: var(--branco); border-color: var(--coral); text-align: left; display: inline-block; max-width: 80%; }
+  .msg.user .msg-name { text-align: right; }
+
+  .typing {
+    display: inline-flex; gap: 4px;
+    padding: 14px 16px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-md);
+  }
+  .typing span { width: 6px; height: 6px; background: var(--cinza-claro); border-radius: 50%; animation: pulse 1.4s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  .chat-input-bar {
+    flex-shrink: 0;
+    background: var(--branco);
+    border-top: 1px solid var(--borda);
+    padding: 16px 32px;
+  }
+  .chat-input-inner {
+    max-width: 760px; margin: 0 auto;
+    display: flex; gap: 10px; align-items: flex-end;
+  }
+  .chat-textarea {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--borda);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--noite);
+    background: var(--branco);
+    outline: none;
+    resize: none;
+    max-height: 120px;
+    min-height: 46px;
+    line-height: 1.5;
+  }
+  .chat-textarea:focus { border-color: var(--coral); }
+  .send-btn {
+    width: 46px; height: 46px;
+    background: var(--coral);
+    color: var(--branco);
+    border: none;
+    border-radius: var(--r-md);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all var(--t);
+  }
+  .send-btn:hover { background: var(--coral-dark); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .clear-link { font-size: 12px; color: var(--cinza); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .clear-link:hover { color: var(--perigo); }
+  .clear-link [data-lucide] { width: 12px; height: 12px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">MeuDoc<span>.app</span></div>
+  <div class="sb-user">
+    <div class="avatar" id="sbAvatar">M</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sbUserName">Carregando...</div>
+      <div class="sb-user-plan" id="sbUserPlan">Plano grátis</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <a href="dashboard.html" class="sb-link"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+    <a href="documentos.html" class="sb-link"><i data-lucide="folder"></i> Documentos</a>
+    <a href="alertas.html" class="sb-link"><i data-lucide="bell"></i> Alertas</a>
+    <a href="agendamentos.html" class="sb-link"><i data-lucide="calendar"></i> Agenda</a>
+    <a href="assistente.html" class="sb-link active"><i data-lucide="sparkles"></i> Bia (assistente)</a>
+    <div class="sb-section">Conta</div>
+    <a href="perfil.html" class="sb-link"><i data-lucide="user"></i> Perfil</a>
+  </nav>
+  <div class="sb-footer">
+    <a href="#" class="sb-link" onclick="logout();return false;"><i data-lucide="log-out"></i> Sair</a>
+  </div>
+</aside>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
+
+<main class="content">
+  <header class="topbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="menu-toggle-mobile" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--coral-light);">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="greeting">
+          <h1>Bia · sua assistente</h1>
+          <p><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--menta); margin-right:6px; animation:pulse 2s infinite;"></span>Online · responde em segundos</p>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="clear-link" onclick="limparHistorico()"><i data-lucide="trash"></i> Limpar conversa</span>
+    </div>
+  </header>
+
+  <div class="chat-wrap">
+    <div class="chat-area" id="chatArea">
+      <div class="chat-inner" id="chatInner">
+        <div class="welcome" id="welcomeBlock">
+          <div class="welcome-avatar">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=240&q=90&auto=format&fit=crop" alt="Bia">
+          </div>
+          <h2>Oi, eu sou a Bia!</h2>
+          <p>Sou sua assistente de documentos brasileiros. Pergunte sobre como tirar, renovar, valores, prazos e onde fazer cada documento.</p>
+          <div class="suggestions">
+            <button class="sugg-card" onclick="enviarSugestao('Como tirar passaporte pela primeira vez?')"><i data-lucide="plane"></i> Como tirar passaporte?</button>
+            <button class="sugg-card" onclick="enviarSugestao('Quanto custa renovar a CNH em 2026?')"><i data-lucide="credit-card"></i> Quanto custa renovar CNH?</button>
+            <button class="sugg-card" onclick="enviarSugestao('Como tirar a CIN (Carteira de Identidade Nacional)?')"><i data-lucide="badge-check"></i> Como tirar a CIN?</button>
+            <button class="sugg-card" onclick="enviarSugestao('Como abrir um MEI rapidamente?')"><i data-lucide="briefcase"></i> Como abrir MEI?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-bar">
+      <div class="chat-input-inner">
+        <textarea class="chat-textarea" id="chatInput" placeholder="Pergunte qualquer coisa sobre documentos..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="enviar()"><i data-lucide="send"></i></button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
+
+  let currentUser = null, profile = null;
+  const STORAGE_KEY = () => 'meudoc_chat_' + currentUser.id;
+  let conversa = [];
+
+  (async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    currentUser = session.user;
+    const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    profile = p || { id: currentUser.id, email: currentUser.email, plano: 'gratis' };
+    renderUser();
+    carregarHistorico();
+    setupInput();
+    lucide.createIcons();
+  })();
+
+  function renderUser() {
+    const nome = profile.nome || currentUser.email.split('@')[0];
+    document.getElementById('sbUserName').textContent = nome;
+    document.getElementById('sbAvatar').textContent = nome.charAt(0).toUpperCase();
+    document.getElementById('sbUserPlan').textContent = { gratis: 'Plano grátis', premium: 'Premium', familia: 'Família' }[profile.plano] || 'Plano grátis';
+  }
+
+  function carregarHistorico() {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY()) || '[]');
+    conversa = saved;
+    if (saved.length > 0) {
+      document.getElementById('welcomeBlock').style.display = 'none';
+      saved.forEach(m => renderMsg(m.role, m.content, false));
+      scrollDown();
+    }
+  }
+
+  function salvarHistorico() {
+    localStorage.setItem(STORAGE_KEY(), JSON.stringify(conversa.slice(-30)));
+  }
+
+  function limparHistorico() {
+    if (!confirm('Tem certeza que quer apagar toda a conversa com a Bia?')) return;
+    conversa = [];
+    localStorage.removeItem(STORAGE_KEY());
+    document.getElementById('chatInner').innerHTML = '';
+    document.getElementById('chatInner').innerHTML = document.querySelector('#welcomeBlock')?.outerHTML || '';
+    window.location.reload();
+  }
+
+  function setupInput() {
+    const ta = document.getElementById('chatInput');
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+    });
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
+    });
+  }
+
+  function renderMsg(role, content, animate) {
+    const welcome = document.getElementById('welcomeBlock');
+    if (welcome) welcome.style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    const isUser = role === 'user';
+    const userInicial = (profile.nome || currentUser.email)[0].toUpperCase();
+    const avatarHtml = isUser
+      ? `<div class="msg-avatar user">${userInicial}</div>`
+      : `<div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>`;
+    const nameHtml = isUser ? (profile.nome || 'Você') : 'Bia';
+    const bodyHtml = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    div.innerHTML = `
+      ${avatarHtml}
+      <div class="msg-content">
+        <div class="msg-name">${nameHtml}</div>
+        <div class="msg-bubble">${bodyHtml}</div>
+      </div>
+    `;
+    document.getElementById('chatInner').appendChild(div);
+    if (animate) scrollDown();
+  }
+
+  function scrollDown() {
+    const area = document.getElementById('chatArea');
+    area.scrollTop = area.scrollHeight;
+  }
+
+  async function enviar() {
+    const ta = document.getElementById('chatInput');
+    const text = ta.value.trim();
+    if (!text) return;
+    ta.value = '';
+    ta.style.height = 'auto';
+    enviarMensagem(text);
+  }
+
+  function enviarSugestao(text) {
+    enviarMensagem(text);
+  }
+
+  async function enviarMensagem(text) {
+    renderMsg('user', text, true);
+    conversa.push({ role: 'user', content: text });
+    salvarHistorico();
+
+    // Typing indicator
+    const inner = document.getElementById('chatInner');
+    const tip = document.createElement('div');
+    tip.className = 'msg bot';
+    tip.id = 'typingMsg';
+    tip.innerHTML = `
+      <div class="msg-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=85&auto=format&fit=crop" alt="Bia"></div>
+      <div class="msg-content">
+        <div class="msg-name">Bia</div>
+        <div class="typing"><span></span><span></span><span></span></div>
+      </div>`;
+    inner.appendChild(tip);
+    scrollDown();
+
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: conversa })
+      });
+      const data = await r.json();
+      const reply = data.content || 'Tive um problema pra responder. Tenta de novo?';
+      document.getElementById('typingMsg').remove();
+      renderMsg('assistant', reply, true);
+      conversa.push({ role: 'assistant', content: reply });
+      salvarHistorico();
+    } catch (e) {
+      const tm = document.getElementById('typingMsg');
+      if (tm) tm.remove();
+      renderMsg('assistant', 'Ops, parece que tive um problema técnico. Pode tentar de novo em alguns segundos?', true);
+    }
+    btn.disabled = false;
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sbOverlay').classList.toggle('show');
+  }
+  async function logout() { await sb.auth.signOut(); window.location.href = 'index.html'; }
+</script>
+</body>
+</html>

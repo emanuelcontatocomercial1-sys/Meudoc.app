@@ -331,9 +331,9 @@
     <a href="documentos.html" class="sb-link"><i data-lucide="folder"></i> Documentos</a>
     <a href="alertas.html" class="sb-link"><i data-lucide="bell"></i> Alertas <span id="badgeAlertas" style="margin-left:auto;font-size:10px;background:var(--coral);color:#fff;padding:2px 7px;border-radius:9999px;display:none;font-weight:700;">0</span></a>
     <a href="agendamentos.html" class="sb-link"><i data-lucide="calendar"></i> Agenda</a>
+    <a href="assistente.html" class="sb-link"><i data-lucide="sparkles"></i> Bia (assistente)</a>
     <div class="sb-section">Conta</div>
     <a href="perfil.html" class="sb-link"><i data-lucide="user"></i> Perfil</a>
-    <a href="#" class="sb-link" onclick="alert('Em breve!');return false;"><i data-lucide="users"></i> Família</a>
   </nav>
   <div class="sb-footer">
     <a href="#" class="sb-link" onclick="logout();return false;"><i data-lucide="log-out"></i> Sair</a>
@@ -625,9 +625,18 @@
     document.getElementById('carteiraRg').textContent = rg?.numero || '— Não cadastrado';
     document.getElementById('carteiraCnh').textContent = cnh?.numero || '— Não cadastrado';
 
-    const qrData = `MEUDOC:${currentUser.id}:${Date.now()}`;
+    const payload = {
+      n: profile.nome || currentUser.email.split('@')[0],
+      cpf: profile.cpf || null,
+      rg: rg?.numero || null,
+      cnh: cnh?.numero || null,
+      t: Math.floor(Date.now() / 1000)
+    };
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const qrUrl = `${window.location.origin}/verificar.html?d=${b64}`;
     const qr = qrcode(0, 'M');
-    qr.addData(qrData);
+    qr.addData(qrUrl);
     qr.make();
     document.getElementById('qrWrap').innerHTML = qr.createImgTag(4, 0);
   }

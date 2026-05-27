@@ -3,294 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MeuDoc.app — Acesso Antecipado</title>
-<meta name="description" content="O app que organiza seus documentos, avisa os prazos e te guia na renovação. Seja uma das primeiras a ter acesso.">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<title>Em breve · MeuDoc.app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-  :root {
-    --navy:#0B1F3A; --blue:#1560BD; --sky:#E8F2FF;
-    --orange:#F76E2A; --orange-light:#FEF0E7;
-    --green:#00B37E; --green-light:#E6FAF4;
-    --white:#FFFFFF; --off:#F7F9FC;
-    --gray:#8A99B0; --border:#DCE4F0; --text:#1A2B40;
+  body {
+    background: linear-gradient(135deg, var(--coral-light) 0%, var(--branco) 50%, var(--lavanda-light) 100%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
   }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;}
+  .wl-wrap { max-width: 540px; width: 100%; text-align: center; }
+  .wl-logo {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 28px;
+    color: var(--noite);
+    margin-bottom: 40px;
+  }
+  .wl-logo span { color: var(--coral); }
+  .wl-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-full);
+    padding: 6px 14px;
+    font-size: 13px; font-weight: 600; color: var(--cinza);
+    margin-bottom: 20px;
+  }
+  .wl-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--menta); animation: pulse 2s infinite; }
+  .wl-wrap h1 { font-size: clamp(32px, 6vw, 52px); margin-bottom: 16px; }
+  .wl-wrap h1 em { font-style: normal; color: var(--coral); }
+  .wl-sub { font-size: 17px; color: var(--cinza); line-height: 1.6; margin-bottom: 36px; max-width: 460px; margin-left: auto; margin-right: auto; }
 
-  /* NAV */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,31,58,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);}
-  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:22px;color:var(--white);text-decoration:none;}
-  .logo span{color:var(--orange);}
-  .nav-badge{display:flex;align-items:center;gap:8px;background:rgba(247,110,42,0.1);border:1px solid rgba(247,110,42,0.25);border-radius:100px;padding:7px 16px;}
-  .nav-pulse{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse 1.5s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-  .nav-badge-text{font-size:13px;font-weight:700;color:var(--orange);letter-spacing:1px;}
+  .wl-form {
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    box-shadow: var(--sh-md);
+    display: flex; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .wl-form .input { flex: 1; min-width: 200px; }
+  .wl-form .btn { flex-shrink: 0; }
+  @media (max-width: 480px) { .wl-form { flex-direction: column; } .wl-form .btn { width: 100%; } }
 
-  /* HERO */
-  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 80px;position:relative;overflow:hidden;text-align:center;}
-  .hero-glow1{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(247,110,42,0.12) 0%,transparent 65%);}
-  .hero-glow2{position:absolute;bottom:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(21,96,189,0.1) 0%,transparent 65%);}
-  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;}
-  .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(247,110,42,0.1);border:1px solid rgba(247,110,42,0.25);border-radius:100px;padding:8px 20px;margin-bottom:32px;position:relative;z-index:1;}
-  .hero-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);}
-  .hero-tag-text{font-size:13px;font-weight:700;color:var(--orange);letter-spacing:1.5px;text-transform:uppercase;}
-  .hero-title{font-family:'Sora',sans-serif;font-weight:900;font-size:clamp(40px,7vw,80px);line-height:1.05;color:var(--white);margin-bottom:24px;position:relative;z-index:1;}
-  .hero-title span{color:var(--orange);}
-  .hero-sub{font-size:clamp(16px,2.5vw,22px);color:rgba(255,255,255,0.55);max-width:600px;line-height:1.7;margin-bottom:48px;position:relative;z-index:1;}
+  .wl-perks {
+    display: flex; justify-content: center; gap: 24px;
+    margin-top: 32px; flex-wrap: wrap;
+  }
+  .wl-perk { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--cinza); }
+  .wl-perk [data-lucide] { color: var(--menta-dark); width: 18px; height: 18px; }
 
-  /* EMAIL FORM */
-  .email-form{display:flex;gap:12px;max-width:520px;width:100%;position:relative;z-index:1;flex-wrap:wrap;justify-content:center;}
-  .email-input{flex:1;min-width:260px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--white);outline:none;transition:all .2s;}
-  .email-input::placeholder{color:rgba(255,255,255,0.3);}
-  .email-input:focus{border-color:var(--orange);background:rgba(247,110,42,0.06);}
-  .email-btn{background:var(--orange);color:var(--white);padding:16px 32px;border-radius:12px;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .25s;white-space:nowrap;}
-  .email-btn:hover{background:#E55A1A;transform:translateY(-1px);}
-  .email-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
-  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  .success {
+    background: var(--branco);
+    border: 1px solid var(--menta);
+    border-radius: var(--r-lg);
+    padding: 32px;
+    text-align: center;
+    box-shadow: var(--sh-md);
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--menta-light);
+    color: var(--menta-dark);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .success-icon [data-lucide] { width: 32px; height: 32px; stroke-width: 3; }
+  .success h2 { font-size: 22px; margin-bottom: 8px; }
+  .success p { color: var(--cinza); }
 
-  /* SUCCESS */
-  .success-msg{display:none;align-items:center;gap:12px;background:rgba(0,179,126,0.1);border:1px solid rgba(0,179,126,0.25);border-radius:12px;padding:16px 24px;margin-top:16px;position:relative;z-index:1;}
-  .success-msg.show{display:flex;}
-  .success-icon{font-size:20px;}
-  .success-text{font-size:15px;color:rgba(255,255,255,0.8);font-weight:500;}
-  .success-text strong{color:#00B37E;}
-
-  .hero-disclaimer{font-size:13px;color:rgba(255,255,255,0.25);margin-top:16px;position:relative;z-index:1;}
-
-  /* COUNTER */
-  .counter-wrap{display:flex;align-items:center;gap:8px;margin-bottom:48px;position:relative;z-index:1;}
-  .counter-avatars{display:flex;}
-  .counter-avatar{width:32px;height:32px;border-radius:50%;background:var(--orange);border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-left:-8px;}
-  .counter-avatar:first-child{margin-left:0;}
-  .counter-text{font-size:14px;color:rgba(255,255,255,0.5);}
-  .counter-text strong{color:var(--white);}
-
-  /* FEATURES */
-  .features-section{padding:100px 24px;position:relative;}
-  .features-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);}
-  .section-label{font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:3px;text-align:center;margin-bottom:16px;}
-  .section-title{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,4vw,48px);color:var(--white);text-align:center;margin-bottom:16px;line-height:1.2;}
-  .section-title span{color:var(--orange);}
-  .section-sub{font-size:18px;color:rgba(255,255,255,0.45);text-align:center;max-width:500px;margin:0 auto 64px;}
-  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1000px;margin:0 auto;}
-  .feature-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:36px;transition:all .3s;}
-  .feature-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(247,110,42,0.2);transform:translateY(-4px);}
-  .feature-icon{width:56px;height:56px;border-radius:14px;background:rgba(247,110,42,0.1);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;}
-  .feature-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:10px;}
-  .feature-desc{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;}
-
-  /* DOCS */
-  .docs-section{padding:100px 24px;background:rgba(0,0,0,0.2);position:relative;}
-  .docs-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);}
-  .docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-width:900px;margin:0 auto;}
-  .doc-pill{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;display:flex;align-items:center;gap:12px;transition:all .2s;}
-  .doc-pill:hover{background:rgba(247,110,42,0.06);border-color:rgba(247,110,42,0.2);}
-  .doc-emoji{font-size:24px;}
-  .doc-name{font-size:14px;font-weight:600;color:rgba(255,255,255,0.7);}
-
-  /* CTA BOTTOM */
-  .cta-section{padding:100px 24px;text-align:center;position:relative;}
-  .cta-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);}
-  .cta-box{background:linear-gradient(135deg,rgba(247,110,42,0.1) 0%,rgba(21,96,189,0.05) 100%);border:1px solid rgba(247,110,42,0.15);border-radius:28px;padding:64px 40px;max-width:640px;margin:0 auto;}
-  .cta-title{font-family:'Sora',sans-serif;font-weight:900;font-size:clamp(28px,4vw,48px);color:var(--white);margin-bottom:16px;line-height:1.1;}
-  .cta-title span{color:var(--orange);}
-  .cta-sub{font-size:18px;color:rgba(255,255,255,0.45);margin-bottom:40px;line-height:1.6;}
-
-  /* FOOTER */
-  footer{padding:40px 24px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;}
-  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:20px;color:rgba(255,255,255,0.4);margin-bottom:8px;}
-  .footer-logo span{color:var(--orange);}
-  .footer-text{font-size:13px;color:rgba(255,255,255,0.2);}
-
-  @media(max-width:600px){nav{padding:16px 20px;}.email-form{flex-direction:column;}.email-input{min-width:unset;width:100%;}.email-btn{width:100%;}.cta-box{padding:40px 24px;}}
+  .back-link { margin-top: 32px; font-size: 14px; color: var(--cinza); }
+  .back-link a { color: var(--coral); font-weight: 600; }
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="logo">MeuDoc<span>.app</span></a>
-  <div class="nav-badge">
-    <div class="nav-pulse"></div>
-    <div class="nav-badge-text">Em breve</div>
-  </div>
-</nav>
+<div class="wl-wrap">
+  <div class="wl-logo">MeuDoc<span>.app</span></div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-glow1"></div>
-  <div class="hero-glow2"></div>
-  <div class="hero-grid"></div>
+  <div id="formBlock">
+    <div class="wl-badge"><span class="dot"></span> Lançamento em breve</div>
+    <h1>Em breve, <em>seus documentos sempre em dia.</em></h1>
+    <p class="wl-sub">Estamos finalizando os últimos detalhes. Deixe seu e-mail e seja um dos primeiros a usar quando lançar.</p>
 
-  <div class="hero-tag">
-    <div class="hero-tag-dot"></div>
-    <div class="hero-tag-text">Acesso antecipado</div>
-  </div>
-
-  <h1 class="hero-title">Seus documentos.<br><span>Sempre em dia.</span></h1>
-
-  <p class="hero-sub">O app que organiza seus documentos, avisa antes do vencimento e te guia para tirar ou renovar qualquer documento sem estresse.</p>
-
-  <div class="counter-wrap">
-    <div class="counter-avatars">
-      <div class="counter-avatar">A</div>
-      <div class="counter-avatar" style="background:#1560BD;">B</div>
-      <div class="counter-avatar" style="background:#00B37E;">C</div>
+    <div class="wl-form">
+      <input type="email" class="input" id="emailInput" placeholder="seu@email.com" autocomplete="email">
+      <button class="btn btn-primary" id="btnEntrar" onclick="entrar()">Entrar pra lista</button>
     </div>
-    <div class="counter-text">Seja uma das <strong>primeiras</strong> a ter acesso</div>
-  </div>
 
-  <div class="email-form">
-    <input type="email" class="email-input" id="emailInput" placeholder="Digite seu melhor e-mail">
-    <button class="email-btn" id="emailBtn" onclick="salvarEmail()">Quero acesso gratuito</button>
-  </div>
-
-  <div class="success-msg" id="successMsg">
-    <div class="success-icon">🎉</div>
-    <div class="success-text"><strong>Você está na lista!</strong> Te avisamos no dia do lançamento.</div>
-  </div>
-
-  <p class="hero-disclaimer">Gratuito. Sem spam. Cancele quando quiser.</p>
-</section>
-
-<!-- FEATURES -->
-<section class="features-section">
-  <div class="section-label">Como funciona</div>
-  <h2 class="section-title">Tudo que você precisa<br><span>num só lugar</span></h2>
-  <p class="section-sub">Chega de burocracia te pegando de surpresa.</p>
-
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">📁</div>
-      <div class="feature-title">Cofre de documentos</div>
-      <div class="feature-desc">Guarde todos os seus documentos e os da sua família em um lugar seguro e organizado.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔔</div>
-      <div class="feature-title">Alertas de vencimento</div>
-      <div class="feature-desc">Receba avisos com 90, 30 e 7 dias de antecedência antes de qualquer documento vencer.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📅</div>
-      <div class="feature-title">Guia de renovação</div>
-      <div class="feature-desc">Saiba exatamente o que fazer, quais documentos levar e onde ir para tirar ou renovar qualquer documento.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📷</div>
-      <div class="feature-title">Cadastro por foto</div>
-      <div class="feature-desc">Tire uma foto do documento e a IA preenche todas as informações automaticamente pra você.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">👨‍👩‍👧</div>
-      <div class="feature-title">Documentos da família</div>
-      <div class="feature-desc">Gerencie os documentos de toda a família em um único painel. Marido, filhos, pais.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔒</div>
-      <div class="feature-title">100% seguro</div>
-      <div class="feature-desc">Seus dados são criptografados e protegidos. Somente você tem acesso às suas informações.</div>
+    <div class="wl-perks">
+      <div class="wl-perk"><i data-lucide="check-circle-2"></i> Acesso prioritário</div>
+      <div class="wl-perk"><i data-lucide="check-circle-2"></i> 100% grátis pra começar</div>
+      <div class="wl-perk"><i data-lucide="check-circle-2"></i> Sem spam</div>
     </div>
   </div>
-</section>
 
-<!-- DOCUMENTOS -->
-<section class="docs-section">
-  <div class="section-label">Documentos suportados</div>
-  <h2 class="section-title" style="margin-bottom:16px;">Cuidamos de <span>tudo</span></h2>
-  <p class="section-sub">Do RG ao IPTU. Da CNH ao Título de Eleitor.</p>
-
-  <div class="docs-grid">
-    <div class="doc-pill"><div class="doc-emoji">🪪</div><div class="doc-name">RG</div></div>
-    <div class="doc-pill"><div class="doc-emoji">📋</div><div class="doc-name">CPF</div></div>
-    <div class="doc-pill"><div class="doc-emoji">🚗</div><div class="doc-name">CNH</div></div>
-    <div class="doc-pill"><div class="doc-emoji">📄</div><div class="doc-name">CRLV</div></div>
-    <div class="doc-pill"><div class="doc-emoji">🗳️</div><div class="doc-name">Título de Eleitor</div></div>
-    <div class="doc-pill"><div class="doc-emoji">✈️</div><div class="doc-name">Passaporte</div></div>
-    <div class="doc-pill"><div class="doc-emoji">💼</div><div class="doc-name">Carteira de Trabalho</div></div>
-    <div class="doc-pill"><div class="doc-emoji">🏥</div><div class="doc-name">Cartão SUS</div></div>
-    <div class="doc-pill"><div class="doc-emoji">🏠</div><div class="doc-name">IPTU</div></div>
-    <div class="doc-pill"><div class="doc-emoji">📜</div><div class="doc-name">Certidões</div></div>
-    <div class="doc-pill"><div class="doc-emoji">🎓</div><div class="doc-name">Diploma</div></div>
-    <div class="doc-pill"><div class="doc-emoji">💉</div><div class="doc-name">Vacinação</div></div>
+  <div class="success" id="successBlock" style="display:none;">
+    <div class="success-icon"><i data-lucide="check"></i></div>
+    <h2>Você está na lista!</h2>
+    <p>Te avisamos por e-mail assim que o MeuDoc.app abrir pra você.</p>
   </div>
-</section>
 
-<!-- CTA BOTTOM -->
-<section class="cta-section">
-  <div class="cta-box">
-    <h2 class="cta-title">Pronta para ter seus documentos <span>em dia?</span></h2>
-    <p class="cta-sub">Seja uma das primeiras a ter acesso. Gratuito no lançamento para quem entrar na lista agora.</p>
-    <div class="email-form" style="justify-content:center;margin:0 auto;">
-      <input type="email" class="email-input" id="emailInput2" placeholder="Digite seu melhor e-mail">
-      <button class="email-btn" id="emailBtn2" onclick="salvarEmail2()">Garantir acesso gratuito</button>
-    </div>
-    <div class="success-msg" id="successMsg2" style="justify-content:center;margin-top:16px;">
-      <div class="success-icon">🎉</div>
-      <div class="success-text"><strong>Você está na lista!</strong> Te avisamos no dia do lançamento.</div>
-    </div>
-    <p class="hero-disclaimer" style="margin-top:16px;">Sem spam. Cancele quando quiser.</p>
+  <div class="back-link">
+    <a href="index.html">← Voltar pra home</a>
   </div>
-</section>
-
-<footer>
-  <div class="footer-logo">MeuDoc<span>.app</span></div>
-  <div class="footer-text">© 2026 MeuDoc.app — Seus documentos. Sempre em dia.</div>
-</footer>
+</div>
 
 <script>
-const { createClient } = supabase;
-const sb = createClient('https://gwepkpbtcwvgxfgqhymb.supabase.co','sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J');
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://gwepkpbtcwvgxfgqhymb.supabase.co',
+    'sb_publishable_0NiRNQMNyhdaX4LDEwNq8A_QkWpzM8J'
+  );
 
-async function salvarEmailBase(email, btnId, successId) {
-  if (!email || !email.includes('@')) return alert('Digite um e-mail válido.');
-  
-  const btn = document.getElementById(btnId);
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Salvando...';
+  lucide.createIcons();
 
-  // Verificar se já existe
-  const { data: existing } = await sb.from('waitlist').select('id').eq('email', email).single();
-  
-  if (existing) {
+  document.getElementById('emailInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') entrar();
+  });
+
+  async function entrar() {
+    const email = document.getElementById('emailInput').value.trim().toLowerCase();
+    if (!email || !email.includes('@')) { alert('Digite um e-mail válido.'); return; }
+    const btn = document.getElementById('btnEntrar');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+    const { error } = await sb.from('waitlist').insert({ email });
     btn.disabled = false;
-    btn.innerHTML = btnId === 'emailBtn' ? 'Quero acesso gratuito' : 'Garantir acesso gratuito';
-    document.getElementById(successId).classList.add('show');
-    document.getElementById(successId).querySelector('.success-text').innerHTML = '<strong>Você já está na lista!</strong> Te avisamos no dia do lançamento.';
-    return;
-  }
-
-  const { error } = await sb.from('waitlist').insert({ email, created_at: new Date().toISOString() });
-
-  btn.disabled = false;
-  btn.innerHTML = btnId === 'emailBtn' ? 'Quero acesso gratuito' : 'Garantir acesso gratuito';
-
-  if (error) {
-    if (error.message.includes('does not exist')) {
-      alert('Tabela waitlist não encontrada. Crie no Supabase:\nCREATE TABLE waitlist (id uuid default gen_random_uuid() primary key, email text unique not null, created_at timestamptz default now());');
-    } else {
+    btn.textContent = 'Entrar pra lista';
+    if (error && !error.message.includes('duplicate')) {
       alert('Erro: ' + error.message);
+      return;
     }
-    return;
+    document.getElementById('formBlock').style.display = 'none';
+    document.getElementById('successBlock').style.display = 'block';
+    lucide.createIcons();
   }
-
-  document.getElementById(successId).classList.add('show');
-}
-
-function salvarEmail() {
-  salvarEmailBase(document.getElementById('emailInput').value.trim(), 'emailBtn', 'successMsg');
-}
-
-function salvarEmail2() {
-  salvarEmailBase(document.getElementById('emailInput2').value.trim(), 'emailBtn2', 'successMsg2');
-}
-
-// Enter key
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('emailInput').addEventListener('keypress', e => { if(e.key==='Enter') salvarEmail(); });
-  document.getElementById('emailInput2').addEventListener('keypress', e => { if(e.key==='Enter') salvarEmail2(); });
-});
 </script>
 </body>
 </html>

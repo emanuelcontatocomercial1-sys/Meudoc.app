@@ -1,0 +1,98 @@
+/* MeuDoc.app — Shell do app logado (sidebar + topbar + layout) */
+
+body { background: var(--neve); display: flex; min-height: 100vh; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 264px;
+  background: var(--noite);
+  color: var(--branco);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 50;
+}
+.sb-logo {
+  padding: 0 8px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 22px;
+  color: var(--branco);
+}
+.sb-logo span { color: var(--coral); }
+.sb-user {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 8px;
+  margin-bottom: 8px;
+}
+.sb-user-info { flex: 1; min-width: 0; }
+.sb-user-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--branco); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-plan { font-size: 12px; color: rgba(255,255,255,0.5); }
+.sb-nav { flex: 1; display: flex; flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
+.sb-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 12px;
+  border-radius: var(--r-md);
+  color: rgba(255,255,255,0.55);
+  font-size: 14px; font-weight: 500;
+  transition: all var(--t);
+  cursor: pointer;
+}
+.sb-link:hover { background: rgba(255,255,255,0.05); color: var(--branco); }
+.sb-link.active { background: rgba(255,90,54,0.15); color: var(--branco); }
+.sb-link.active [data-lucide] { color: var(--coral); }
+.sb-link [data-lucide] { width: 18px; height: 18px; }
+.sb-section { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; padding: 16px 12px 6px; font-weight: 700; }
+.sb-footer { padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+/* === CONTENT === */
+.content { margin-left: 264px; flex: 1; min-width: 0; }
+.topbar {
+  background: var(--branco); border-bottom: 1px solid var(--borda);
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  position: sticky; top: 0; z-index: 40;
+}
+.greeting h1 { font-size: 22px; margin-bottom: 4px; line-height: 1.2; }
+.greeting p { font-size: 13px; color: var(--cinza); }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
+  background: var(--neve);
+  border: 1px solid var(--borda);
+  color: var(--noite);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--t);
+  position: relative;
+}
+.icon-btn:hover { background: var(--branco); border-color: var(--coral); color: var(--coral); }
+.icon-btn-dot::after { content: ''; position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--coral); border-radius: 50%; border: 2px solid var(--branco); }
+
+.page { padding: 32px; max-width: 1280px; }
+.page-section { margin-bottom: 32px; }
+.page-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-h h2 { font-size: 18px; }
+.page-h a { font-size: 13px; color: var(--coral); font-weight: 600; }
+.page-h a:hover { text-decoration: underline; }
+
+/* === MOBILE === */
+@media (max-width: 900px) {
+  body { flex-direction: column; }
+  .sidebar {
+    position: fixed; top: 0; left: -280px; height: 100vh;
+    transition: left var(--t);
+  }
+  .sidebar.open { left: 0; }
+  .content { margin-left: 0; }
+  .menu-toggle-mobile { display: inline-flex; }
+  .page { padding: 20px 16px; }
+  .topbar { padding: 16px; }
+}
+.menu-toggle-mobile { display: none; background: var(--neve); border: 1px solid var(--borda); width: 40px; height: 40px; border-radius: var(--r-md); align-items: center; justify-content: center; color: var(--noite); cursor: pointer; }
+
+.sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 49; }
+.sb-overlay.show { display: block; }

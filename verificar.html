@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carteira Digital — MeuDoc.app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--lavanda) 100%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    position: relative; overflow: hidden;
+  }
+  body::before { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(255,217,61,0.25), transparent 70%); }
+  body::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(6,214,160,0.2), transparent 70%); }
+
+  .card {
+    background: var(--branco);
+    border-radius: var(--r-xl);
+    width: 100%; max-width: 440px;
+    box-shadow: var(--sh-lg);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .card-header {
+    background: var(--noite);
+    color: var(--branco);
+    padding: 24px;
+    position: relative; overflow: hidden;
+  }
+  .card-header::before { content: ''; position: absolute; bottom: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,90,54,0.3), transparent 70%); }
+  .brand { font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+  .brand span { color: var(--coral); }
+  .tag { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 16px; position: relative; }
+  .nome { font-family: var(--font-display); font-weight: 800; font-size: 26px; margin-top: 6px; position: relative; }
+
+  .card-body { padding: 28px; }
+  .field { padding: 14px 0; border-bottom: 1px solid var(--borda); }
+  .field:last-child { border-bottom: none; }
+  .field-label { font-size: 11px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+  .field-val { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--noite); margin-top: 4px; letter-spacing: 0.5px; }
+  .field-empty .field-val { color: var(--cinza-claro); font-style: italic; font-family: var(--font-body); font-weight: 400; }
+
+  .footer {
+    padding: 18px 24px;
+    background: var(--neve);
+    border-top: 1px solid var(--borda);
+    text-align: center;
+    font-size: 11px; color: var(--cinza);
+  }
+  .footer a { color: var(--coral); font-weight: 600; }
+  .footer-icon { display: inline-flex; align-items: center; gap: 6px; }
+  .footer-icon [data-lucide] { width: 14px; height: 14px; }
+
+  .error {
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    padding: 40px 32px;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: var(--sh-lg);
+    z-index: 1;
+  }
+  .error [data-lucide] { width: 48px; height: 48px; color: var(--perigo); margin-bottom: 12px; }
+  .error h2 { font-size: 20px; margin-bottom: 8px; }
+  .error p { color: var(--cinza); line-height: 1.6; margin-bottom: 20px; }
+
+  .badge-verify {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--menta-light);
+    color: var(--menta-dark);
+    padding: 6px 12px;
+    border-radius: var(--r-full);
+    font-size: 12px; font-weight: 700;
+    margin-top: 12px;
+  }
+  .badge-verify [data-lucide] { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+  function decodeData() {
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get('d');
+    if (!d) return null;
+    try {
+      const json = atob(d.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decodeURIComponent(escape(json)));
+    } catch (e) {
+      try { return JSON.parse(atob(d)); } catch (e2) { return null; }
+    }
+  }
+
+  function mask(num, keep) {
+    if (!num) return null;
+    const s = String(num);
+    if (s.length <= keep) return s;
+    return '*'.repeat(s.length - keep) + s.slice(-keep);
+  }
+
+  function fmtCpf(c) {
+    if (!c) return null;
+    const v = String(c).replace(/\D/g, '');
+    if (v.length !== 11) return c;
+    return `***.${v.slice(3,6)}.${v.slice(6,9)}-**`;
+  }
+
+  function render() {
+    const data = decodeData();
+    const root = document.getElementById('root');
+
+    if (!data || !data.n) {
+      root.innerHTML = `
+        <div class="error">
+          <i data-lucide="alert-circle"></i>
+          <h2>Carteira inválida</h2>
+          <p>Esse QR Code não contém uma carteira válida do MeuDoc.app. Verifique se está apontando pra um QR gerado pelo aplicativo.</p>
+          <a href="/" class="btn btn-primary">Conhecer o MeuDoc.app</a>
+        </div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    const ts = data.t ? new Date(data.t * 1000) : new Date();
+    const dataStr = ts.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    const rows = [];
+    if (data.cpf) rows.push({ label: 'CPF', val: fmtCpf(data.cpf) });
+    else rows.push({ label: 'CPF', val: 'Não informado', empty: true });
+
+    if (data.rg) rows.push({ label: 'RG / CIN', val: mask(data.rg, 3) });
+    else rows.push({ label: 'RG / CIN', val: 'Não informado', empty: true });
+
+    if (data.cnh) rows.push({ label: 'CNH', val: mask(data.cnh, 3) });
+    else rows.push({ label: 'CNH', val: 'Não informado', empty: true });
+
+    root.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="brand">MeuDoc<span>.app</span></div>
+          <div class="tag">Carteira Digital</div>
+          <div class="nome">${data.n}</div>
+          <div class="badge-verify"><i data-lucide="shield-check"></i> Validado</div>
+        </div>
+        <div class="card-body">
+          ${rows.map(r => `
+            <div class="field ${r.empty ? 'field-empty' : ''}">
+              <div class="field-label">${r.label}</div>
+              <div class="field-val">${r.val}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="footer">
+          <div class="footer-icon"><i data-lucide="clock"></i> Gerada em ${dataStr}</div>
+          <div style="margin-top:6px;">Carteira digital · <a href="/">meudoc.app</a></div>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+
+  render();
+</script>
+</body>
+</html>
