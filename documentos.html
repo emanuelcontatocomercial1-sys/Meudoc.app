@@ -340,6 +340,9 @@
     renderUser();
     await loadDocs();
     setupFilters();
+    // Auto-calcula vencimento quando tipo ou emissao mudam manualmente
+    document.getElementById('fTipo').addEventListener('change', aoMudarTipoOuEmissao);
+    document.getElementById('fEmissao').addEventListener('change', aoMudarTipoOuEmissao);
     lucide.createIcons();
   })();
 
@@ -504,6 +507,67 @@
     reader.readAsDataURL(file);
   }
 
+  // Calcula vencimento automaticamente baseado em tipo, emissao e data nascimento
+  // Regras oficiais brasileiras (2025+)
+  function calcularVencimento(tipo, dataEmissao, dataNascimento) {
+    if (!dataEmissao || !tipo) return null;
+    const emissao = new Date(dataEmissao);
+    if (isNaN(emissao)) return null;
+
+    let idade = 30; // padrao adulto se nao houver nascimento
+    if (dataNascimento) {
+      const nasc = new Date(dataNascimento);
+      if (!isNaN(nasc)) idade = Math.floor((emissao - nasc) / (1000*60*60*24*365.25));
+    }
+
+    let anos = null;
+    switch (tipo) {
+      case 'RG':
+      case 'CIN':
+        // CIN: 5 anos (0-11), 10 anos (12-59), sem prazo (60+)
+        if (idade < 12) anos = 5;
+        else if (idade >= 60) anos = null;
+        else anos = 10;
+        break;
+      case 'CNH':
+        // Resolucao Contran: 10 anos ate 50, 5 anos ate 70, 3 anos apos 70
+        if (idade < 50) anos = 10;
+        else if (idade < 70) anos = 5;
+        else anos = 3;
+        break;
+      case 'PASSAPORTE':
+        // 5 anos pra menores de 12, 10 anos adultos
+        anos = (idade < 12) ? 5 : 10;
+        break;
+      // Sem vencimento oficial:
+      case 'CPF':
+      case 'TITULO_ELEITOR':
+      case 'CERTIDAO_NASCIMENTO':
+      case 'CERTIDAO_CASAMENTO':
+      case 'CARTEIRA_TRABALHO':
+      case 'CARTEIRA_VACINACAO':
+      default:
+        anos = null;
+    }
+
+    if (!anos) return null;
+    const venc = new Date(emissao);
+    venc.setFullYear(venc.getFullYear() + anos);
+    return venc.toISOString().split('T')[0];
+  }
+
+  // Recalcula vencimento quando tipo ou emissao mudam manualmente
+  function aoMudarTipoOuEmissao() {
+    const tipo = document.getElementById('fTipo').value;
+    const emissao = document.getElementById('fEmissao').value;
+    const venc = document.getElementById('fVencimento');
+    // So preenche se estiver vazio (nao sobrescreve o que user digitou)
+    if (!venc.value && tipo && emissao) {
+      const calculado = calcularVencimento(tipo, emissao, profile?.data_nascimento);
+      if (calculado) venc.value = calculado;
+    }
+  }
+
   function fillFromOcr(data) {
     if (data.tipo) document.getElementById('fTipo').value = data.tipo;
     if (data.numero) document.getElementById('fNumero').value = data.numero;
@@ -524,6 +588,15 @@
     if (data.nome && !profile.nome) {
       sb.from('profiles').update({ nome: data.nome }).eq('id', currentUser.id);
       profile.nome = data.nome;
+    }
+    if (data.data_nascimento && !profile.data_nascimento) {
+      sb.from('profiles').update({ data_nascimento: data.data_nascimento }).eq('id', currentUser.id);
+      profile.data_nascimento = data.data_nascimento;
+    }
+    // Se OCR nao identificou vencimento, calcula baseado em tipo + emissao + idade
+    if (!data.data_vencimento && data.tipo && data.data_emissao) {
+      const calculado = calcularVencimento(data.tipo, data.data_emissao, data.data_nascimento || profile.data_nascimento);
+      if (calculado) document.getElementById('fVencimento').value = calculado;
     }
   }
 
