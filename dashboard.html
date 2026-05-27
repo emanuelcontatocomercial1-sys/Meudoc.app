@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — MeuDoc.app</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -517,6 +519,30 @@
       </div>
     </div>
 
+    <!-- CTA PREMIUM (so plano gratis) -->
+    <div class="page-section" id="ctaPremium" style="display:none;">
+      <div style="background: linear-gradient(135deg, var(--coral) 0%, var(--sol) 100%); border-radius: var(--r-lg); padding: 28px; color: var(--branco); position: relative; overflow: hidden;">
+        <div style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);"></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; position:relative;">
+          <div style="flex:1; min-width:260px;">
+            <div style="font-family:var(--font-display); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:2px; opacity:0.9; margin-bottom:8px;">⚡ Premium</div>
+            <h2 style="font-size:24px; color:var(--branco); margin-bottom:12px; line-height:1.2;">Desbloqueie tudo por R$ 14,90/mês</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; font-size:14px;">
+              <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="check" style="width:18px; height:18px; stroke-width:3;"></i> Documentos ilimitados</div>
+              <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="check" style="width:18px; height:18px; stroke-width:3;"></i> Lia ilimitada (sem limite/dia)</div>
+              <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="check" style="width:18px; height:18px; stroke-width:3;"></i> Alertas por WhatsApp</div>
+              <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="check" style="width:18px; height:18px; stroke-width:3;"></i> Leitor automático (OCR)</div>
+            </div>
+          </div>
+          <div>
+            <button onclick="alert('Em breve! Estamos finalizando a integração de pagamento. Te aviso assim que estiver disponível.');return false;" style="background: var(--branco); color: var(--coral-dark); padding: 14px 32px; font-size: 15px; font-weight: 800; font-family: var(--font-display); border: none; border-radius: var(--r-md); cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.18); display: inline-flex; align-items: center; gap: 8px;">
+              <i data-lucide="zap"></i> Assinar agora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- LINHA 2: CARTEIRA + CONQUISTAS -->
     <div class="page-section">
       <div class="grid-2">
@@ -670,6 +696,11 @@
     document.getElementById('sbAvatar').textContent = nome.charAt(0).toUpperCase();
     const planoLabel = { gratis: 'Plano grátis', premium: 'Premium', familia: 'Família' }[profile.plano] || 'Plano grátis';
     document.getElementById('sbUserPlan').textContent = planoLabel;
+    // CTA Premium so aparece pra plano gratis
+    const plano = profile.plano || 'gratis';
+    if (plano === 'gratis') {
+      document.getElementById('ctaPremium').style.display = 'block';
+    }
   }
 
   function renderGreeting() {
