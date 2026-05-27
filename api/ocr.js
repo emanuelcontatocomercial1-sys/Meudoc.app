@@ -40,14 +40,31 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { image, mediaType } = req.body || {};
-  if (!image) return res.status(400).json({ error: 'Imagem obrigatoria' });
+  // Aceita tanto formato antigo {image, mediaType} quanto novo {images: [{data, mediaType}]}
+  const body = req.body || {};
+  let images = [];
+  if (Array.isArray(body.images) && body.images.length > 0) {
+    images = body.images.map(i => ({
+      data: i.data || i.image,
+      mediaType: i.mediaType || 'image/jpeg'
+    }));
+  } else if (body.image) {
+    images = [{ data: body.image, mediaType: body.mediaType || 'image/jpeg' }];
+  }
+  if (images.length === 0) return res.status(400).json({ error: 'Pelo menos uma imagem e obrigatoria' });
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY nao configurada no Vercel' });
 
-  const mt = mediaType || 'image/jpeg';
-  const dataUrl = `data:${mt};base64,${image}`;
+  // Monta o content multi-imagem (frente + verso ou mais)
+  const imageContent = images.map(img => ({
+    type: 'image_url',
+    image_url: { url: `data:${img.mediaType};base64,${img.data}` }
+  }));
+
+  const promptText = images.length > 1
+    ? `${SYSTEM_PROMPT}\n\nVoce esta vendo ${images.length} fotos do MESMO documento (ex: frente e verso). CONSOLIDE as informacoes de todas as fotos em UM unico JSON. Cada foto pode trazer dados diferentes (frente: foto+nome+numero; verso: filiacao+observacoes; assim por diante). Responda APENAS com o JSON.`
+    : `${SYSTEM_PROMPT}\n\nAnalise a imagem e responda APENAS com o JSON dos dados extraidos.`;
 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -62,8 +79,8 @@ export default async function handler(req, res) {
           {
             role: 'user',
             content: [
-              { type: 'text', text: SYSTEM_PROMPT + '\n\nAnalise a imagem e responda APENAS com o JSON dos dados extraidos.' },
-              { type: 'image_url', image_url: { url: dataUrl } }
+              { type: 'text', text: promptText },
+              ...imageContent
             ]
           }
         ],

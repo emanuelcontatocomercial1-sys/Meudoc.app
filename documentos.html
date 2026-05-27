@@ -223,24 +223,32 @@
         <p style="color:var(--cinza); margin-bottom:16px; font-size:14px;">Como você quer adicionar?</p>
         <div class="add-options">
           <label class="add-opt">
-            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="onFileSelected(event)">
+            <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="onFilesSelected(event)">
             <i data-lucide="camera"></i>
             <div class="add-opt-title">Tirar foto</div>
-            <div class="add-opt-sub">A Bia lê os dados</div>
+            <div class="add-opt-sub">Frente e verso</div>
           </label>
           <label class="add-opt">
-            <input type="file" accept="image/*,application/pdf" style="display:none" onchange="onFileSelected(event)">
+            <input type="file" accept="image/*,application/pdf" multiple style="display:none" onchange="onFilesSelected(event)">
             <i data-lucide="upload"></i>
-            <div class="add-opt-title">Enviar arquivo</div>
-            <div class="add-opt-sub">Foto ou PDF</div>
+            <div class="add-opt-title">Enviar arquivos</div>
+            <div class="add-opt-sub">Foto(s) ou PDF</div>
           </label>
         </div>
-        <div style="text-align:center; margin: 8px 0; color: var(--cinza-claro); font-size: 13px;">ou</div>
+        <p style="font-size:12px; color:var(--cinza); margin-top:12px; text-align:center;">Dica: tire foto da <strong>frente e verso</strong> pra Bia ler tudo certo.</p>
+        <div style="text-align:center; margin: 12px 0; color: var(--cinza-claro); font-size: 13px;">ou</div>
         <button class="btn btn-secondary btn-full" onclick="showFormStep()"><i data-lucide="keyboard" class="icon-sm"></i> Preencher manualmente</button>
       </div>
 
       <div id="modalStep2" style="display:none;">
-        <img id="previewImg" class="preview-img" style="display:none">
+        <div id="previewsContainer" style="display:none; margin-bottom:16px;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;" id="previewsList"></div>
+          <label style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border:1.5px dashed var(--borda); border-radius:var(--r-md); cursor:pointer; font-size:13px; color:var(--cinza); margin-top:8px;">
+            <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="onFilesSelected(event)">
+            <i data-lucide="plus" style="width:14px; height:14px;"></i> Adicionar foto
+          </label>
+          <button class="btn btn-primary btn-sm" id="btnAnalyze" onclick="analisarComIA()" style="margin-left:8px;"><i data-lucide="sparkles" class="icon-sm"></i> Analisar com IA</button>
+        </div>
         <div class="ocr-status" id="ocrStatus">
           <span class="spinner" style="border-color: rgba(124,58,237,0.3); border-top-color: var(--lavanda);"></span>
           <span>A Bia está lendo o documento...</span>
@@ -459,52 +467,80 @@
     document.getElementById('modalStep2').style.display = 'block';
     document.getElementById('modalFooter').style.display = 'flex';
   }
+  let imagensSelecionadas = []; // [{data, mediaType, dataUrl}]
+
   function clearForm() {
     ['fDocId','fNome','fNumero','fEmissao','fVencimento','fOrgao','fCategoria','fObs'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fTipo').value = '';
-    document.getElementById('previewImg').style.display = 'none';
-    document.getElementById('previewImg').src = '';
     document.getElementById('ocrStatus').classList.remove('show');
+    imagensSelecionadas = [];
+    renderPreviews();
   }
 
-  async function onFileSelected(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    showFormStep();
-    if (!file.type.startsWith('image/')) {
-      // PDF — sem OCR por enquanto
-      document.getElementById('fNome').focus();
+  function renderPreviews() {
+    const cont = document.getElementById('previewsContainer');
+    const list = document.getElementById('previewsList');
+    if (imagensSelecionadas.length === 0) {
+      cont.style.display = 'none';
+      list.innerHTML = '';
       return;
     }
-    // Image: preview + OCR
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
-      const img = document.getElementById('previewImg');
-      img.src = dataUrl;
-      img.style.display = 'block';
+    cont.style.display = 'block';
+    list.innerHTML = imagensSelecionadas.map((img, i) => `
+      <div style="position:relative; width:84px; height:84px; border-radius:var(--r-md); overflow:hidden; border:1px solid var(--borda);">
+        <img src="${img.dataUrl}" style="width:100%; height:100%; object-fit:cover;">
+        <button onclick="removerImagem(${i})" style="position:absolute; top:4px; right:4px; width:22px; height:22px; border-radius:50%; background:var(--perigo); color:var(--branco); border:none; cursor:pointer; font-weight:700; line-height:1; padding:0;">×</button>
+      </div>
+    `).join('');
+    lucide.createIcons();
+  }
 
-      // Extrai base64 puro
+  function removerImagem(i) {
+    imagensSelecionadas.splice(i, 1);
+    renderPreviews();
+  }
+
+  async function onFilesSelected(e) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    showFormStep();
+
+    // Processa cada arquivo
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue; // PDF pulamos por enquanto
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = ev => resolve(ev.target.result);
+        reader.readAsDataURL(file);
+      });
       const base64 = dataUrl.split(',')[1];
-      const mediaType = file.type;
+      imagensSelecionadas.push({ data: base64, mediaType: file.type, dataUrl });
+    }
+    renderPreviews();
+    e.target.value = ''; // permite re-selecionar mesma foto
+  }
 
-      document.getElementById('ocrStatus').classList.add('show');
-      try {
-        const r = await fetch('/api/ocr', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64, mediaType })
-        });
-        const json = await r.json();
-        document.getElementById('ocrStatus').classList.remove('show');
-        if (json.data) fillFromOcr(json.data);
-        else alert('A Bia não conseguiu ler. Preencha manualmente.');
-      } catch (err) {
-        document.getElementById('ocrStatus').classList.remove('show');
-        alert('Erro ao ler o documento. Preencha manualmente.');
-      }
-    };
-    reader.readAsDataURL(file);
+  async function analisarComIA() {
+    if (imagensSelecionadas.length === 0) return;
+    const btn = document.getElementById('btnAnalyze');
+    btn.disabled = true;
+    document.getElementById('ocrStatus').classList.add('show');
+    try {
+      const r = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: imagensSelecionadas.map(i => ({ data: i.data, mediaType: i.mediaType })) })
+      });
+      const json = await r.json();
+      document.getElementById('ocrStatus').classList.remove('show');
+      btn.disabled = false;
+      if (json.data) fillFromOcr(json.data);
+      else alert('A Bia não conseguiu ler. Preencha manualmente.');
+    } catch (err) {
+      document.getElementById('ocrStatus').classList.remove('show');
+      btn.disabled = false;
+      alert('Erro ao ler o documento. Preencha manualmente.');
+    }
   }
 
   // Calcula vencimento automaticamente baseado em tipo, emissao e data nascimento
