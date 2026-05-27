@@ -54,6 +54,21 @@ export default async function handler(req, res) {
   }
   if (images.length === 0) return res.status(400).json({ error: 'Pelo menos uma imagem e obrigatoria' });
 
+  // Sanitiza base64: remove whitespace, newlines, e prefixos data: se vierem por engano
+  images = images.map(img => {
+    let data = String(img.data || '');
+    // Se vier com prefixo data:..base64,, extrai so o base64
+    const commaIdx = data.indexOf('base64,');
+    if (commaIdx >= 0) data = data.substring(commaIdx + 7);
+    // Remove qualquer whitespace/newline/CR
+    data = data.replace(/\s/g, '');
+    return { data, mediaType: img.mediaType };
+  });
+
+  // Valida que base64 nao esta vazio e tem tamanho minimo
+  const invalid = images.find(img => !img.data || img.data.length < 100);
+  if (invalid) return res.status(400).json({ error: 'Imagem em base64 invalida ou muito pequena' });
+
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY nao configurada no Vercel' });
 
