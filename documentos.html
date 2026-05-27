@@ -255,26 +255,33 @@
         </div>
 
         <input type="hidden" id="fDocId">
+
+        <!-- Tipo identificado (display read-only) -->
+        <div id="tipoDisplay" style="background: linear-gradient(135deg, var(--coral-light) 0%, var(--lavanda-light) 100%); border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 16px; display: none; border-left: 3px solid var(--coral);">
+          <div style="font-size: 11px; color: var(--cinza); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 4px;">Tipo de documento</div>
+          <div id="tipoDisplayValue" style="font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--noite);">—</div>
+        </div>
+
         <div class="form-group">
-          <label class="label">Nome do documento</label>
-          <input class="input" id="fNome" placeholder="Ex: Meu RG, CNH 2026">
+          <label class="label">Nome da pessoa</label>
+          <input class="input" id="fNome" placeholder="Ex: João Silva">
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="label">Tipo</label>
+          <div class="form-group" id="tipoSelectGroup">
+            <label class="label">Tipo (alterar)</label>
             <select class="input" id="fTipo">
               <option value="">Selecione...</option>
-              <option value="RG">RG</option>
-              <option value="CIN">CIN</option>
+              <option value="RG">Carteira de Identidade (RG)</option>
+              <option value="CIN">Carteira de Identidade Nacional (CIN)</option>
               <option value="CPF">CPF</option>
-              <option value="CNH">CNH</option>
+              <option value="CNH">Carteira de Habilitação (CNH)</option>
               <option value="PASSAPORTE">Passaporte</option>
               <option value="TITULO_ELEITOR">Título de Eleitor</option>
               <option value="CERTIDAO_NASCIMENTO">Certidão de Nascimento</option>
               <option value="CERTIDAO_CASAMENTO">Certidão de Casamento</option>
               <option value="CARTEIRA_TRABALHO">Carteira de Trabalho</option>
               <option value="CARTEIRA_VACINACAO">Carteira de Vacinação</option>
-              <option value="OUTRO">Outro</option>
+              <option value="OUTRO">Outro documento</option>
             </select>
           </div>
           <div class="form-group">
@@ -297,8 +304,8 @@
             <label class="label">Órgão emissor</label>
             <input class="input" id="fOrgao" placeholder="Ex: SSP-BA">
           </div>
-          <div class="form-group">
-            <label class="label">Categoria (opcional)</label>
+          <div class="form-group" id="categoriaGroup" style="display:none;">
+            <label class="label">Categoria CNH</label>
             <input class="input" id="fCategoria" placeholder="Ex: AB">
           </div>
         </div>
@@ -399,7 +406,19 @@
 
   const iconMap = { RG: 'badge-check', CIN: 'badge-check', CPF: 'file-text', CNH: 'credit-card', PASSAPORTE: 'plane', TITULO_ELEITOR: 'vote', CERTIDAO_NASCIMENTO: 'baby', CERTIDAO_CASAMENTO: 'heart', CARTEIRA_TRABALHO: 'briefcase', CARTEIRA_VACINACAO: 'syringe', OUTRO: 'file' };
   const corMap = ['coral', 'menta', 'lavanda', 'sol', 'alerta', 'perigo'];
-  const tipoLabel = { RG: 'RG', CIN: 'CIN', CPF: 'CPF', CNH: 'CNH', PASSAPORTE: 'Passaporte', TITULO_ELEITOR: 'Título de Eleitor', CERTIDAO_NASCIMENTO: 'Certidão Nascimento', CERTIDAO_CASAMENTO: 'Certidão Casamento', CARTEIRA_TRABALHO: 'CTPS', CARTEIRA_VACINACAO: 'Vacinação', OUTRO: 'Outro' };
+  const tipoLabel = {
+    RG: 'Carteira de Identidade (RG)',
+    CIN: 'Carteira de Identidade Nacional (CIN)',
+    CPF: 'CPF',
+    CNH: 'Carteira de Habilitação (CNH)',
+    PASSAPORTE: 'Passaporte',
+    TITULO_ELEITOR: 'Título de Eleitor',
+    CERTIDAO_NASCIMENTO: 'Certidão de Nascimento',
+    CERTIDAO_CASAMENTO: 'Certidão de Casamento',
+    CARTEIRA_TRABALHO: 'Carteira de Trabalho',
+    CARTEIRA_VACINACAO: 'Carteira de Vacinação',
+    OUTRO: 'Outro documento'
+  };
 
   function badge(doc) {
     const s = status(doc);
@@ -644,6 +663,30 @@
       const calculado = calcularVencimento(tipo, emissao, profile?.data_nascimento);
       if (calculado) venc.value = calculado;
     }
+    atualizarDisplayTipo();
+  }
+
+  // Atualiza display do tipo no topo + mostra/esconde categoria
+  function atualizarDisplayTipo() {
+    const tipo = document.getElementById('fTipo').value;
+    const display = document.getElementById('tipoDisplay');
+    const displayValue = document.getElementById('tipoDisplayValue');
+    const catGroup = document.getElementById('categoriaGroup');
+
+    if (tipo) {
+      displayValue.textContent = tipoLabel[tipo] || tipo;
+      display.style.display = 'block';
+    } else {
+      display.style.display = 'none';
+    }
+
+    // Categoria so faz sentido pra CNH
+    if (tipo === 'CNH') {
+      catGroup.style.display = 'block';
+    } else {
+      catGroup.style.display = 'none';
+      document.getElementById('fCategoria').value = '';
+    }
   }
 
   function fillFromOcr(data) {
@@ -652,8 +695,10 @@
     if (data.data_emissao) document.getElementById('fEmissao').value = data.data_emissao;
     if (data.data_vencimento) document.getElementById('fVencimento').value = data.data_vencimento;
     if (data.orgao_emissor) document.getElementById('fOrgao').value = data.orgao_emissor;
-    if (data.categoria) document.getElementById('fCategoria').value = data.categoria;
+    // Categoria so se for CNH (outros docs nao tem categoria)
+    if (data.categoria && data.tipo === 'CNH') document.getElementById('fCategoria').value = data.categoria;
     if (data.observacoes) document.getElementById('fObs').value = data.observacoes;
+    atualizarDisplayTipo();
     // Nome do documento = nome da pessoa (tipo ja tem campo proprio)
     if (!document.getElementById('fNome').value) {
       const nomeFonte = data.nome || profile.nome || '';
@@ -736,7 +781,7 @@
     document.getElementById('fOrgao').value = d.orgao_emissor || '';
     document.getElementById('fCategoria').value = d.categoria || '';
     document.getElementById('fObs').value = d.observacoes || '';
-    document.getElementById('previewImg').style.display = 'none';
+    atualizarDisplayTipo();
     document.getElementById('modalDoc').classList.add('show');
     lucide.createIcons();
   }

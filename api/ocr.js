@@ -15,11 +15,12 @@ REGRAS CRITICAS:
    - NUNCA coloque so a UF no orgao_emissor — sempre orgao+UF
 
 2) Por tipo de documento:
-   - RG/CIN: numero = so os digitos brasileiros (ex: "23660376"). orgao_emissor tipico: "SSP-XX" ou "PC-XX"
-   - CNH: numero = 11 digitos. orgao_emissor SEMPRE "DETRAN-XX". categoria = letra(s) (A, B, AB, etc)
-   - CPF: numero = 11 digitos. orgao_emissor null ou "RFB"
-   - Passaporte: numero = alfanumerico (ex: "FE234567"). orgao_emissor = "PF" ou "POLICIA FEDERAL"
-   - Titulo de Eleitor: numero = 12 digitos. orgao_emissor = "TSE"
+   - RG/CIN: numero = so os digitos brasileiros (ex: "23660376"). orgao_emissor tipico: "SSP-XX" ou "PC-XX". categoria = null (RG e CIN NAO tem categoria)
+   - CNH: numero = 11 digitos. orgao_emissor SEMPRE "DETRAN-XX". categoria = letra(s) da habilitacao (A, B, AB, C, D, E, AC, AD, AE)
+   - CPF: numero = 11 digitos. orgao_emissor null ou "RFB". categoria = null
+   - Passaporte: numero = alfanumerico (ex: "FE234567"). orgao_emissor = "PF" ou "POLICIA FEDERAL". categoria = null
+   - Titulo de Eleitor: numero = 12 digitos. orgao_emissor = "TSE". categoria = null
+   - Demais: categoria = null (categoria SO existe pra CNH)
 
 3) Datas:
    - SEMPRE no formato YYYY-MM-DD
