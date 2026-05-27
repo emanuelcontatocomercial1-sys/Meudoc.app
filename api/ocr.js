@@ -1,18 +1,37 @@
 // OCR de documentos brasileiros via Groq (Llama 3.2 Vision, free tier)
 // Recebe imagem base64, retorna dados estruturados
 
-const SYSTEM_PROMPT = `Voce e um OCR de documentos brasileiros. Analise a foto e extraia os dados em formato JSON.
-
-Responda APENAS com o JSON, sem texto antes ou depois, sem explicacoes, sem markdown. So o objeto JSON.
+const SYSTEM_PROMPT = `Voce e OCR especializado em documentos brasileiros. Retorne APENAS o JSON, sem texto antes/depois, sem markdown.
 
 Schema obrigatorio (todos os campos, use null quando nao encontrar):
-{"tipo":"RG|CIN|CPF|CNH|PASSAPORTE|TITULO_ELEITOR|CERTIDAO_NASCIMENTO|CERTIDAO_CASAMENTO|CARTEIRA_TRABALHO|CARTEIRA_VACINACAO|OUTRO","nome":"nome completo ou null","numero":"so digitos ou null","cpf":"so digitos ou null","data_nascimento":"YYYY-MM-DD ou null","data_emissao":"YYYY-MM-DD ou null","data_vencimento":"YYYY-MM-DD ou null","orgao_emissor":"sigla ou null","categoria":"categoria CNH ou null","observacoes":"info extra ou null","confianca":"alta|media|baixa"}
+{"tipo":"RG|CIN|CPF|CNH|PASSAPORTE|TITULO_ELEITOR|CERTIDAO_NASCIMENTO|CERTIDAO_CASAMENTO|CARTEIRA_TRABALHO|CARTEIRA_VACINACAO|OUTRO","nome":"nome completo","numero":"so digitos","cpf":"so digitos","data_nascimento":"YYYY-MM-DD","data_emissao":"YYYY-MM-DD","data_vencimento":"YYYY-MM-DD","orgao_emissor":"SIGLA-UF","categoria":"...","observacoes":"...","confianca":"alta|media|baixa"}
 
-Regras importantes:
-- Numeros sem formatacao (so digitos, sem pontos/tracos)
-- Datas no formato YYYY-MM-DD (ex: 2025-03-15)
-- Se nao for documento, tipo="OUTRO" e confianca="baixa"
-- Sempre retorne o JSON completo, mesmo com varios campos null`;
+REGRAS CRITICAS:
+
+1) SEPARAR numero do orgao emissor:
+   - numero = APENAS digitos do RG/CNH/CPF (sem letras, sem pontos, sem tracos, sem UF)
+   - orgao_emissor = sigla do orgao + UF (ex: "SSP-MG", "PC-BA", "DETRAN-SP")
+   - NUNCA coloque a UF no campo numero
+   - NUNCA coloque so a UF no orgao_emissor — sempre orgao+UF
+
+2) Por tipo de documento:
+   - RG/CIN: numero = so os digitos brasileiros (ex: "23660376"). orgao_emissor tipico: "SSP-XX" ou "PC-XX"
+   - CNH: numero = 11 digitos. orgao_emissor SEMPRE "DETRAN-XX". categoria = letra(s) (A, B, AB, etc)
+   - CPF: numero = 11 digitos. orgao_emissor null ou "RFB"
+   - Passaporte: numero = alfanumerico (ex: "FE234567"). orgao_emissor = "PF" ou "POLICIA FEDERAL"
+   - Titulo de Eleitor: numero = 12 digitos. orgao_emissor = "TSE"
+
+3) Datas:
+   - SEMPRE no formato YYYY-MM-DD
+   - Converta DD/MM/YYYY ou DD.MM.YYYY para esse formato
+   - Ex: 18/12/2019 vira "2019-12-18"
+
+4) Nome: completo, em CAIXA ALTA se aparecer assim no doc, ou capitalizado
+
+5) Se nao for documento conhecido: tipo="OUTRO", confianca="baixa"
+
+EXEMPLO de saida correta pra um RG mineiro com numero "23.660.376" emitido pela SSP-MG:
+{"tipo":"RG","nome":"JOAO DA SILVA","numero":"23660376","cpf":null,"data_nascimento":"1990-05-12","data_emissao":"2019-12-18","data_vencimento":null,"orgao_emissor":"SSP-MG","categoria":null,"observacoes":null,"confianca":"alta"}`;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
