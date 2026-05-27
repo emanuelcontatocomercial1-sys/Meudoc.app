@@ -3,7 +3,7 @@
 
 const SYSTEM_PROMPT = `Voce e OCR especializado em documentos brasileiros. Retorne APENAS o JSON, sem texto antes/depois, sem markdown.
 
-Schema obrigatorio (todos os campos, use null quando nao encontrar):
+Schema obrigatorio (todos os campos, use null LITERAL JSON quando nao encontrar — NUNCA a string "null", "N/A", "none" ou vazio entre aspas. Apenas null sem aspas.):
 {"tipo":"RG|CIN|CPF|CNH|PASSAPORTE|TITULO_ELEITOR|CERTIDAO_NASCIMENTO|CERTIDAO_CASAMENTO|CARTEIRA_TRABALHO|CARTEIRA_VACINACAO|OUTRO","nome":"nome completo","numero":"so digitos","cpf":"so digitos","data_nascimento":"YYYY-MM-DD","data_emissao":"YYYY-MM-DD","data_vencimento":"YYYY-MM-DD","orgao_emissor":"SIGLA-UF","categoria":"...","observacoes":"...","confianca":"alta|media|baixa"}
 
 REGRAS CRITICAS:
