@@ -96,3 +96,64 @@ body { background: var(--neve); display: flex; min-height: 100vh; }
 
 .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 49; }
 .sb-overlay.show { display: block; }
+
+/* === BOTTOM NAVIGATION (mobile) === */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--branco);
+  border-top: 1px solid var(--borda);
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) 8px;
+  justify-content: space-around;
+  align-items: flex-end;
+  z-index: 48;
+  box-shadow: 0 -2px 8px rgba(15,23,42,0.04);
+}
+.bn-item {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px;
+  padding: 6px 4px;
+  color: var(--cinza);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  flex: 1;
+  text-align: center;
+  transition: color var(--t);
+  min-width: 48px;
+  letter-spacing: 0.2px;
+}
+.bn-item [data-lucide] {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+.bn-item.active { color: var(--coral); }
+.bn-item:hover { color: var(--noite); }
+.bn-item.active span { font-weight: 700; }
+
+/* Item central destacado (Bia) */
+.bn-center {
+  background: var(--coral);
+  color: var(--branco);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  margin-top: -28px;
+  box-shadow: 0 4px 16px rgba(255,90,54,0.5);
+  flex: 0 0 auto;
+  padding: 0;
+  position: relative;
+}
+.bn-center [data-lucide] { width: 26px; height: 26px; stroke-width: 2.2; }
+.bn-center span { display: none; }
+.bn-center.active { background: var(--coral-dark); color: var(--branco); }
+.bn-center:hover { color: var(--branco); transform: translateY(-2px); }
+
+/* No mobile, mostrar bottom nav + reservar espaco no content */
+@media (max-width: 900px) {
+  .bottom-nav { display: flex; }
+  .content { padding-bottom: 80px; }
+}
